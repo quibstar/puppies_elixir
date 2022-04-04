@@ -97,8 +97,8 @@ config :stripity_stripe,
 
 config :ex_aws,
   debug_requests: true,
-  access_key_id: "AKIASNS4YY6JMGM6A75Q",
-  secret_access_key: "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",
+  access_key_id: "tbd",
+  secret_access_key: "tbd",
   s3: [
     scheme: "https://",
     host: "reputable-rooms-staging.s3.amazonaws.com",
