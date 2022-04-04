@@ -22,6 +22,7 @@ defmodule PuppiesWeb.ListingsIndex do
                       <th scope="col" class="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-gray-900 sm:pl-6 md:pl-0">Name</th>
                       <th scope="col" class="py-3.5 px-3 text-left text-sm font-semibold text-gray-900">Price</th>
                       <th scope="col" class="py-3.5 px-3 text-left text-sm font-semibold text-gray-900">Breeds</th>
+                      <th scope="col" class="py-3.5 px-3 text-left text-sm font-semibold text-gray-900">Views</th>
                       <th scope="col" class="py-3.5 px-3 text-left text-sm font-semibold text-gray-900">Messages</th>
                       <th scope="col" class="relative py-3.5 pl-3 pr-4 sm:pr-6 md:pr-0">
                         <span class="sr-only">Edit</span>
@@ -37,6 +38,7 @@ defmodule PuppiesWeb.ListingsIndex do
                         </td>
                         <td class="whitespace-nowrap py-4 px-3 text-sm text-gray-500">$<%= listing.price %>.00</td>
                         <td class="whitespace-nowrap py-4 px-3 text-sm text-gray-500"><%= Puppies.Utilities.breed_names(listing.breeds)%></td>
+                        <td class="whitespace-nowrap py-4 px-3 text-sm text-gray-500">0</td>
                         <td class="whitespace-nowrap py-4 px-3 text-sm text-gray-500">
                           0
                         </td>

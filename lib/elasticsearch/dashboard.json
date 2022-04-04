@@ -1,0 +1,60 @@
+{
+  "email": "quibstar@gmail.com",
+  "confirmed_at": null,
+  "first_name": "Kris",
+  "last_name": "utter",
+  "status": "active",
+  "phone_number": null,
+  "is_seller": true,
+  "business": {
+    "name": "Mike's Kennel",
+    "slug": null,
+    "phone": "616-555-5555",
+    "state_license": false,
+    "federal_license": false,
+    "website": "tes.com",
+    "description": "test",
+    "breeds": [{ "name": "Shih-Poo", "slug": "shih-poo" }],
+    "photo": {
+      "name": "31e687f4-d5cd-47c0-b7be-2f68e6fa5afd.jpg",
+      "url": "/uploads/6434c717-bd93-4bee-b57d-b2b4c56513c8.jpg"
+    },
+    "location": {
+      "place_name": "Startop Drive, Montauk, New York 11954, United States",
+      "lat": 41.06365,
+      "lng": -71.90411,
+      "region_slug": "new-york",
+      "place_slug": "montauk",
+      "region_short_code": "ny",
+      "text": "Startop Drive"
+    }
+  },
+  "listings": [
+    {
+      "coat_color_pattern": "Black & Tan",
+      "description": "test",
+      "dob": "2022-04-04",
+      "name": "Stupid",
+      "price": 100,
+      "sex": "male",
+      "status": null,
+      "deliver_on_site": false,
+      "deliver_pick_up": false,
+      "delivery_shipped": false,
+      "champion_sired": false,
+      "show_quality": false,
+      "champion_bloodline": false,
+      "registered": false,
+      "registrable": false,
+      "current_vaccinations": false,
+      "veterinary_exam": false,
+      "health_certificate": false,
+      "health_guarantee": false,
+      "pedigree": false,
+      "hypoallergenic": false,
+      "microchip": false,
+      "purebred": true,
+      "breeds": [{ "name": "Shih-Poo", "slug": "shih-poo" }]
+    }
+  ]
+}

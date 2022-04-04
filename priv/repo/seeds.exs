@@ -86,3 +86,5 @@ Location.changeset(
   }
 )
 |> Repo.insert()
+
+# todo create listings
