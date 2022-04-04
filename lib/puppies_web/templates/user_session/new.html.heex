@@ -1,0 +1,64 @@
+
+
+
+<div class="min-h-full flex bg-white">
+  <div class="flex-1 flex flex-col justify-center py-12 px-4 sm:px-6 lg:flex-none lg:px-20 xl:px-24">
+    <div class="mx-auto w-full max-w-sm lg:w-96">
+      <div>
+        <%= img_tag(Routes.static_path(@conn, "/images/rr-logo-150.svg"), class: "mx-auto") %>
+        <h2 class="mt-6 text-3xl font-bold text-center text-gray-900">
+          Sign in to your account
+        </h2>
+      </div>
+
+      <div class="mt-8">
+        <div class="mt-6">
+          <%= form_for @conn, Routes.user_session_path(@conn, :create), [as: :user, class: "space-y-6"], fn f -> %>
+           <%= if @error_message do %>
+              <div class="alert alert-danger">
+                <p><%= @error_message %></p>
+              </div>
+            <% end %>
+
+            <div>
+              <%= label f, :email, class: "block text-sm font-medium text-gray-700" %>
+              <div class="mt-1">
+                <%= email_input f, :email, required: true, class: "appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-primary-500 focus:border-primary-500 sm:text-sm" %>
+              </div>
+            </div>
+
+            <div class="space-y-1">
+              <%= label f, :password, class: "block text-sm font-medium text-gray-700" %>
+              <div class="mt-1">
+                <%= password_input f, :password, required: true, class: "appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-primary-500 focus:border-primary-500 sm:text-sm" %>
+              </div>
+            </div>
+
+            <div class="flex items-center justify-between">
+              <div class="flex items-center">
+                <%= checkbox f, :remember_me, class: "-4 w-4 text-primary-600 focus:ring-primary-500 border-gray-300 rounded" %>
+                <label for="remember-me" class="ml-2 block text-sm text-gray-900">
+                  Remember me
+                </label>
+              </div>
+
+              <div class="text-sm">
+                <%= link "Forgot your password?", to: Routes.user_reset_password_path(@conn, :new), class: "font-medium text-primary-600 hover:text-primary-500" %>
+              </div>
+            </div>
+
+            <div>
+              <%= submit "Sign In", class: "w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-primary-600 hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500" %>
+            </div>
+            <div class='text-center' >
+               <%= link "Sign Up", to: Routes.user_registration_path(@conn, :new), class: "font-medium text-primary-600 hover:text-primary-500" %>
+            </div>
+          <% end %>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="hidden lg:block relative w-0 flex-1">
+    <img class="absolute inset-0 h-full w-full object-cover" src="https://images.unsplash.com/photo-1537726235470-8504e3beef77?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=2340&q=80" alt="">
+  </div>
+</div>

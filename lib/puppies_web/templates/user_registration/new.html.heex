@@ -1,0 +1,114 @@
+<script>
+  // Initialize the agent at application startup.
+  const fpPromise = new Promise((resolve, reject) => {
+    const script = document.createElement('script');
+    script.onload = resolve;
+    script.onerror = reject;
+    script.async = true;
+    script.src = 'https://cdn.jsdelivr.net/npm/@fingerprintjs/fingerprintjs-pro@3/dist/fp.min.js';
+    document.head.appendChild(script);
+  })
+    .then(() => FingerprintJS.load({token: 'QUV53dbb5TqwApTHOdFm'}));
+
+  fpPromise
+    .then(fp => fp.get())
+    .then(result => {
+      var element = document.getElementById("user_visitor_id")
+      element.value = result.visitorId
+    })
+</script>
+
+
+<div class="min-h-full flex bg-white">
+  <div class="flex-1 flex flex-col justify-center py-12 px-4 sm:px-6 lg:flex-none lg:px-20 xl:px-24">
+    <div class="mx-auto w-full max-w-sm lg:w-96">
+      <div>
+        <%= img_tag(Routes.static_path(@conn, "/images/rr-logo-150.svg"), class: "mx-auto") %>
+        <h2 class="mt-6 text-3xl font-bold text-center text-gray-900">Sign Up</h2>
+      </div>
+
+      <div class="mt-8">
+
+        <div class="mt-6">
+
+
+         <.form let={f} for={@changeset} action={Routes.user_registration_path(@conn, :create) }, class="space-y-6">
+           <%= if @changeset.action do %>
+              <div class="alert alert-danger">
+                <p>Please check the errors below.</p>
+              </div>
+            <% end %>
+
+            <div>
+              <%= label f, :first_name, class: "block text-sm font-medium text-gray-700" %>
+              <div class="mt-1">
+                <%= text_input f, :first_name, required: true, class: "appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-primary-500 focus:border-primary-500 sm:text-sm" %>
+              </div>
+              <%= error_tag f, :first_name %>
+            </div>
+
+            <div>
+              <%= label f, :last_name, class: "block text-sm font-medium text-gray-700" %>
+              <div class="mt-1">
+                <%= text_input f, :last_name, required: true, class: "appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-primary-500 focus:border-primary-500 sm:text-sm" %>
+              </div>
+              <%= error_tag f, :last_name %>
+            </div>
+
+            <div>
+              <%= label f, :email, class: "block text-sm font-medium text-gray-700" %>
+              <div class="mt-1">
+                <%= email_input f, :email, required: true, class: "appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-primary-500 focus:border-primary-500 sm:text-sm" %>
+              </div>
+              <%= error_tag f, :email %>
+            </div>
+
+            <div class="space-y-1">
+              <%= label f, :password, class: "block text-sm font-medium text-gray-700" %>
+              <div class="mt-1">
+                <%= password_input f, :password, required: true, class: "appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-primary-500 focus:border-primary-500 sm:text-sm" %>
+              </div>
+              <%= error_tag f, :password %>
+            </div>
+
+            <fieldset class="mt-4">
+                <div class="space-y-4">
+                  <div class="flex items-center">
+                   <%= radio_button(f, :is_seller, true ,class: "focus:ring-primary-500 h-4 w-4 text-primary-600 border-gray-300" ) %>
+                    <label for="email" class="ml-3 block text-sm font-medium text-gray-700">
+                      I'm looking to find a great home for the dogs I have.
+                    </label>
+                  </div>
+
+                  <div class="flex items-center">
+                    <%= radio_button(f, :is_seller, false, class: "focus:ring-primary-500 h-4 w-4 text-primary-600 border-gray-300") %>
+                    <label for="sms" class="ml-3 block text-sm font-medium text-gray-700">
+                      I'm looking to add a new member to our/my family.
+                    </label>
+                  </div>
+                </div>
+              </fieldset>
+
+            <%= hidden_input f, :visitor_id %>
+            <div class="text-xs text-gray-500 text-center">
+              <%= checkbox(f, :terms_of_service ,class: "focus:ring-primary-500 h-4 w-4 text-primary-600 border-gray-300", value: false) %> By using the TrendingPuppies.com website, you affirm that you have read, understand, and agree to the <%= link "Terms of Service ", to: Routes.legal_path(@conn, :terms_of_service), class: "underline" %> agreement.
+              <div class="mt-4">
+                <%= error_tag f, :terms_of_service %>
+              </div>
+            </div>
+            <div>
+              <%= submit "Sign Up", class: "w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-primary-600 hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500" %>
+            </div>
+            <div class='text-center' >
+               <%= link "Sign In", to: Routes.user_session_path(@conn, :new), class: "ont-medium text-primary-600 hover:text-primary-500" %>
+            </div>
+
+          </.form>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="hidden lg:block relative w-0 flex-1">
+    <img class="absolute inset-0 h-full w-full object-cover" src="https://images.unsplash.com/photo-1583847268964-b28dc8f51f92?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=987&q=80" alt="">
+  </div>
+</div>
