@@ -31,3 +31,6 @@ config :logger, level: :warn
 
 # Initialize plugs at runtime for faster test compilation
 config :phoenix, :plug_init_mode, :runtime
+
+config :puppies,
+  elasticsearch_base_url: "http://localhost:9200"
