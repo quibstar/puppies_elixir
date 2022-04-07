@@ -56,6 +56,16 @@ defmodule Puppies.Listings do
     Repo.one(q)
   end
 
+  def get_listings_by_user_id(id) do
+    q =
+      from(b in Listing,
+        where: b.user_id == ^id
+      )
+      |> preload([:breeds, :photos, :listing_breeds])
+
+    Repo.all(q)
+  end
+
   def get_listing_by_user_id(id) do
     q =
       from(b in Listing,

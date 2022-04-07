@@ -3,11 +3,11 @@ defmodule Puppies.Pagination do
   Pagination
   """
   def pagination(count, page, limit, number_of_links \\ 7) do
-    page = String.to_integer(page)
+    page = String.to_integer(page) - 1
     limit = String.to_integer(limit)
     previous = page - 1
     next = page + 1
-    last_page = (count / limit) |> floor()
+    last_page = (count / limit) |> ceil()
 
     map1 = %{
       count: count,

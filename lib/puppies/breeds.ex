@@ -29,6 +29,8 @@ defmodule Puppies.Breeds do
         preload: [:breeds, :photos, [user: [business: :photo]]]
       )
 
+    IO.inspect(opt)
+
     matches =
       limit_offset(q, opt.limit, Utilities.set_offset(opt.page, opt.limit))
       |> Repo.all()

@@ -30,7 +30,7 @@ defmodule Puppies.ES.StateCitySearch do
   def state(state, page, size) do
     page = String.to_integer(page)
     size = String.to_integer(size)
-    {:ok, results} = query_state(state, page * size, size)
+    {:ok, results} = query_state(state, (page - 1) * size, size)
     {:ok, res} = Jason.decode(results)
     %{matches: res["hits"]["hits"], count: res["hits"]["total"]["value"]}
   end

@@ -16,19 +16,19 @@ defmodule Puppies.Businesses.Business do
              :location
            ]}
   schema "businesses" do
-    field :description, :string
-    field :federal_license, :boolean, default: false
-    field :name, :string
-    field :slug, :string
-    field :phone, :string
-    field :state_license, :boolean, default: false
-    field :website, :string
-    belongs_to :user, Puppies.Accounts.User
-    has_many :business_breeds, Puppies.BusinessBreed, on_replace: :delete
-    many_to_many :breeds, Puppies.Dogs.Breed, join_through: Puppies.BusinessBreed
-    has_one :location, Puppies.Location, on_replace: :delete
-    has_one :photo, Puppies.Photos.Photo
-    field :location_autocomplete, :string, virtual: true
+    field(:description, :string)
+    field(:federal_license, :boolean, default: false)
+    field(:name, :string)
+    field(:slug, :string)
+    field(:phone, :string)
+    field(:state_license, :boolean, default: false)
+    field(:website, :string)
+    belongs_to(:user, Puppies.Accounts.User)
+    has_many(:business_breeds, Puppies.BusinessBreed, on_replace: :delete)
+    many_to_many(:breeds, Puppies.Dogs.Breed, join_through: Puppies.BusinessBreed)
+    has_one(:location, Puppies.Location, on_replace: :delete)
+    has_one(:photo, Puppies.Photos.Photo)
+    field(:location_autocomplete, :string, virtual: true)
 
     timestamps()
   end
@@ -48,6 +48,7 @@ defmodule Puppies.Businesses.Business do
       :location_autocomplete
     ])
     |> validate_required([:phone], message: "Phone can't be blank")
+    |> validate_required([:name], message: "Name can't be blank")
     |> validate_required([:location_autocomplete], message: "Location can't be blank")
     |> cast_assoc(:location)
     |> cast_assoc(:business_breeds)

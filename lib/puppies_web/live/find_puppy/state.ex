@@ -2,7 +2,7 @@ defmodule PuppiesWeb.FindPuppyLive.State do
   use PuppiesWeb, :live_view
   alias Puppies.{ES.StateCitySearch}
 
-  @size "40"
+  @size "12"
   def mount(params, session, socket) do
     case connected?(socket) do
       true -> connected_mount(session, params, socket)
@@ -23,7 +23,7 @@ defmodule PuppiesWeb.FindPuppyLive.State do
         matches: Map.get(matches, :matches, []),
         pagination: Puppies.Pagination.pagination(count, "1", @size),
         match: %{
-          limit: "40",
+          limit: @size,
           page: "1",
           sort: :newest
         },

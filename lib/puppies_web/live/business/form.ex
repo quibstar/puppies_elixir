@@ -296,14 +296,13 @@ defmodule PuppiesWeb.BusinessForm do
                 </div>
               </div>
 
-               <div class="text-sm">
-                  If you'd like a special profile page on our site fill in name.
-              </div>
-
               <div class="mt-4 flex-grow">
-                <%= label f, :name, class: "block text-sm font-medium text-gray-700" %>
+                <%= label f, "Name or business name", class: "inline-block text-sm font-medium text-gray-700" %> <small class="text-xs text-red-500">*</small>
                 <%= text_input f, :name, class: "shadow-sm focus:ring-primary-500 focus:border-primary-500 block w-full sm:text-sm border-gray-300 rounded-md" %>
                 <%= error_tag f, :name %>
+                <div class="text-xs text-gray-500 mt-2">
+                  Filling in you name or business name gives you a unique marketing page on our site. This is required to advertise/list on our site.
+                </div>
               </div>
 
               <%= hidden_input f, :slug %>

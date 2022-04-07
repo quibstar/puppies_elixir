@@ -48,8 +48,7 @@ defmodule PuppiesWeb.ListingShow do
 
   def render(assigns) do
     ~H"""
-      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8" x-data="{ modal: false, showMessage: false, showFlag: false, showBlock: false }">
-
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <%= if @loading do %>
           <%= live_component PuppiesWeb.LoadingComponent, id: "listing-loading" %>
         <% else  %>
