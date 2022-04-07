@@ -23,7 +23,7 @@ defmodule PuppiesWeb.ListingShow do
       end
 
     listing = Listings.get_listing!(listing_id)
-    business = Businesses.get_business_by_user_id(user.id)
+    business = Businesses.get_business_by_user_id(listing.user_id)
 
     photos =
       Enum.reduce(listing.photos, [], fn photo, acc ->

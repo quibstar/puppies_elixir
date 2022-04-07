@@ -30,4 +30,19 @@ defmodule Puppies.ES.Indexing do
   def delete_index(idx) do
     Api.delete("/#{idx}")
   end
+
+  def alias(idx, alias_name) do
+    action = %{
+      actions: [
+        %{
+          add: %{
+            index: idx,
+            alias: alias_name
+          }
+        }
+      ]
+    }
+
+    Api.post("/_aliases", action)
+  end
 end

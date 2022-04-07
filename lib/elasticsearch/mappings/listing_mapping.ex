@@ -7,10 +7,13 @@ defmodule Puppies.Mappings do
     %{
       mappings: %{
         properties: %{
+          id: %{type: :keyword},
           email: %{type: :keyword},
           first_name: %{type: :text},
+          approved_to_sell: %{type: :boolean},
           last_name: %{type: :text},
           user_status: %{type: :text},
+          photos: %{type: :keyword},
           deliver_on_site: %{type: :boolean},
           deliver_pick_up: %{type: :boolean},
           delivery_shipped: %{type: :boolean},
@@ -35,8 +38,11 @@ defmodule Puppies.Mappings do
           sex: %{type: :keyword},
           status: %{type: :keyword},
           breeds_slug: %{type: :keyword},
+          breeds_name: %{type: :keyword},
           business_name: %{type: :keyword},
           business_slug: %{type: :keyword},
+          business_photo: %{type: :keyword},
+          business_breeds_slug: %{type: :keyword},
           phone: %{type: :keyword},
           state_license: %{type: :boolean},
           federal_license: %{type: :boolean},
@@ -45,10 +51,10 @@ defmodule Puppies.Mappings do
           region_slug: %{type: :keyword},
           place_slug: %{type: :keyword},
           region_short_code: %{type: :keyword},
-          text: %{type: :keyword},
           place: %{type: :keyword},
           region: %{type: :keyword},
-          location: %{type: :geo_point}
+          location: %{type: :geo_point},
+          updated_at: %{type: :date}
         }
       }
     }

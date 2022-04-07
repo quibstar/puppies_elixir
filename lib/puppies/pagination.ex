@@ -7,7 +7,7 @@ defmodule Puppies.Pagination do
     limit = String.to_integer(limit)
     previous = page - 1
     next = page + 1
-    last_page = (count / limit) |> ceil()
+    last_page = (count / limit) |> floor()
 
     map1 = %{
       count: count,

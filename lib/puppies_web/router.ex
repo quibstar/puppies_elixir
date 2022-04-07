@@ -4,13 +4,13 @@ defmodule PuppiesWeb.Router do
   import PuppiesWeb.UserAuth
 
   pipeline :browser do
-    plug :accepts, ["html"]
-    plug :fetch_session
-    plug :fetch_live_flash
-    plug :put_root_layout, {PuppiesWeb.LayoutView, :root}
-    plug :protect_from_forgery
-    plug :put_secure_browser_headers
-    plug :fetch_current_user
+    plug(:accepts, ["html"])
+    plug(:fetch_session)
+    plug(:fetch_live_flash)
+    plug(:put_root_layout, {PuppiesWeb.LayoutView, :root})
+    plug(:protect_from_forgery)
+    plug(:put_secure_browser_headers)
+    plug(:fetch_current_user)
   end
 
   pipeline(:session_layout) do
@@ -18,15 +18,15 @@ defmodule PuppiesWeb.Router do
   end
 
   pipeline :api do
-    plug :accepts, ["json"]
+    plug(:accepts, ["json"])
   end
 
   scope "/", PuppiesWeb do
-    pipe_through :browser
+    pipe_through(:browser)
 
-    get "/", PageController, :index
-    live "/search", SearchLive
-    live "/business/:slug", BusinessPageLive
+    get("/", PageController, :index)
+    live("/search", SearchLive)
+    live("/business/:slug", BusinessPageLive)
   end
 
   # Other scopes may use custom stacks.
@@ -45,9 +45,9 @@ defmodule PuppiesWeb.Router do
     import Phoenix.LiveDashboard.Router
 
     scope "/" do
-      pipe_through :browser
+      pipe_through(:browser)
 
-      live_dashboard "/dashboard", metrics: PuppiesWeb.Telemetry
+      live_dashboard("/dashboard", metrics: PuppiesWeb.Telemetry)
     end
   end
 
@@ -57,52 +57,58 @@ defmodule PuppiesWeb.Router do
   # node running the Phoenix server.
   if Mix.env() == :dev do
     scope "/dev" do
-      pipe_through :browser
+      pipe_through(:browser)
 
-      forward "/mailbox", Plug.Swoosh.MailboxPreview
+      forward("/mailbox", Plug.Swoosh.MailboxPreview)
     end
   end
 
   ## Authentication routes
 
   scope "/", PuppiesWeb do
-    pipe_through [:browser, :session_layout, :redirect_if_user_is_authenticated]
-    get "/users/register", UserRegistrationController, :new
-    post "/users/register", UserRegistrationController, :create
-    get "/users/log_in", UserSessionController, :new
-    post "/users/log_in", UserSessionController, :create
-    get "/users/reset_password", UserResetPasswordController, :new
-    post "/users/reset_password", UserResetPasswordController, :create
-    get "/users/reset_password/:token", UserResetPasswordController, :edit
-    put "/users/reset_password/:token", UserResetPasswordController, :update
+    pipe_through([:browser, :session_layout, :redirect_if_user_is_authenticated])
+    get("/users/register", UserRegistrationController, :new)
+    post("/users/register", UserRegistrationController, :create)
+    get("/users/log_in", UserSessionController, :new)
+    post("/users/log_in", UserSessionController, :create)
+    get("/users/reset_password", UserResetPasswordController, :new)
+    post("/users/reset_password", UserResetPasswordController, :create)
+    get("/users/reset_password/:token", UserResetPasswordController, :edit)
+    put("/users/reset_password/:token", UserResetPasswordController, :update)
   end
 
   scope "/", PuppiesWeb do
-    pipe_through [:browser, :require_authenticated_user]
+    pipe_through([:browser, :require_authenticated_user])
     # dashboard
-    live "/users/dashboard", UserDashboardLive
+    live("/users/dashboard", UserDashboardLive)
     # business
-    live "/users/business/new", BusinessNew
-    live "/users/business/:id/edit", BusinessEdit
+    live("/users/business/new", BusinessNew)
+    live("/users/business/:id/edit", BusinessEdit)
     # listings
-    live "/listings/new", ListingsNew
-    live "/listings/:listing_id", ListingShow
-    live "/listings/:listing_id/edit", ListingsEdit
+    live("/listings/new", ListingsNew)
+    live("/listings/:listing_id/edit", ListingsEdit)
 
-    get "/users/settings", UserSettingsController, :edit
-    put "/users/settings", UserSettingsController, :update
-    get "/users/settings/confirm_email/:token", UserSettingsController, :confirm_email
+    get("/users/settings", UserSettingsController, :edit)
+    put("/users/settings", UserSettingsController, :update)
+    get("/users/settings/confirm_email/:token", UserSettingsController, :confirm_email)
   end
 
   scope "/", PuppiesWeb do
-    pipe_through [:browser]
-    live "/breeds/:slug", BreedsShowLive
-    delete "/users/log_out", UserSessionController, :delete
-    get "/users/confirm", UserConfirmationController, :new
-    post "/users/confirm", UserConfirmationController, :create
-    get "/users/confirm/:token", UserConfirmationController, :edit
-    post "/users/confirm/:token", UserConfirmationController, :update
+    pipe_through([:browser])
+    # breeds
+    live("/breeds", BreedsIndexLive)
+    live("/breeds/:slug", BreedsShowLive)
+    # listings
+    live("/listings/:listing_id", ListingShow)
+
+    delete("/users/log_out", UserSessionController, :delete)
+    get("/users/confirm", UserConfirmationController, :new)
+    post("/users/confirm", UserConfirmationController, :create)
+    get("/users/confirm/:token", UserConfirmationController, :edit)
+    post("/users/confirm/:token", UserConfirmationController, :update)
     get("/legal/term-of-service", LegalController, :terms_of_service)
     get("/legal/privacy", LegalController, :privacy)
+    live("/puppies-in/:state", FindPuppyLive.State, :state)
+    live("/puppies-in/:city/:state", FindPuppyLive.CityState, :city_state)
   end
 end

@@ -1,7 +1,7 @@
 defmodule PuppiesWeb.BreedsShowLive do
   use PuppiesWeb, :live_view
 
-  alias Puppies.{Accounts, Utilities, Breeds}
+  alias Puppies.{Utilities, Breeds}
 
   def mount(params, session, socket) do
     case connected?(socket) do
@@ -10,22 +10,14 @@ defmodule PuppiesWeb.BreedsShowLive do
     end
   end
 
-  def connected_mount(params, session, socket) do
-    user =
-      if connected?(socket) && Map.has_key?(session, "user_token") do
-        %{"user_token" => user_token} = session
-        Accounts.get_user_by_session_token(user_token)
-      end
-
+  def connected_mount(params, _session, socket) do
     %{"slug" => breed} = params
 
-    matches = %{matches: [], pagination: %{count: 0}}
     matches = Breeds.get_breed(breed)
 
     socket =
       assign(
         socket,
-        user: user,
         loading: false,
         matches: Map.get(matches, :matches, []),
         pagination: Map.get(matches, :pagination, %{count: 0}),
@@ -39,6 +31,61 @@ defmodule PuppiesWeb.BreedsShowLive do
       )
 
     {:ok, socket}
+  end
+
+  def handle_event("page-to", %{"page_id" => page_id}, socket) do
+    match =
+      socket.assigns.match
+      |> Map.put(:page, page_id)
+      |> Map.put(:sort, socket.assigns.match.sort)
+
+    {:noreply,
+     socket
+     |> push_redirect(
+       to: Routes.live_path(socket, PuppiesWeb.BreedsShowLive, socket.assigns.breed, match: match)
+     )}
+  end
+
+  def handle_params(params, _uri, socket) do
+    if params["match"] do
+      match = params["match"]
+      page = match["page"]
+      limit = match["limit"]
+      sort = match["sort"]
+
+      matches =
+        Breeds.get_breed(params["slug"], %{
+          limit: limit,
+          page: page,
+          sort: sort,
+          number_of_links: 7
+        })
+
+      updated_match =
+        if Map.has_key?(socket.assigns, "match") do
+          socket.assigns.match
+          |> Map.put(:page, page)
+          |> Map.put(:limit, limit)
+          |> Map.put(:sort, sort)
+        else
+          %{}
+          |> Map.put(:page, page)
+          |> Map.put(:limit, limit)
+          |> Map.put(:sort, sort)
+        end
+
+      socket =
+        assign(
+          socket,
+          matches: Map.get(matches, :matches, []),
+          pagination: Map.get(matches, :pagination, %{count: 0}),
+          match: updated_match
+        )
+
+      {:noreply, socket}
+    else
+      {:noreply, socket}
+    end
   end
 
   def render(assigns) do
@@ -61,25 +108,25 @@ defmodule PuppiesWeb.BreedsShowLive do
                   <% end %>
 
 
-                  <%= if length(@matches) > 0 do %>
-                      <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4 my-4">
-                          <%= for listing <- @matches do %>
-                            <%= live_component  PuppiesWeb.Card, id: listing.id, listing: listing %>
-                          <% end %>
-                      </div>
-                      <%= if @pagination.count > String.to_integer(@match.limit) do %>
-                          <%= PuppiesWeb.PaginationComponent.render(%{pagination: @pagination, socket: @socket, page: @match.page, limit: @match.limit}) %>
-                      <% end %>
+                  <%= if @pagination.count > 0 do %>
+                    <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4 my-4">
+                        <%= for listing <- @matches do %>
+                          <%= live_component  PuppiesWeb.Card, id: listing.id, listing: listing %>
+                        <% end %>
+                    </div>
+                    <%= if @pagination.count > String.to_integer(@match.limit) do %>
+                        <%= PuppiesWeb.PaginationComponent.render(%{pagination: @pagination, socket: @socket, page: @match.page, limit: @match.limit}) %>
+                    <% end %>
 
-                       <div class="bg-primary-700 rounded">
-                          <div class="max-w-2xl mx-auto text-center py-16 px-4 sm:py-20 sm:px-6 lg:px-8">
-                              <h2 class="text-3xl font-extrabold text-white sm:text-4xl">
-                                  <span class="block capitalize"><%= Utilities.slug_to_string(@breed) %> found!</span>
-                              </h2>
-                              <p class="mt-4 text-lg leading-6 text-primary-200">There is <%= @pagination.count %> <%= Utilities.slug_to_string(@breed) %> waiting for you.</p>
-                              <%= link "Sign up for free", to: Routes.user_registration_path(@socket, :new), class: "mt-8 w-full inline-flex items-center justify-center px-5 py-3 border border-transparent text-base font-medium rounded-md text-primary-600 bg-white hover:bg-primary-50 sm:w-auto" %>
-                          </div>
-                      </div>
+                      <div class="bg-primary-700 rounded">
+                        <div class="max-w-2xl mx-auto text-center py-16 px-4 sm:py-20 sm:px-6 lg:px-8">
+                            <h2 class="text-3xl font-extrabold text-white sm:text-4xl">
+                                <span class="block capitalize"><%= Utilities.slug_to_string(@breed) %> found!</span>
+                            </h2>
+                            <p class="mt-4 text-lg leading-6 text-primary-200">There is <%= @pagination.count %> <%= Utilities.slug_to_string(@breed) %> waiting for you.</p>
+                            <%= link "Sign up for free", to: Routes.user_registration_path(@socket, :new), class: "mt-8 w-full inline-flex items-center justify-center px-5 py-3 border border-transparent text-base font-medium rounded-md text-primary-600 bg-white hover:bg-primary-50 sm:w-auto" %>
+                        </div>
+                    </div>
 
                   <% else %>
                     <div class="h-full flex justify-center items-center mx-auto">

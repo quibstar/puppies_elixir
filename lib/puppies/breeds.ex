@@ -5,7 +5,18 @@ defmodule Puppies.Breeds do
   import Ecto.Query, warn: false
   alias Puppies.Repo
 
-  alias Puppies.{Pagination, Utilities}
+  alias Puppies.{Pagination, Utilities, Dogs.Breed}
+
+  def breeds_list() do
+    Repo.all(Breed)
+  end
+
+  def get_breed_by_slug(slug) do
+    from(b in Breed,
+      where: b.slug == ^slug
+    )
+    |> Repo.one()
+  end
 
   def get_breed(
         slug,

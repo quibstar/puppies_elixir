@@ -3,9 +3,9 @@
     <div class="relative">
       <div class="flex justify-between items-center max-w-7xl mx-auto px-4 py-6 sm:px-6 md:justify-start md:space-x-10 lg:px-8">
         <div class="flex justify-start lg:w-0 lg:flex-1">
-          <a href="#">
+          <a href="/">
             <span class="sr-only">Workflow</span>
-            <img class="h-8 w-auto sm:h-10" src="https://tailwindui.com/img/logos/workflow-mark-primary-600-to-secondary-600.svg" alt="">
+            <img class="h-8 w-auto sm:h-10" src="https://tailwindui.com/img/logos/workflow-mark-indigo-600.svg" alt="">
           </a>
         </div>
         <div class="-mr-2 -my-2 md:hidden">
@@ -19,21 +19,19 @@
         </div>
         <nav class="hidden md:flex space-x-10">
 		      <%= live_redirect "Search",  to: Routes.live_path(assigns.conn, PuppiesWeb.SearchLive), class: "text-base font-medium text-gray-500 hover:text-gray-900" %>
-
-            <%= if @current_user do %>
-              <%= live_redirect "Dashboard", to:  Routes.live_path(assigns.conn, PuppiesWeb.UserDashboardLive), class:  "py-3 md:p-0 block text-base text-gray-500 hover:text-gray-900 nav-link" %>
-              <%= link "Settings", to: Routes.user_settings_path(@conn, :edit) %>
-              <%= link "Log out", to: Routes.user_session_path(@conn, :delete), method: :delete %>
-            <% else %>
-              <div class="hidden md:flex items-center justify-end md:flex-1 lg:w-0">
-                <%= link "Log in", to: Routes.user_session_path(@conn, :new), class: "whitespace-nowrap text-base font-medium text-gray-500 hover:text-gray-900" %>
-                <%= link "Register", to: Routes.user_registration_path(@conn, :new), class: "ml-8 whitespace-nowrap inline-flex items-center justify-center bg-gradient-to-r from-primary-600 to-secondary-600 bg-origin-border px-4 py-2 border border-transparent rounded-md shadow-sm text-base font-medium text-white hover:from-primary-700 hover:to-secondary-700" %>
-              </div>
-            <% end %>
+          <%= live_redirect "Breeds",  to: Routes.live_path(assigns.conn, PuppiesWeb.BreedsIndexLive), class: "text-base font-medium text-gray-500 hover:text-gray-900" %>
         </nav>
+        <%= if @current_user do %>
+          <%= live_redirect "Dashboard", to:  Routes.live_path(assigns.conn, PuppiesWeb.UserDashboardLive), class:  "py-3 md:p-0 block text-base text-gray-500 hover:text-gray-900 nav-link" %>
+          <%= link "Settings", to: Routes.user_settings_path(@conn, :edit) %>
+          <%= link "Log out", to: Routes.user_session_path(@conn, :delete), method: :delete %>
+        <% else %>
+          <div class="hidden md:flex items-center justify-end md:flex-1 lg:w-0">
+            <%= link "Log in", to: Routes.user_session_path(@conn, :new), class: "whitespace-nowrap text-base font-medium text-gray-500 hover:text-gray-900" %>
+            <%= link "Register", to: Routes.user_registration_path(@conn, :new), class: "ml-8 whitespace-nowrap inline-flex items-center justify-center bg-gradient-to-r from-primary-600 to-secondary-600 bg-origin-border px-4 py-2 border border-transparent rounded-md shadow-sm text-base font-medium text-white hover:from-primary-700 hover:to-secondary-700" %>
+          </div>
+        <% end %>
       </div>
-
-
     <!-- mobile here -->
     </div>
   </header>

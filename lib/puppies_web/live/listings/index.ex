@@ -4,6 +4,14 @@ defmodule PuppiesWeb.ListingsIndex do
   """
   use PuppiesWeb, :live_component
 
+  def first_image(photos) do
+    if photos != [] do
+      List.first(photos).url
+    else
+      nil
+    end
+  end
+
   def render(assigns) do
     ~H"""
       <section aria-labelledby="applicant-information-title">
@@ -31,13 +39,20 @@ defmodule PuppiesWeb.ListingsIndex do
                   </thead>
                   <tbody class="divide-y divide-gray-200">
 
-                  <%= for  listing <- @listings do %>
+                  <%= for listing <- @listings do %>
                       <tr>
                         <td class="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-gray-900 sm:pl-6 md:pl-0">
+                          <%= if !is_nil(first_image(listing.photos)) do %>
+                            <%= img_tag first_image(listing.photos), class: "inline-block h-6 w-6 rounded-full" %>
+                          <% end %>
                           <%= live_patch listing.name, to: Routes.live_path(@socket, PuppiesWeb.ListingShow, listing.id), class: "text-primary-600 hover:text-primary-900" %>
                         </td>
                         <td class="whitespace-nowrap py-4 px-3 text-sm text-gray-500">$<%= listing.price %>.00</td>
-                        <td class="whitespace-nowrap py-4 px-3 text-sm text-gray-500"><%= Puppies.Utilities.breed_names(listing.breeds)%></td>
+                        <td class="whitespace-nowrap py-4 px-3 text-sm text-gray-500">
+                          <%= for breed <- listing.breeds do %>
+                            <%= live_redirect breed.name, to: Routes.live_path(@socket, PuppiesWeb.BreedsShowLive, breed.slug), class: "inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-primary-100 text-primary-800"%>
+                          <% end %>
+                        </td>
                         <td class="whitespace-nowrap py-4 px-3 text-sm text-gray-500">0</td>
                         <td class="whitespace-nowrap py-4 px-3 text-sm text-gray-500">
                           0

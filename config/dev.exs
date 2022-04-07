@@ -105,4 +105,4 @@ config :ex_aws,
     region: "us-east-1"
   ]
 
-config :puppies, ReputableRooms.Mailer, adapter: Swoosh.Adapters.Local
+config :puppies, Puppies.Mailer, adapter: Swoosh.Adapters.Local

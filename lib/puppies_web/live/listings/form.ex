@@ -161,8 +161,6 @@ defmodule PuppiesWeb.ListingsForm do
         end
       end)
 
-    IO.inspect(photos)
-
     {:noreply,
      assign(socket,
        current_photos: Map.get(photos, :keep),

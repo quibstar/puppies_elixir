@@ -20,7 +20,6 @@ defmodule PuppiesWeb.UserDashboardLive do
       end
 
     user = Accounts.get_user_business_and_listings(user.id)
-    IO.inspect(Jason.encode!(user))
 
     {:ok,
      assign(socket, user: user, loading: false, business: user.business, listings: user.listings)}

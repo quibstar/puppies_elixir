@@ -15,10 +15,10 @@ defmodule Puppies.Accounts.User do
              :listings
            ]}
   schema "users" do
-    field :email, :string
-    field :password, :string, virtual: true, redact: true
-    field :hashed_password, :string, redact: true
-    field :confirmed_at, :naive_datetime
+    field(:email, :string)
+    field(:password, :string, virtual: true, redact: true)
+    field(:hashed_password, :string, redact: true)
+    field(:confirmed_at, :naive_datetime)
     field(:first_name, :string)
     field(:last_name, :string)
     field(:customer_id, :string)
@@ -29,8 +29,9 @@ defmodule Puppies.Accounts.User do
     field(:visitor_id, :string)
     field(:terms_of_service, :boolean)
     field(:is_seller, :boolean, default: false)
-    has_one :business, Puppies.Businesses.Business
-    has_many :listings, Puppies.Listings.Listing
+    field(:approved_to_sell, :boolean, default: false)
+    has_one(:business, Puppies.Businesses.Business)
+    has_many(:listings, Puppies.Listings.Listing)
 
     timestamps()
   end
@@ -172,5 +173,10 @@ defmodule Puppies.Accounts.User do
     else
       add_error(changeset, :current_password, "is not valid")
     end
+  end
+
+  def approved_changeset(user, attrs) do
+    user
+    |> cast(attrs, [:approved_to_sell])
   end
 end

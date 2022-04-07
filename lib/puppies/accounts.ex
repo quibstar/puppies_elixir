@@ -356,8 +356,21 @@ defmodule Puppies.Accounts do
       from(b in User,
         where: b.id == ^id
       )
-      |> preload([[business: [:breeds, :location, :photo, :business_breeds]], [listings: :breeds]])
+      |> preload([
+        [business: [:breeds, :location, :photo, :business_breeds]],
+        [listings: [:breeds, :photos]]
+      ])
 
     Repo.one(q)
+  end
+
+  def approve_seller(user, approved) do
+    User.approved_changeset(user, %{approved_to_sell: true}) |> Repo.update()
+  end
+
+  ## testing and seeding
+  def seed_confirm_user(user) do
+    User.confirm_changeset(user)
+    |> Repo.update!()
   end
 end

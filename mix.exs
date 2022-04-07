@@ -57,7 +57,8 @@ defmodule Puppies.MixProject do
       {:ex_aws, "~> 2.2"},
       {:ex_aws_s3, "~> 2.3"},
       {:ex_aws_ses, "~> 2.0"},
-      {:mogrify, "~> 0.8"}
+      {:mogrify, "~> 0.8"},
+      {:faker, "~> 0.17", only: [:dev, :test], runtime: false}
     ]
   end
 

@@ -1,0 +1,18 @@
+<div class="bg-gray-50">
+  <div class="max-w-7xl mx-auto py-16 px-4 sm:px-6 lg:py-24 lg:px-8">
+      <div class="max-w-xl">
+        <h2 class="text-4xl font-extrabold text-gray-900 sm:text-5xl sm:tracking-tight lg:text-6xl">Friends Available</h2>
+        <p class="mt-5 text-xl text-gray-500"> Check out these most popular breeds.</p>
+      </div>
+    <div class="mt-12 space-y-10 sm:space-y-0 sm:grid sm:grid-cols-2 sm:gap-x-6 sm:gap-y-12 lg:grid-cols-4 lg:gap-x-8">
+      <%= for breed <- @popular_breeds do %>
+        <div class="relative">
+          <div>
+            <%= live_redirect breed.name, to: Routes.live_path(@conn, PuppiesWeb.BreedsShowLive, breed.slug), class: "ml-9 text-lg leading-6 font-medium text-gray-900 hover:underline"  %>
+            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-primary-600 text-white"> <%= breed.count %> </span>
+          </div>
+        </div>
+      <% end %>
+    </div>
+  </div>
+</div>

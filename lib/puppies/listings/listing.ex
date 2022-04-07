@@ -30,33 +30,33 @@ defmodule Puppies.Listings.Listing do
              :breeds
            ]}
   schema "listings" do
-    field :coat_color_pattern, :string
-    field :description, :string
-    field :dob, :date
-    field :name, :string
-    field :price, :integer
-    field :sex, :string
-    field :status, :string
-    field :deliver_on_site, :boolean, default: false
-    field :deliver_pick_up, :boolean, default: false
-    field :delivery_shipped, :boolean, default: false
-    field :champion_sired, :boolean, default: false
-    field :show_quality, :boolean, default: false
-    field :champion_bloodline, :boolean, default: false
-    field :registered, :boolean, default: false
-    field :registrable, :boolean, default: false
-    field :current_vaccinations, :boolean, default: false
-    field :veterinary_exam, :boolean, default: false
-    field :health_certificate, :boolean, default: false
-    field :health_guarantee, :boolean, default: false
-    field :pedigree, :boolean, default: false
-    field :hypoallergenic, :boolean, default: false
-    field :microchip, :boolean, default: false
-    field :purebred, :boolean, default: true
-    belongs_to :user, Puppies.Accounts.User
-    has_many :listing_breeds, Puppies.ListingBreed, on_replace: :delete
-    many_to_many :breeds, Puppies.Dogs.Breed, join_through: Puppies.ListingBreed
-    has_many :photos, Puppies.Photos.Photo
+    field(:coat_color_pattern, :string)
+    field(:description, :string)
+    field(:dob, :date)
+    field(:name, :string)
+    field(:price, :integer)
+    field(:sex, :string)
+    field(:status, :string)
+    field(:deliver_on_site, :boolean, default: false)
+    field(:deliver_pick_up, :boolean, default: false)
+    field(:delivery_shipped, :boolean, default: false)
+    field(:champion_sired, :boolean, default: false)
+    field(:show_quality, :boolean, default: false)
+    field(:champion_bloodline, :boolean, default: false)
+    field(:registered, :boolean, default: false)
+    field(:registrable, :boolean, default: false)
+    field(:current_vaccinations, :boolean, default: false)
+    field(:veterinary_exam, :boolean, default: false)
+    field(:health_certificate, :boolean, default: false)
+    field(:health_guarantee, :boolean, default: false)
+    field(:pedigree, :boolean, default: false)
+    field(:hypoallergenic, :boolean, default: false)
+    field(:microchip, :boolean, default: false)
+    field(:purebred, :boolean, default: true)
+    belongs_to(:user, Puppies.Accounts.User)
+    has_many(:listing_breeds, Puppies.ListingBreed, on_replace: :delete)
+    many_to_many(:breeds, Puppies.Dogs.Breed, join_through: Puppies.ListingBreed)
+    has_many(:photos, Puppies.Photos.Photo)
     timestamps()
   end
 

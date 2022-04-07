@@ -18,7 +18,16 @@ defmodule Puppies.Listings do
 
   """
   def list_listings do
-    Repo.all(Listing)
+    q =
+      from(b in Listing)
+      |> preload([
+        :photos,
+        :breeds,
+        :listing_breeds,
+        user: [business: [:location, :breeds, :photo]]
+      ])
+
+    Repo.all(q)
   end
 
   @doc """
