@@ -1,6 +1,6 @@
 defmodule PuppiesWeb.FindPuppyLive.State do
   use PuppiesWeb, :live_view
-  alias Puppies.{ES.StateCitySearch}
+  alias Puppies.{ES.ListingsSearch}
 
   @size "12"
   def mount(params, session, socket) do
@@ -13,7 +13,7 @@ defmodule PuppiesWeb.FindPuppyLive.State do
   def connected_mount(_, params, socket) do
     %{"state" => state} = params
 
-    matches = StateCitySearch.state(state, "1", @size)
+    matches = ListingsSearch.state(state, "1", @size)
     count = Map.get(matches, :count, 0)
 
     socket =
@@ -84,7 +84,7 @@ defmodule PuppiesWeb.FindPuppyLive.State do
       sort = match["sort"]
       state = params["state"]
 
-      matches = StateCitySearch.state(state, page, limit)
+      matches = ListingsSearch.state(state, page, limit)
       count = Map.get(matches, :count, 0)
 
       updated_match =

@@ -126,7 +126,7 @@ defmodule Puppies.Utilities do
   end
 
   def slug_to_string(str) do
-    String.downcase(str) |> String.replace(" ", "-")
+    String.downcase(str) |> String.replace("-", " ")
   end
 
   def breed_names(breeds) do

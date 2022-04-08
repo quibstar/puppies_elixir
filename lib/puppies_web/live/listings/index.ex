@@ -12,6 +12,12 @@ defmodule PuppiesWeb.ListingsIndex do
     end
   end
 
+  def listings_sum(listings) do
+    Enum.reduce(listings, 0, fn x, acc ->
+      x.price + acc
+    end)
+  end
+
   def render(assigns) do
     ~H"""
       <section aria-labelledby="applicant-information-title">
@@ -29,7 +35,7 @@ defmodule PuppiesWeb.ListingsIndex do
                     <tr>
                       <th scope="col" class="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-gray-900 sm:pl-6 md:pl-0">Name</th>
                       <th scope="col" class="py-3.5 px-3 text-left text-sm font-semibold text-gray-900">Price</th>
-                      <th scope="col" class="py-3.5 px-3 text-left text-sm font-semibold text-gray-900">Breeds</th>
+                      <th scope="col" class="py-3.5 px-3 text-left text-sm font-semibold text-gray-900">Status</th>
                       <th scope="col" class="py-3.5 px-3 text-left text-sm font-semibold text-gray-900">Views</th>
                       <th scope="col" class="py-3.5 px-3 text-left text-sm font-semibold text-gray-900">Messages</th>
                       <th scope="col" class="relative py-3.5 pl-3 pr-4 sm:pr-6 md:pr-0">
@@ -48,11 +54,7 @@ defmodule PuppiesWeb.ListingsIndex do
                           <%= live_patch listing.name, to: Routes.live_path(@socket, PuppiesWeb.ListingShow, listing.id), class: "text-primary-600 hover:text-primary-900" %>
                         </td>
                         <td class="whitespace-nowrap py-4 px-3 text-sm text-gray-500">$<%= listing.price %>.00</td>
-                        <td class="whitespace-nowrap py-4 px-3 text-sm text-gray-500">
-                          <%= for breed <- listing.breeds do %>
-                            <%= live_redirect breed.name, to: Routes.live_path(@socket, PuppiesWeb.BreedsShowLive, breed.slug), class: "inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-primary-100 text-primary-800"%>
-                          <% end %>
-                        </td>
+                        <td class="whitespace-nowrap py-4 px-3 text-sm text-green-500 capitalize"><%= listing.status %></td>
                         <td class="whitespace-nowrap py-4 px-3 text-sm text-gray-500">0</td>
                         <td class="whitespace-nowrap py-4 px-3 text-sm text-gray-500">
                           0
@@ -64,6 +66,10 @@ defmodule PuppiesWeb.ListingsIndex do
                   <% end %>
                 </tbody>
               </table>
+              <div class="pt-4 text-lg text-gray-500 flex justify-between  border-t border-gray-300">
+                <div>Potential earnings</div>
+                <div>$<%= listings_sum(@listings) %>.00</div>
+              </div>
             <% end %>
           </div>
         </div>

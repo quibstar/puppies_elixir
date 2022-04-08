@@ -358,13 +358,13 @@ defmodule Puppies.Accounts do
       )
       |> preload([
         [business: [:breeds, :location, :photo, :business_breeds]],
-        [listings: [:breeds, :photos]]
+        [listings: :photos]
       ])
 
     Repo.one(q)
   end
 
-  def approve_seller(user, approved) do
+  def approve_seller(user) do
     User.approved_changeset(user, %{approved_to_sell: true}) |> Repo.update()
   end
 
