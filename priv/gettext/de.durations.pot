@@ -1,0 +1,66 @@
+msgid "less than %{count} seconds"
+msgid_plural "less than %{count} seconds"
+msgstr[0] "weniger als %{count} Sekunden"
+msgstr[1] "weniger als %{count} Sekunden"
+
+msgid "half a minute"
+msgstr "eine halbe Minute"
+
+msgid "less than a minute"
+msgstr "weniger als eine Minute"
+
+msgid "1 minute"
+msgstr "eine Minute"
+
+msgid "%{count} minutes"
+msgid_plural "%{count} minutes"
+msgstr[0] "%{count} Minuten"
+msgstr[1] "%{count} Minuten"
+
+msgid "about 1 hour"
+msgstr "etwa eine Stunde"
+
+msgid "about %{count} hours"
+msgid_plural "about %{count} hours"
+msgstr[0] "etwa %{count} Stunden"
+msgstr[1] "etwa %{count} Stunden"
+
+msgid "1 day"
+msgstr "ein Tag"
+
+msgid "%{count} days"
+msgid_plural "%{count} days"
+msgstr[0] "%{count} Tage"
+msgstr[1] "%{count} Tage"
+
+msgid "about 1 month"
+msgstr "etwa ein Monat"
+
+msgid "about %{count} months"
+msgid_plural "about %{count} months"
+msgstr[0] "etwa %{count} Monate"
+msgstr[1] "etwa %{count} Monate"
+
+msgid "%{count} months"
+msgid_plural "%{count} months"
+msgstr[0] "%{count} Monate"
+msgstr[1] "%{count} Monate"
+
+msgid "about 1 year"
+msgstr "etwa ein Jahr"
+
+msgid "over 1 year"
+msgstr "mehr als ein Jahr"
+
+msgid "about %{count} years"
+msgstr "etwa %{count} Jahre"
+
+msgid "over %{count} years"
+msgid_plural "over %{count} years"
+msgstr[0] "mehr als %{count} Jahre"
+msgstr[1] "mehr als %{count} Jahre"
+
+msgid "almost %{count} years"
+msgid_plural "almost %{count} years"
+msgstr[0] "fast %{count} Jahre"
+msgstr[1] "fast %{count} Jahre"
