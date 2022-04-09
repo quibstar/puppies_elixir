@@ -2,6 +2,8 @@ defmodule PuppiesWeb.SearchLive do
   use PuppiesWeb, :live_view
   alias Puppies.{Accounts, Dogs, Utilities, Searches, Search}
 
+  @size "60"
+
   def mount(params, session, socket) do
     case connected?(socket) do
       true -> connected_mount(params, session, socket)
@@ -48,7 +50,12 @@ defmodule PuppiesWeb.SearchLive do
           breed_queried: [],
           selected_state: nil,
           breeds_options: breeds_options,
-          search_by: "state"
+          search_by: "state",
+          matches: [],
+          pagination: Puppies.Pagination.pagination(0, "1", @size),
+          limit: @size,
+          page: "1",
+          sort: :newest
         }
       )
 
@@ -132,7 +139,8 @@ defmodule PuppiesWeb.SearchLive do
   end
 
   def handle_event("choose-breed", %{"breed_slug" => breed_slug}, socket) do
-    breeds = [breed_slug | socket.assigns.params["breeds"]]
+    current = Map.get(socket.assigns.params, "breeds", [])
+    breeds = [breed_slug | current]
     params = Map.put(socket.assigns.params, "breeds", breeds)
     changeset = Searches.change_search(%Search{}, params)
 
@@ -144,6 +152,7 @@ defmodule PuppiesWeb.SearchLive do
         breed_queried: []
       )
 
+    socket = assign(socket, params: params)
     update_url(socket, params)
   end
 
@@ -166,6 +175,7 @@ defmodule PuppiesWeb.SearchLive do
         changeset: changeset
       )
 
+    socket = assign(socket, params: params)
     update_url(socket, params)
   end
 
@@ -189,34 +199,37 @@ defmodule PuppiesWeb.SearchLive do
 
   def handle_event("remove_filter", %{"key" => key}, socket) do
     params = Map.delete(socket.assigns.params, key)
-    query_search_params(socket, params)
+    socket = assign(socket, params: params)
+    update_url(socket, params)
   end
 
   def handle_params(params, _uri, socket) do
     if params["search"] && socket.assigns.loading == false do
       params = params["search"]
-      query_search_params(socket, params)
+      changeset = Searches.change_search(%Search{}, params)
+
+      matches = Puppies.ES.ListingsSearch.query_builder(params)
+
+      count = Map.get(matches, :count, 0)
+      page = Map.get(params, "page", 0)
+
+      IO.inspect(Puppies.Pagination.pagination(count, page, @size))
+
+      socket =
+        assign(
+          socket,
+          changeset: changeset,
+          results: [],
+          params: params,
+          search_by: params["search_by"],
+          matches: Map.get(matches, :matches, []),
+          pagination: Puppies.Pagination.pagination(count, page, @size)
+        )
+
+      {:noreply, socket}
     else
       {:noreply, socket}
     end
-  end
-
-  def query_search_params(socket, params) do
-    page = check_param(params["page"], "1")
-    limit = check_param(params["limit"], "60")
-
-    changeset = Searches.change_search(%Search{}, params)
-
-    socket =
-      assign(
-        socket,
-        changeset: changeset,
-        results: [],
-        params: params,
-        search_by: params["search_by"]
-      )
-
-    {:noreply, socket}
   end
 
   def check_for_param(search, param) do
@@ -224,19 +237,6 @@ defmodule PuppiesWeb.SearchLive do
       Map.get(search, param)
     else
       []
-    end
-  end
-
-  def check_param(param, return_value) do
-    cond do
-      param == nil ->
-        return_value
-
-      Regex.match?(~r{\A\d*\z}, param) == true ->
-        param
-
-      true ->
-        return_value
     end
   end
 
@@ -259,10 +259,16 @@ defmodule PuppiesWeb.SearchLive do
 
   def render(assigns) do
     ~H"""
-    <%= if @loading == false do %>
+    <%= if @loading do %>
+      <%= live_component PuppiesWeb.LoadingComponent, id: "search-loading" %>
+    <% else %>
       <div class=" max-w-7xl mx-auto px-4 py-6 sm:px-6 lg:px-8">
         <.form let={f} for={@changeset} id="search-form" phx-submit="search" phx_change="changed">
-          <%= hidden_input f, :is_filtering,  value: Map.get(@params, "is_filtering", false)  %>
+          <%= hidden_input f, :is_filtering %>
+          <%= hidden_input f, :page, value: Map.get(@params,"page", "1")%>
+          <%= hidden_input f, :limit, value:  Map.get(@params, "limit", "60") %>
+          <%= multiple_select f, :breeds, @breeds_options, class: "hidden"%>
+
           <div class="md:flex my-4 border bg-white rounded p-4">
 
               <div class="mr-2 ">
@@ -342,32 +348,48 @@ defmodule PuppiesWeb.SearchLive do
         </.form>
 
 
-      <!-- pills -->
-      <%= for key <- [:male, :female, :purebred, :designer, :purebred_and_designer,:champion_sired, :show_quality, :champion_bloodline, :registered, :registrable, :pedigree, :current_vaccinations, :veterinary_exam, :health_certificate, :health_guarantee, :hypoallergenic, :microchip] do %>
-        <%= live_component PuppiesWeb.SearchPill, key: key, is_filtering: @params[Atom.to_string(key)] %>
-      <% end %>
+        <!-- pills -->
+        <%= for key <- [:champion_sired, :show_quality, :champion_bloodline, :registered, :registrable, :pedigree, :current_vaccinations, :veterinary_exam, :health_certificate, :health_guarantee, :hypoallergenic, :microchip] do %>
+          <%= live_component PuppiesWeb.SearchPill, key: key, is_filtering: @params[Atom.to_string(key)], label: key %>
+        <% end %>
 
-      <%= live_component PuppiesWeb.SearchPill, key: :dob, is_filtering: !is_nil(@params["dob"]) && @params["dob"] != "-1" %>
-      <%= live_component PuppiesWeb.SearchPill, key: :min_price, is_filtering: !is_nil(@params["min_price"]) && @params["min_price"] != "100" %>
-      <%= live_component PuppiesWeb.SearchPill, key: :max_price, is_filtering: !is_nil(@params["max_price"]) && @params["max_price"] != "2000", for_param: "Max Price" %>
+        <%= live_component PuppiesWeb.SearchPill, key: :sex, is_filtering: @params["sex"] == "male", label: :male %>
+        <%= live_component PuppiesWeb.SearchPill, key: :sex, is_filtering: @params["sex"] == "female", label: :female %>
 
-      <%= for breed <- Map.get(@params, "breeds", []) do %>
-        <span class="inline-flex rounded-full items-center py-1 pl-3 pr-1 text-sm font-medium bg-primary-100 text-primary-700 ">
-          <%= format_breed(breed) %>
-          <button type="button" class="flex-shrink-0 ml-0.5 h-4 w-4 rounded-full inline-flex items-center justify-center text-primary-400 hover:bg-primary-200 hover:text-primary-500 focus:outline-none focus:bg-primary-500 focus:text-white" phx-click="remove-breed" phx-value-breed={breed} >
-            <span class="sr-only">Remove large option</span>
-            <svg class="h-2 w-2" stroke="currentColor" fill="none" viewBox="0 0 8 8">
-              <path stroke-linecap="round" stroke-width="1.5" d="M1 1l6 6m0-6L1 7" />
-            </svg>
-          </button>
-        </span>
-      <% end %>
+        <%= live_component PuppiesWeb.SearchPill, key: :bloodline, is_filtering: @params["bloodline"] == "purebred", label: :purebred %>
+        <%= live_component PuppiesWeb.SearchPill, key: :bloodline, is_filtering: @params["bloodline"] == "designer", label: :designer %>
+        <%= live_component PuppiesWeb.SearchPill, key: :bloodline, is_filtering: @params["bloodline"] == "purebred_and_designer", label: :purebred_and_designer %>
 
+        <%= live_component PuppiesWeb.SearchPill, key: :dob, is_filtering: !is_nil(@params["dob"]) && @params["dob"] != "-1", label: :age %>
+        <%= live_component PuppiesWeb.SearchPill, key: :min_price, is_filtering: !is_nil(@params["min_price"]) && @params["min_price"] != "-1" , label: :min_price %>
+        <%= live_component PuppiesWeb.SearchPill, key: :max_price, is_filtering: !is_nil(@params["max_price"]) && @params["max_price"] != "-1", label: :min_price %>
+
+        <%= for breed <- Map.get(@params, "breeds", []) do %>
+          <span class="inline-flex rounded-full items-center py-1 pl-3 pr-1 text-sm font-medium bg-primary-100 text-primary-700 ">
+            <%= format_breed(breed) %>
+            <button type="button" class="flex-shrink-0 ml-0.5 h-4 w-4 rounded-full inline-flex items-center justify-center text-primary-400 hover:bg-primary-200 hover:text-primary-500 focus:outline-none focus:bg-primary-500 focus:text-white" phx-click="remove-breed" phx-value-breed={breed} >
+              <span class="sr-only">Remove large option</span>
+              <svg class="h-2 w-2" stroke="currentColor" fill="none" viewBox="0 0 8 8">
+                <path stroke-linecap="round" stroke-width="1.5" d="M1 1l6 6m0-6L1 7" />
+              </svg>
+            </button>
+          </span>
+        <% end %>
+        <%= if length(@matches) > 0 do %>
+          <div class="mt-4">
+            Matches <span class="inline-flex items-center px-3 py-0.5 rounded-full text-sm font-medium bg-primary-400 text-primary-800"> <%= @pagination.count %> </span>
+          </div>
+          <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4 my-4">
+            <%= for listing <- @matches do %>
+                <%= live_component  PuppiesWeb.StateSearchCard, id: listing["_id"], listing: listing["_source"] %>
+            <% end %>
+          </div>
+          <%= if @pagination.count > String.to_integer(@params["limit"]) do %>
+            <%= PuppiesWeb.PaginationComponent.render(%{pagination: @pagination, socket: @socket, page: @params["page"], limit: @params["limit"]}) %>
+          <% end %>
+        <% end %>
       </div>
-         <% else %>
-        <%= live_component PuppiesWeb.LoadingComponent, id: "search-loading" %>
-      <% end %>
-
+    <% end %>
     """
   end
 end

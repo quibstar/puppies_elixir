@@ -12,10 +12,10 @@ defmodule FilterComponent do
                   </svg>
               </button>
               <div class="top-0 absolute p-4 bg-white z-50 rounded border w-full" x-show="open"  @click.outside="open = false">
-                  <%= for k <- [:male, :female] do %>
+                  <%= for k <- [:male, :female, :both ] do %>
                       <div class="relative flex items-star">
                           <div class="flex items-center h-5">
-                          <%= checkbox @f, k, class: "focus:ring-primary-500 h-4 w-4 text-primary-600 border-gray-300 rounded" %>
+                          <%= radio_button @f, :sex, k, class: "focus:ring-primary-500 h-4 w-4 text-primary-600 border-gray-300 rounded" %>
                           </div>
                           <div class="ml-3 text-sm">
                               <label for={k} class="font-medium"><%= humanize(k) %></label>
@@ -36,7 +36,7 @@ defmodule FilterComponent do
                   <%= for k <- [:purebred, :designer, :purebred_and_designer] do %>
                       <div class="relative flex items-star">
                           <div class="flex items-center h-5">
-                          <%= checkbox @f, k, class: "focus:ring-primary-500 h-4 w-4 text-primary-600 border-gray-300 rounded" %>
+                          <%= radio_button @f, :bloodline, k, class: "focus:ring-primary-500 h-4 w-4 text-primary-600 border-gray-300 rounded" %>
                           </div>
                           <div class="ml-3 text-sm">
                               <label for={k} class="font-medium"><%= humanize(k) %></label>
@@ -130,10 +130,10 @@ defmodule FilterComponent do
             </button>
             <div class="top-0 absolute p-4 bg-white z-50 rounded border w-full" x-show="open"  @click.outside="open = false">
                 Min:
-                <%= select @f, :min_price, [ {"$100", 100}, {"$200", 200}, {"$300", 300}, {"$400", 400}, {"$500", 500}, {"$600", 600}, {"$700", 700}, {"$800", 800}, {"$900", 900}, {"$1000", 1000}, {"$1200", 1200}, {"$1300", 1300}, {"$1400", 1400}, {"$1500", 1500}, {"$1600", 1600}, {"$1700", 1700}, {"$1800", 1800}, {"$1900", 1900}], class: "shadow-sm focus:ring-primary-500 focus:border-primary-500 sm:text-sm border-gray-300 rounded-md"%>
+                <%= select @f, :min_price, [ {"Any", -1}, {"$100", 100}, {"$200", 200}, {"$300", 300}, {"$400", 400}, {"$500", 500}, {"$600", 600}, {"$700", 700}, {"$800", 800}, {"$900", 900}, {"$1000", 1000}, {"$1200", 1200}, {"$1300", 1300}, {"$1400", 1400}, {"$1500", 1500}, {"$1600", 1600}, {"$1700", 1700}, {"$1800", 1800}, {"$1900", 1900}], class: "shadow-sm focus:ring-primary-500 focus:border-primary-500 sm:text-sm border-gray-300 rounded-md"%>
                 <div class="my-2"></div>
                 Max:
-                <%= select @f, :max_price, [ {"$200", 200}, {"$300", 300}, {"$400", 400}, {"$500", 500}, {"$600", 600}, {"$700", 700}, {"$800", 800}, {"$900", 900}, {"$1000", 1000}, {"$1200", 1200}, {"$1300", 1300}, {"$1400", 1400}, {"$1500", 1500}, {"$1600", 1600}, {"$1700", 1700}, {"$1800", 1800}, {"$1900", 1900}, {"$2000+", 2000}], value: Map.get(@params, "max_price", 2000), class: "shadow-sm focus:ring-primary-500 focus:border-primary-500 sm:text-sm border-gray-300 rounded-md"%>
+                <%= select @f, :max_price, [ {"$200", 200}, {"$300", 300}, {"$400", 400}, {"$500", 500}, {"$600", 600}, {"$700", 700}, {"$800", 800}, {"$900", 900}, {"$1000", 1000}, {"$1200", 1200}, {"$1300", 1300}, {"$1400", 1400}, {"$1500", 1500}, {"$1600", 1600}, {"$1700", 1700}, {"$1800", 1800}, {"$1900", 1900}, {"$2000", 2000}, {"$3000", 3000},  {"$4000", 4000},  {"$5000", 5000}, {"Any", -1}], value: Map.get(@params, "max_price", -1), class: "shadow-sm focus:ring-primary-500 focus:border-primary-500 sm:text-sm border-gray-300 rounded-md"%>
             </div>
           </div>
             <div x-data="{ open: false }" class='relative'>

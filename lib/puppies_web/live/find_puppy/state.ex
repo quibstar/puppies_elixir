@@ -1,6 +1,6 @@
 defmodule PuppiesWeb.FindPuppyLive.State do
   use PuppiesWeb, :live_view
-  alias Puppies.{ES.ListingsSearch}
+  alias Puppies.{ES.ListingsSearch, Utilities}
 
   @size "12"
   def mount(params, session, socket) do
@@ -32,18 +32,6 @@ defmodule PuppiesWeb.FindPuppyLive.State do
       )
 
     {:ok, socket}
-  end
-
-  def state_to_human_readable(state) do
-    if String.length(state) == 2 do
-      String.upcase(state) |> String.to_atom() |> PuppiesWeb.StateUtilities.abbrev_to_state()
-    else
-      state
-    end
-  end
-
-  def handle_event("show_profile", %{"profile_id" => profile_id}, socket) do
-    {:noreply, socket |> push_redirect(to: Routes.profile_show_path(socket, :show, profile_id))}
   end
 
   def handle_event("page-to", %{"page_id" => page_id}, socket) do
@@ -124,7 +112,7 @@ defmodule PuppiesWeb.FindPuppyLive.State do
                       <div class='md:flex justify-between'>
                           <div class='flex'>
                               <div class="text-xl md:text-3xl">
-                                Puppies in <span class="capitalize"><%= state_to_human_readable(@state) %></span>.
+                                Puppies in <span class="capitalize"><%= Utilities.state_to_human_readable(@state) %></span>.
                               </div>
                           </div>
                           <div class="my-2">
@@ -136,26 +124,25 @@ defmodule PuppiesWeb.FindPuppyLive.State do
 
 
                   <%= if length(@matches) > 0 do %>
-                      <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4 my-4">
-                          <%= for listing <- @matches do %>
-                              <%= live_component  PuppiesWeb.FlatCard, id: listing["_id"], listing: listing["_source"] %>
-                          <% end %>
-                      </div>
-                      <%= if @pagination.count > String.to_integer(@match.limit) do %>
-                          <%= PuppiesWeb.PaginationComponent.render(%{pagination: @pagination, socket: @socket, page: @match.page, limit: @match.limit}) %>
+                    <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4 my-4">
+                      <%= for listing <- @matches do %>
+                          <%= live_component  PuppiesWeb.StateSearchCard, id: listing["_id"], listing: listing["_source"] %>
                       <% end %>
+                    </div>
+                    <%= if @pagination.count > String.to_integer(@match.limit) do %>
+                      <%= PuppiesWeb.PaginationComponent.render(%{pagination: @pagination, socket: @socket, page: @match.page, limit: @match.limit}) %>
+                    <% end %>
 
-                       <div class="bg-primary-700 rounded">
-                          <div class="max-w-2xl mx-auto text-center py-16 px-4 sm:py-20 sm:px-6 lg:px-8">
-                              <h2 class="text-3xl font-extrabold text-white sm:text-4xl">
-                                  <span class="block capitalize"><%= state_to_human_readable(@state) %></span>
-                                  <span class="block">is waiting for you.</span>
-                              </h2>
-                              <p class="mt-4 text-lg leading-6 text-primary-200">There are <%= @pagination.count %> new opportunities.</p>
-                              <%= link "Sign up for free", to: Routes.user_registration_path(@socket, :new), class: "mt-8 w-full inline-flex items-center justify-center px-5 py-3 border border-transparent text-base font-medium rounded-md text-primary-600 bg-white hover:bg-primary-50 sm:w-auto" %>
-                          </div>
+                    <div class="bg-primary-700 rounded">
+                      <div class="max-w-2xl mx-auto text-center py-16 px-4 sm:py-20 sm:px-6 lg:px-8">
+                          <h2 class="text-3xl font-extrabold text-white sm:text-4xl">
+                              <span class="block capitalize"><%= Utilities.state_to_human_readable(@state) %></span>
+                              <span class="block">is waiting for you.</span>
+                          </h2>
+                          <p class="mt-4 text-lg leading-6 text-primary-200">There are <%= @pagination.count %> new opportunities.</p>
+                          <%= link "Sign up for free", to: Routes.user_registration_path(@socket, :new), class: "mt-8 w-full inline-flex items-center justify-center px-5 py-3 border border-transparent text-base font-medium rounded-md text-primary-600 bg-white hover:bg-primary-50 sm:w-auto" %>
                       </div>
-
+                    </div>
                   <% else %>
                     <div class="h-full flex justify-center items-center mx-auto">
                       <div class="text-center bg-white shadow p-4 rounded">
@@ -164,7 +151,7 @@ defmodule PuppiesWeb.FindPuppyLive.State do
                           </svg>
                           <h3 class="mt-2 text-sm font-medium text-gray-900">So Sorry!</h3>
                           <p class="mt-1 text-sm text-gray-500">
-                              No rooms available in <span class="capitalize"> <%= state_to_human_readable(@state) %></span>. Maybe try <%= live_redirect "searching", to: Routes.live_path(@socket, PuppiesWeb.SearchLive), class: "underline py-3 md:p-0 block text-base text-gray-500 hover:text-gray-900 nav-link" %>
+                              No rooms available in <span class="capitalize"> <%= Utilities.state_to_human_readable(@state) %></span>. Maybe try <%= live_redirect "searching", to: Routes.live_path(@socket, PuppiesWeb.SearchLive), class: "underline py-3 md:p-0 block text-base text-gray-500 hover:text-gray-900 nav-link" %>
                           </p>
                       </div>
                   </div>

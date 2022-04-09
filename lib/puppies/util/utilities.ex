@@ -135,4 +135,12 @@ defmodule Puppies.Utilities do
     end)
     |> Enum.join(", ")
   end
+
+  def state_to_human_readable(state) do
+    if String.length(state) == 2 do
+      String.upcase(state) |> String.to_atom() |> PuppiesWeb.StateUtilities.abbrev_to_state()
+    else
+      state
+    end
+  end
 end

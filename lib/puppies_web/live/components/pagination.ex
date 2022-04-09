@@ -9,6 +9,7 @@ defmodule PuppiesWeb.PaginationComponent do
     <div id='pagination' class="mx-auto my-4">
       <div id='pagination-links' class="flex justify-center">
         <%= if @pagination.previous > 0 do %>
+
           <div class="hover:underline mx-2 cursor-pointer" phx-click="page-to" phx-value-page_id="1" >
             <svg class="h-5 w-5 mt-0.5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 19l-7-7 7-7m8 14l-7-7 7-7" />
@@ -20,18 +21,22 @@ defmodule PuppiesWeb.PaginationComponent do
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
             </svg>
           </div>
-        <% else %>
-          <div class="text-gray-400">
-            <svg class="h-5 w-5 mt-0.5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
-            </svg>
-          </div>
 
-          <div class="text-gray-400">
+        <% else %>
+
+        <div class="text-gray-400">
             <svg class="h-5 w-5 mt-0.5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 19l-7-7 7-7m8 14l-7-7 7-7" />
             </svg>
           </div>
+
+        <div class="text-gray-400">
+          <svg class="h-5 w-5 mt-0.5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+          </svg>
+        </div>
+
+
         <% end %>
 
         <%= for i <- @pagination.first_link..@pagination.last_link do %>
