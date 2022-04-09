@@ -143,4 +143,24 @@ defmodule Puppies.Utilities do
       state
     end
   end
+
+  def date_format(date) do
+    {:ok, d} = NaiveDateTime.from_iso8601(date <> " 00:00:00Z")
+    [year, month, day] = String.split(date, "-")
+
+    if Date.compare(d, Date.utc_today()) == :gt do
+      "Expected on: #{month}/#{day}/#{year}"
+    else
+      Puppies.DistanceOfTimeHelpers.time_ago_in_words(d) <> " old"
+    end
+  end
+
+  def date_format_from_ecto(date) do
+    if Date.compare(date, Date.utc_today()) == :gt do
+      "Expected on: #{date.month}/#{date.day}/#{date.year}"
+    else
+      {:ok, d} = NaiveDateTime.from_iso8601(Date.to_iso8601(date) <> " 00:00:00Z")
+      Puppies.DistanceOfTimeHelpers.time_ago_in_words(d) <> " old"
+    end
+  end
 end

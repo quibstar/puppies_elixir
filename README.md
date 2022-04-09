@@ -23,7 +23,7 @@
 
 - Name
 - DOB or Expected DOB
-- Breed(s) [araay]
+- Breed(s) [array]
 - Price
 - Sex
 - Designer, PureBread

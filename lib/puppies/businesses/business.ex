@@ -49,6 +49,7 @@ defmodule Puppies.Businesses.Business do
     ])
     |> validate_required([:phone], message: "Phone can't be blank")
     |> validate_required([:name], message: "Name can't be blank")
+    |> unique_constraint([:name], message: "Name taken, please choose another")
     |> validate_required([:location_autocomplete], message: "Location can't be blank")
     |> cast_assoc(:location)
     |> cast_assoc(:business_breeds)

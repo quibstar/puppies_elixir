@@ -117,7 +117,7 @@ defmodule FilterComponent do
                   </svg>
               </button>
               <div class="top-0 absolute p-4 bg-white z-50 rounded border w-full" x-show="open"  @click.outside="open = false">
-                  <%= select @f, :dob, [ {"", -1}, {"Not born yet", 0}, {"Week", 7}, {"Two weeks", 14}, {"Month", 30}, {"Two months", 60}, {"Three months", 90}, {"Six months", 180}, {"Year+", 365}], value: Map.get(@params, "dob", -1), class: "shadow-sm focus:ring-primary-500 focus:border-primary-500 sm:text-sm border-gray-300 rounded-md" %>
+                  <%= select @f, :dob, [ {"", -1}, {"Not born yet", 0}, {"One week", 7}, {"Two weeks", 14},{"Three weeks", 21}, {"Month", 30}, {"Two months", 60}, {"Three months", 90}, {"Six months", 180}, {"Year+", 365}], value: Map.get(@params, "dob", -1), class: "shadow-sm focus:ring-primary-500 focus:border-primary-500 sm:text-sm border-gray-300 rounded-md" %>
               </div>
           </div>
 

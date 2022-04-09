@@ -1,7 +1,7 @@
 defmodule PuppiesWeb.BreedsShowLive do
   use PuppiesWeb, :live_view
 
-  alias Puppies.{Utilities, Breeds}
+  alias Puppies.{Utilities, Breeds, Accounts}
 
   def mount(params, session, socket) do
     case connected?(socket) do
@@ -10,7 +10,13 @@ defmodule PuppiesWeb.BreedsShowLive do
     end
   end
 
-  def connected_mount(params, _session, socket) do
+  def connected_mount(params, session, socket) do
+    user =
+      if connected?(socket) && Map.has_key?(session, "user_token") do
+        %{"user_token" => user_token} = session
+        Accounts.get_user_by_session_token(user_token)
+      end
+
     %{"slug" => breed} = params
 
     matches = Breeds.get_breed(breed)
@@ -18,6 +24,7 @@ defmodule PuppiesWeb.BreedsShowLive do
     socket =
       assign(
         socket,
+        user: user,
         loading: false,
         matches: Map.get(matches, :matches, []),
         pagination: Map.get(matches, :pagination, %{count: 0}),
@@ -111,7 +118,7 @@ defmodule PuppiesWeb.BreedsShowLive do
                   <%= if @pagination.count > 0 do %>
                     <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4 my-4">
                         <%= for listing <- @matches do %>
-                          <%= live_component  PuppiesWeb.Card, id: listing.id, listing: listing %>
+                          <%= live_component  PuppiesWeb.Card, id: listing.id, listing: listing, user: @user %>
                         <% end %>
                     </div>
                     <%= if @pagination.count > String.to_integer(@match.limit) do %>

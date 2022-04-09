@@ -1,16 +1,22 @@
 defmodule PuppiesWeb.FindPuppyLive.State do
   use PuppiesWeb, :live_view
-  alias Puppies.{ES.ListingsSearch, Utilities}
+  alias Puppies.{ES.ListingsSearch, Utilities, Accounts}
 
   @size "12"
   def mount(params, session, socket) do
     case connected?(socket) do
-      true -> connected_mount(session, params, socket)
+      true -> connected_mount(params, session, socket)
       false -> {:ok, assign(socket, loading: true)}
     end
   end
 
-  def connected_mount(_, params, socket) do
+  def connected_mount(params, session, socket) do
+    user =
+      if connected?(socket) && Map.has_key?(session, "user_token") do
+        %{"user_token" => user_token} = session
+        Accounts.get_user_by_session_token(user_token)
+      end
+
     %{"state" => state} = params
 
     matches = ListingsSearch.state(state, "1", @size)
@@ -19,6 +25,7 @@ defmodule PuppiesWeb.FindPuppyLive.State do
     socket =
       assign(
         socket,
+        user: user,
         loading: false,
         matches: Map.get(matches, :matches, []),
         pagination: Puppies.Pagination.pagination(count, "1", @size),
@@ -126,7 +133,7 @@ defmodule PuppiesWeb.FindPuppyLive.State do
                   <%= if length(@matches) > 0 do %>
                     <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4 my-4">
                       <%= for listing <- @matches do %>
-                          <%= live_component  PuppiesWeb.StateSearchCard, id: listing["_id"], listing: listing["_source"] %>
+                          <%= live_component  PuppiesWeb.StateSearchCard, id: listing["_id"], listing: listing["_source"], user: @user %>
                       <% end %>
                     </div>
                     <%= if @pagination.count > String.to_integer(@match.limit) do %>
@@ -136,10 +143,10 @@ defmodule PuppiesWeb.FindPuppyLive.State do
                     <div class="bg-primary-700 rounded">
                       <div class="max-w-2xl mx-auto text-center py-16 px-4 sm:py-20 sm:px-6 lg:px-8">
                           <h2 class="text-3xl font-extrabold text-white sm:text-4xl">
-                              <span class="block capitalize"><%= Utilities.state_to_human_readable(@state) %></span>
-                              <span class="block">is waiting for you.</span>
+                              <span class="block capitalize"><%= Utilities.state_to_human_readable(@state) %> puppies </span>
+                              <span class="block">are waiting for you.</span>
                           </h2>
-                          <p class="mt-4 text-lg leading-6 text-primary-200">There are <%= @pagination.count %> new opportunities.</p>
+                          <p class="mt-4 text-lg leading-6 text-primary-200">There are <%= @pagination.count %> new friends to be made. <br />Their so excited they're peeing on the carpet!</p>
                           <%= link "Sign up for free", to: Routes.user_registration_path(@socket, :new), class: "mt-8 w-full inline-flex items-center justify-center px-5 py-3 border border-transparent text-base font-medium rounded-md text-primary-600 bg-white hover:bg-primary-50 sm:w-auto" %>
                       </div>
                     </div>

@@ -19,8 +19,8 @@ defmodule PuppiesWeb.BusinessPageLive do
         Accounts.get_user_by_session_token(user_token)
       end
 
-    IO.inspect(params)
     business = Businesses.get_business_by_slug(params["slug"])
+    IO.inspect(business)
     listings = Listings.get_listings_by_user_id(business.user_id)
     {:ok, assign(socket, user: user, loading: false, business: business, listings: listings)}
   end

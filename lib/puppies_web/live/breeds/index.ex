@@ -5,12 +5,12 @@ defmodule PuppiesWeb.BreedsIndexLive do
 
   def mount(_params, session, socket) do
     case connected?(socket) do
-      true -> connected_mount(session, socket)
+      true -> connected_mount(_params, session, socket)
       false -> {:ok, assign(socket, loading: true)}
     end
   end
 
-  def connected_mount(_session, socket) do
+  def connected_mount(_params, _session, socket) do
     breeds = Breeds.breeds_list()
 
     socket =

@@ -153,7 +153,12 @@ defmodule PuppiesWeb.SearchLive do
       )
 
     socket = assign(socket, params: params)
-    update_url(socket, params)
+
+    if changeset.valid? do
+      update_url(socket, params)
+    else
+      {:noreply, socket}
+    end
   end
 
   def handle_event("remove-breed", %{"breed" => breed}, socket) do
@@ -212,8 +217,6 @@ defmodule PuppiesWeb.SearchLive do
 
       count = Map.get(matches, :count, 0)
       page = Map.get(params, "page", 0)
-
-      IO.inspect(Puppies.Pagination.pagination(count, page, @size))
 
       socket =
         assign(
@@ -294,7 +297,7 @@ defmodule PuppiesWeb.SearchLive do
               <%= if @search_by == "state" do %>
                 <div class="mr-2 flex-grow">
                   <%= label f, :state, class: "block"%>
-                  <%= select f, :state, @states, selected: @params["state"], class: "w-full shadow-sm focus:ring-primary-500 focus:border-primary-500 sm:text-sm border-gray-300 rounded-md" %>
+                  <%= select f, :state, @states, prompt: "Select a state", class: "w-full shadow-sm focus:ring-primary-500 focus:border-primary-500 sm:text-sm border-gray-300 rounded-md" %>
                 </div>
               <% end %>
 
@@ -381,7 +384,7 @@ defmodule PuppiesWeb.SearchLive do
           </div>
           <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4 my-4">
             <%= for listing <- @matches do %>
-                <%= live_component  PuppiesWeb.StateSearchCard, id: listing["_id"], listing: listing["_source"] %>
+                <%= live_component  PuppiesWeb.StateSearchCard, id: listing["_id"], listing: listing["_source"], user: @user %>
             <% end %>
           </div>
           <%= if @pagination.count > String.to_integer(@params["limit"]) do %>
