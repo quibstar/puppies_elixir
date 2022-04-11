@@ -4,18 +4,22 @@ defmodule PuppiesWeb.WatchListComponent do
   """
   use PuppiesWeb, :live_component
 
+  alias PuppiesWeb.{ListView}
+
   def render(assigns) do
     ~H"""
-      <section aria-labelledby="applicant-information-title">
-        <div class="bg-white shadow sm:rounded-lg">
-          <div class="px-4 py-5 sm:px-6">
-            <div class="flex justify-between">
-              <h2 id="applicant-information-title" class="text-lg leading-6 font-medium text-gray-900">Watch List</h2>
-            </div>
-            <p class="mt-1 max-w-2xl text-gray-500">Add profiles to you watch list that you might want to purchase or have interest in.</p>
-          </div>
-        </div>
-      </section>
+      <div class="bg-white px-4 py-5 shadow sm:rounded-lg sm:px-6">
+        <h2 id="timeline-title" class="text-xlg font-medium text-gray-900">Watch list</h2>
+        <%= if  @listings == [] do %>
+          <p class="mt-1 max-w-2xl text-gray-500">Add profiles to your watch list that you might want to purchase or have interest in.</p>
+        <% else %>
+          <ul role="list" class="divide-y divide-gray-200">
+            <%= for listing <- @listings do %>
+              <.live_component module={ListView} id={"#{listing.id}-wl"}   listing={listing} />
+            <% end %>
+          </ul>
+        <% end %>
+      </div>
     """
   end
 end

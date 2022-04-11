@@ -8,7 +8,9 @@ defmodule Puppies.Breeds do
   alias Puppies.{Pagination, Utilities, Dogs.Breed}
 
   def breeds_list() do
-    Repo.all(Breed)
+    Repo.all( from(b in Breed,
+       order_by: b.name
+    ))
   end
 
   def get_breed_by_slug(slug) do
@@ -16,6 +18,19 @@ defmodule Puppies.Breeds do
       where: b.slug == ^slug
     )
     |> Repo.one()
+  end
+
+  def get_breed_by_name(name) do
+    from(b in Breed,
+      where: b.name == ^name
+    )
+    |> Repo.one()
+  end
+
+ def update_breed(%Breed{} = breed, attrs) do
+    breed
+    |> Breed.changeset(attrs)
+    |> Repo.update()
   end
 
   def get_breed(

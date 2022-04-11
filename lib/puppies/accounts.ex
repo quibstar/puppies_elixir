@@ -358,7 +358,8 @@ defmodule Puppies.Accounts do
       )
       |> preload([
         [business: [:breeds, :location, :photo, :business_breeds]],
-        [listings: :photos]
+        [listings: :photos],
+        [favorite_listings: [:photos, [user: [business: :photo]]]]
       ])
 
     Repo.one(q)

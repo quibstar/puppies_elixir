@@ -93,7 +93,8 @@ defmodule Puppies.ES.IndexListings do
         lat: listing.user.business.location.lat,
         lon: listing.user.business.location.lng
       },
-      updated_at: listing.updated_at
+      updated_at: listing.updated_at,
+      views: listing.views
     }
   end
 end

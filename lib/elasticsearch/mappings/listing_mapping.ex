@@ -54,7 +54,8 @@ defmodule Puppies.Mappings do
           place: %{type: :keyword},
           region: %{type: :keyword},
           location: %{type: :geo_point},
-          updated_at: %{type: :date}
+          updated_at: %{type: :date},
+          views: %{type: :keyword}
         }
       }
     }

@@ -6,7 +6,7 @@ defmodule PuppiesWeb.ListingShow do
 
   alias Puppies.Accounts
 
-  alias Puppies.{Listings, Businesses}
+  alias Puppies.{Listings, Businesses, Favorites}
 
   def mount(%{"listing_id" => listing_id}, session, socket) do
     case connected?(socket) do
@@ -23,6 +23,33 @@ defmodule PuppiesWeb.ListingShow do
       end
 
     listing = Listings.get_listing!(listing_id)
+
+    user_id =
+      if is_nil(user) do
+        nil
+      else
+        user.id
+      end
+
+    if !is_nil(user) && user.id != listing.user_id do
+      %{user_id: user_id, listing_id: listing_id}
+      |> Puppies.ViewBackgroundJob.new()
+      |> Oban.insert()
+    end
+
+    if is_nil(user) do
+      %{user_id: nil, listing_id: listing_id}
+      |> Puppies.ViewBackgroundJob.new()
+      |> Oban.insert()
+    end
+
+    favorites =
+      if is_nil(user) do
+        []
+      else
+        Favorites.get_favorite_ids(user.id)
+      end
+
     business = Businesses.get_business_by_user_id(listing.user_id)
 
     photos =
@@ -42,8 +69,28 @@ defmodule PuppiesWeb.ListingShow do
        current_photo: List.first(photos),
        photos: photos,
        business: business,
-       page_title: "#{business.name} #{listing.name} - "
+       page_title: "#{business.name} #{listing.name} - ",
+       favorites: favorites
      )}
+  end
+
+  def handle_event("favorite", %{"listing_id" => listing_id}, socket) do
+    user_id = socket.assigns.user.id
+    listing_id = String.to_integer(listing_id)
+
+    if Enum.member?(socket.assigns.favorites, listing_id) do
+      Favorites.delete_favorite(user_id, listing_id)
+    else
+      Favorites.create_favorite(%{user_id: user_id, listing_id: listing_id})
+    end
+
+    socket =
+      assign(
+        socket,
+        favorites: Favorites.get_favorite_ids(user_id)
+      )
+
+    {:noreply, socket}
   end
 
   def render(assigns) do
@@ -52,7 +99,6 @@ defmodule PuppiesWeb.ListingShow do
         <%= if @loading do %>
           <%= live_component PuppiesWeb.LoadingComponent, id: "listing-loading" %>
         <% else  %>
-
           <div class="my-2">
             <button onclick="history.back()" aria-label="Back to collection">
               <svg  xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 stroke-primary-500" fill="none" viewBox="0 0 24 24" stroke="#3b82f6">
@@ -62,7 +108,7 @@ defmodule PuppiesWeb.ListingShow do
           </div>
 
           <div class="md:grid md:grid-cols-3 md:gap-4">
-            <%= live_component  PuppiesWeb.Details, id: "user_listing", listing: @listing, user: @user, business: @business %>
+            <%= live_component  PuppiesWeb.Details, id: "user_listing", listing: @listing, user: @user, business: @business, favorites: @favorites %>
             <%= live_component  PuppiesWeb.ImageViewer, id: "image_viewer", photos: @photos, current_photo: @current_photo %>
           </div>
         <% end %>

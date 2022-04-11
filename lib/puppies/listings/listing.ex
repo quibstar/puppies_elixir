@@ -27,7 +27,8 @@ defmodule Puppies.Listings.Listing do
              :hypoallergenic,
              :microchip,
              :purebred,
-             :breeds
+             :breeds,
+             :views
            ]}
   schema "listings" do
     field(:coat_color_pattern, :string)
@@ -37,6 +38,7 @@ defmodule Puppies.Listings.Listing do
     field(:price, :integer)
     field(:sex, :string)
     field(:status, :string)
+    field(:views, :integer, default: 0)
     field(:deliver_on_site, :boolean, default: false)
     field(:deliver_pick_up, :boolean, default: false)
     field(:delivery_shipped, :boolean, default: false)
@@ -87,7 +89,8 @@ defmodule Puppies.Listings.Listing do
       :pedigree,
       :hypoallergenic,
       :microchip,
-      :purebred
+      :purebred,
+      :views
     ])
     |> validate_required([:name], message: "Name cannot be blank")
     |> validate_required([:dob], message: "DOB/Expected date cannot be blank")

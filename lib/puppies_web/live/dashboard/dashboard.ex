@@ -1,9 +1,9 @@
 defmodule PuppiesWeb.UserDashboardLive do
   use PuppiesWeb, :live_view
 
-  alias Puppies.{Accounts}
+  alias Puppies.{Accounts, Listings, Views}
 
-  alias PuppiesWeb.{UI.Drawer, BusinessForm}
+  alias PuppiesWeb.{UI.Drawer, BusinessForm, ListView}
 
   def mount(_params, session, socket) do
     case connected?(socket) do
@@ -20,14 +20,22 @@ defmodule PuppiesWeb.UserDashboardLive do
       end
 
     user = Accounts.get_user_business_and_listings(user.id)
+    listings = Listings.get_listings_by_user_id(user.id)
+    viewing_history = Views.my_views(user.id)
 
     {:ok,
-     assign(socket, user: user, loading: false, business: user.business, listings: user.listings)}
+     assign(socket,
+       user: user,
+       loading: false,
+       business: user.business,
+       listings: listings,
+       viewing_history: viewing_history
+     )}
   end
 
   def render(assigns) do
     ~H"""
-    <div x-data="{ show_drawer: false, show_modal: false }">
+    <div class="mb-4" x-data="{ show_drawer: false, show_modal: false }">
       <%= if @loading do %>
       <% else %>
 
@@ -44,7 +52,9 @@ defmodule PuppiesWeb.UserDashboardLive do
           <div class="flex items-center space-x-5">
             <div class="flex-shrink-0">
               <div class="relative">
-                <%= if !is_nil(@business.photo) do %>
+                <%= if is_nil(@business) do %>
+                  <img class="mx-auto w-10 h-10 rounded-full overflow-hidden object-cover block ring-2 ring-yellow-500 ring-offset-1" src={"/uploads/dogs/#{Enum.random(1..16)}.jpg"} alt="random dog image">
+                <% else %>
                   <%= img_tag( @business.photo.url, class: "h-16 w-16 rounded-full border border-2 border-primary-500 object-cover") %>
                 <% end %>
               </div>
@@ -65,11 +75,10 @@ defmodule PuppiesWeb.UserDashboardLive do
 
         <div class="mt-8 max-w-3xl mx-auto grid grid-cols-1 gap-6 sm:px-6 lg:max-w-7xl lg:grid-flow-col-dense lg:grid-cols-3">
           <div class="space-y-6 lg:col-start-1 lg:col-span-2">
-            <!-- Description list-->
             <section aria-labelledby="applicant-information-title">
               <div class="bg-white shadow sm:rounded-lg">
                 <div class="px-4 py-5 sm:px-6">
-                  <h2 id="applicant-information-title" class="text-lg leading-6 font-medium text-gray-900">Dashboard</h2>
+                  <h2 id="applicant-information-title" class="text-xlg leading-6 font-medium text-gray-900">Dashboard</h2>
                   <%= if @user.is_seller do %>
                     <p class="mt-1 max-w-2xl text-gray-500">Good evening, to get started listing you must first:</p>
                     <ol class="my-2 text-gray-500 list-decimal ml-4">
@@ -84,14 +93,30 @@ defmodule PuppiesWeb.UserDashboardLive do
                 </div>
               </div>
             </section>
-            <%= live_component PuppiesWeb.ListingsIndex, id: "listing", listings: @listings %>
-            <%= live_component PuppiesWeb.WatchListComponent, id: "watch_list" %>
+            <%= unless is_nil(@user.business) do %>
+              <%= live_component PuppiesWeb.ListingsIndex, id: "listing", listings: @listings, listing: nil %>
+            <% end %>
+
+            <%= if is_nil(@user.business) do %>
+              <div class="bg-white px-4 py-5 shadow sm:rounded-lg sm:px-6">
+                <h2 id="timeline-title" class="text-xlg font-medium text-gray-900">Messages</h2>
+
+              </div>
+            <% end %>
+
           </div>
 
           <section aria-labelledby="timeline-title" class="space-y-4">
+
             <div class="bg-white px-4 py-5 shadow sm:rounded-lg sm:px-6">
-              <h2 id="timeline-title" class="text-lg font-medium text-gray-900">Viewing History</h2>
+              <h2 id="timeline-title" class="text-xlg font-medium text-gray-900">Viewing History</h2>
+              <ul role="list" class="divide-y divide-gray-200">
+                <%= for view <- @viewing_history do %>
+                  <.live_component module={ListView} id={view.id}  listing={view.listing}} />
+                <% end %>
+              </ul>
             </div>
+             <%= live_component PuppiesWeb.WatchListComponent, id: "watch_list", listings: @user.favorite_listings %>
           </section>
         </div>
       <% end %>

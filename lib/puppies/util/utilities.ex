@@ -163,4 +163,12 @@ defmodule Puppies.Utilities do
       Puppies.DistanceOfTimeHelpers.time_ago_in_words(d) <> " old"
     end
   end
+
+  def first_image(photos) do
+    if photos != [] do
+      List.first(photos).url
+    else
+      nil
+    end
+  end
 end

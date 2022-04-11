@@ -32,6 +32,8 @@ defmodule Puppies.Accounts.User do
     field(:approved_to_sell, :boolean, default: false)
     has_one(:business, Puppies.Businesses.Business)
     has_many(:listings, Puppies.Listings.Listing)
+    has_many(:favorites, Puppies.Favorite, on_replace: :delete)
+    many_to_many(:favorite_listings, Puppies.Listings.Listing, join_through: Puppies.Favorite)
 
     timestamps()
   end

@@ -21,6 +21,7 @@ defmodule PuppiesWeb.StateSearchCard do
             <%= live_patch @listing["name"], to: Routes.live_path(@socket, PuppiesWeb.ListingShow, @listing["id"]), class: "underline text-primary-600 hover:text-primary-900" %>
             <div class="text-gray-500 text-sm">
               <div class="inline-block">
+                <span class="font-semibold">$<%= @listing["price"] %>.00</span> -
                 <%= if @listing["purebred"] do %>
                   Purebred
                 <% else %>

@@ -79,6 +79,21 @@ defmodule PuppiesWeb.BreedsIndexLive do
     end
   end
 
+  def color_base_on_percent(number) do
+    res = 100 / 5 * number
+
+    cond do
+      res <= 30 ->
+        "red"
+
+      res <= 60 ->
+        "green"
+
+      true ->
+        "green"
+    end
+  end
+
   def render(assigns) do
     ~H"""
       <div class="h-full max-w-7xl mx-auto px-4 py-6 sm:px-6 md:justify-start md:space-x-10 lg:px-8">
@@ -94,17 +109,50 @@ defmodule PuppiesWeb.BreedsIndexLive do
                       Autocomplete
                     </div>
                 </div>
+                <div>
+                  Filter
+                </div>
                 <span class="inline-flex items-center text-sm font-medium text-gray-900"> <%= length(@breeds) %> beautiful types of dogs.</span>
                 <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 my-4">
                   <%= for breed <- @breeds do %>
-                    <div class="relative rounded-lg  bg-white shadow-sm flex items-center space-x-3 hover:shadow-lg focus-within:ring-2 focus-within:ring-offset-2 focus-within:ring-primary-500">
-                      <div class="flex-shrink-0 rounded-tl-lg rounded-bl-lg overflow-hidden">
-                        <img class="h-16 w-16" src={"/uploads/dogs/#{Enum.random(1..16)}.jpg"} alt="">
+                    <div class="overflow-hidden relative rounded-lg bg-white shadow-sm  space-x-3 hover:shadow-lg focus-within:ring-2 focus-within:ring-offset-2 focus-within:ring-primary-500">
+                      <div class="h-52 overflow-hidden">
+                        <img class="w-full z-0 object-cover h-52" src={"/uploads/dogs/#{Enum.random(1..16)}.jpg"} alt="random dog image">
                       </div>
-                      <div class="flex-1 min-w-0">
+                      <div class="p-2">
                         <%= live_redirect to: Routes.live_path(@socket, PuppiesWeb.BreedsShowLive, breed.slug) do %>
-                          <span class="absolute inset-0" aria-hidden="true"></span>
-                          <p class="text-sm font-medium text-gray-900"><%= breed.name %></p>
+                          <p class="text-base font-medium text-gray-900"><%= breed.name %></p>
+
+                          <div class="text-xs text-gray-900 grid grid-cols-2 flex-grow">
+                            <div >Adaptable: </div>
+                            <div class="bg-gray-200 h-1 mt-2 ml-2">
+                              <div class={"bg-#{color_base_on_percent(breed.friendly)}-600 h-1"} style={"width: #{100/5 * breed.adaptable}%"}></div>
+                            </div>
+
+                            <div>Friendly:</div>
+                            <div class="bg-gray-200 h-1 mt-2 ml-2">
+                              <div class={"bg-#{color_base_on_percent(breed.friendly)}-600 h-1"} style={"width: #{100/5 * breed.friendly}%"}></div>
+                            </div>
+
+                            <div>Grooming & Health:</div>
+                            <div class="bg-gray-200 h-1 mt-2 ml-2">
+                              <div class={"bg-#{color_base_on_percent(breed.grooming_and_health)}-600 h-1"} style={"width: #{100/5 * breed.grooming_and_health}%"}></div>
+                            </div>
+
+
+                            <div>Trainable:</div>
+                            <div class="bg-gray-200 h-1 mt-2 ml-2">
+                              <div class={"bg-#{color_base_on_percent(breed.trainable)}-600 h-1"} style={"width: #{100/5 * breed.trainable}%"}></div>
+                            </div>
+
+
+                            <div>Training & Exercise:</div>
+                            <div class="bg-gray-200 h-1 mt-2 ml-2">
+                              <div class={"bg-#{color_base_on_percent(breed.attention_and_exercise)}-600 h-1"} style={"width: #{100/5 * breed.attention_and_exercise}%"}></div>
+                            </div>
+
+                          </div>
+
                         <% end %>
                       </div>
                     </div>

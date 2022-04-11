@@ -7,11 +7,21 @@ defmodule PuppiesWeb.Details do
      |> assign(assigns)}
   end
 
+  def is_favorite?(list, id) do
+    case Enum.member?(list, id) do
+      false ->
+        "none"
+
+      true ->
+        "#dc2626"
+    end
+  end
+
   def render(assigns) do
     ~H"""
       <div>
         <div class="text-center space-y-4 bg-white px-6 py-9 border rounded">
-          <%= img_tag @business.photo.url, class: "mx-auto w-44 h-44 rounded-full overflow-hidden object-cover block ring-2 ring-yellow-500 ring-offset-1", alt: "Profile image"%>
+          <%= img_tag @business.photo.url, class: "mx-auto w-44 h-44 rounded-full overflow-hidden object-cover block ring-2 ring-primary-500 ring-offset-1", alt: "Profile image"%>
           <div>
             <div class="inline-block text-sm text-gray-500">Presented by</div>
             <h3 class="font-bold text-xl text-gray-900 sm:text-2xl"><%= @business.name %></h3>
@@ -26,7 +36,7 @@ defmodule PuppiesWeb.Details do
           <div class="mx-auto">
             <%= if !is_nil(@user) && @user.id != @listing.user_id do %>
               <div class="flex place-content-center">
-                  <svg class="w-6 h-6 mr-2 cursor-pointer" phx-click="favorite" phx-value-listing_id={@listing.id} xmlns="http://www.w3.org/2000/svg"  viewBox="0 0 24 24" stroke="#dc2626">
+                  <svg class="w-6 h-6 mr-2 cursor-pointer" phx-click="favorite" phx-value-listing_id={@listing.id} fill={is_favorite?(@favorites, @listing.id)} xmlns="http://www.w3.org/2000/svg"  viewBox="0 0 24 24" stroke="#dc2626">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
                   </svg>
 

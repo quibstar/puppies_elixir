@@ -59,7 +59,8 @@ defmodule Puppies.Listings do
   def get_listings_by_user_id(id) do
     q =
       from(b in Listing,
-        where: b.user_id == ^id
+        where: b.user_id == ^id,
+        order_by: [desc: :views]
       )
       |> preload([:breeds, :photos, :listing_breeds])
 
@@ -139,5 +140,10 @@ defmodule Puppies.Listings do
   """
   def change_listing(%Listing{} = listing, attrs \\ %{}) do
     Listing.changeset(listing, attrs)
+  end
+
+  def update_view_count(listing_id, views) do
+    listing = __MODULE__.get_listing_alt!(listing_id)
+    __MODULE__.update_listing(listing, %{views: views})
   end
 end
