@@ -9,8 +9,6 @@ module.exports = {
         silver: '#9ca3af',
         primary: colors.yellow,
         secondary: colors.amber,
-        slate: colors.slate,
-        zinc: colors.zinc,
       },
     },
   },

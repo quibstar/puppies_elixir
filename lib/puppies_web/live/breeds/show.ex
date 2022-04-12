@@ -1,7 +1,7 @@
 defmodule PuppiesWeb.BreedsShowLive do
   use PuppiesWeb, :live_view
 
-  alias Puppies.{Utilities, Breeds, Accounts}
+  alias Puppies.{Breeds, Accounts}
 
   def mount(params, session, socket) do
     case connected?(socket) do
@@ -17,9 +17,10 @@ defmodule PuppiesWeb.BreedsShowLive do
         Accounts.get_user_by_session_token(user_token)
       end
 
-    %{"slug" => breed} = params
+    %{"slug" => slug} = params
 
-    matches = Breeds.get_breed(breed)
+    matches = Breeds.get_breed(slug)
+    breed = Breeds.get_breed_and_attributes_by_slug(slug)
 
     socket =
       assign(
@@ -97,26 +98,67 @@ defmodule PuppiesWeb.BreedsShowLive do
 
   def render(assigns) do
     ~H"""
-      <div class="h-full max-w-7xl mx-auto px-4 py-6 sm:px-6 md:justify-start md:space-x-10 lg:px-8">
+      <div class="h-full max-w-7xl mx-auto px-4 py-6 sm:px-6 md:justify-start md:space-x-10 lg:px-8" x-data="{ open: false }">
           <%= if @loading == false do %>
               <div class='container mx-auto my-4 px-2 md:px-0 h-full'>
                   <%= if length(@matches) > 0 do %>
                       <div class='md:flex justify-between'>
                           <div class='flex'>
                               <div class="text-xl md:text-3xl">
-                                 <span class="capitalize"><%= Utilities.slug_to_string(@breed) %></span>.
+                                 <span class="capitalize"><%= @breed.name %></span>.
                               </div>
                           </div>
-                          <div class="my-2">
-                            filler
+                          <div class="my-2 flex">
+                            <button class="inline-flex items-center px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-md shadow-sm text-white bg-primary-600 hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500" @click="open = ! open">View Traits</button>
                           </div>
                       </div>
                       <span class="inline-flex items-center px-2.5 py-0.5 rounded-md text-sm font-medium bg-primary-500 text-white"> <%= @pagination.count %> available! </span>
+
+                      <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 my-4 p-4 bg-white rounded border"
+                        x-show="open"
+                        @click.outside="open = false"
+                        x-transition.opacity
+                        x-transition:enter.duration.500ms
+                        x-transition:leave.duration.400ms
+                        >
+                        <%= live_component PuppiesWeb.ProgressBarComponent, id: "family-friendly", attribute: @breed.attributes.affectionate_with_family, title: "Family friendly", lower_bound: "Not so much", upper_bound: "Very loving" %>
+                        <%= live_component PuppiesWeb.ProgressBarComponent, id: "kid-friendly", attribute: @breed.attributes.kid_friendly, title: "Good with children", lower_bound: "Not recommended", upper_bound: "Yes" %>
+                        <%= live_component PuppiesWeb.ProgressBarComponent, id: "dog-friendly", attribute: @breed.attributes.dog_friendly, title: "Good with other dogs", lower_bound: "Not recommended", upper_bound: "Yes" %>
+                        <%= live_component PuppiesWeb.ProgressBarComponent, id: "friendly_toward_strangers", attribute: @breed.attributes.friendly_toward_strangers, title: "Friendly to strangers", lower_bound: "Stranger danger", upper_bound: "Hello friend!" %>
+                        <%= live_component PuppiesWeb.ProgressBarComponent, id: "all_around_friendliness", attribute: @breed.attributes.all_around_friendliness, title: "General friendliness", lower_bound: "Low", upper_bound: "High" %>
+                        <%= live_component PuppiesWeb.ProgressBarComponent, id: "size", attribute: @breed.attributes.size, title: "Size", lower_bound: "Small", upper_bound: "Large" %>
+                        <%= live_component PuppiesWeb.ProgressBarComponent, id: "intelligence", attribute: @breed.attributes.intelligence, title: "Intelligence", lower_bound: "No so smart", upper_bound: "Smart" %>
+                        <%= live_component PuppiesWeb.ProgressBarComponent, id: "shedding", attribute: @breed.attributes.amount_of_shedding, title: "Shedding level", lower_bound: "Nope", upper_bound: "Get a new vacuum" %>
+                        <%= live_component PuppiesWeb.ProgressBarComponent, id: "amount_of_shedding", attribute: @breed.attributes.amount_of_shedding, title: "Shedding amount", lower_bound: "Low", upper_bound: "High" %>
+                        <%= live_component PuppiesWeb.ProgressBarComponent, id: "grooming", attribute: @breed.attributes.easy_to_groom, title: "Grooming", lower_bound: "Monthly", upper_bound: "Daily" %>
+                        <%= live_component PuppiesWeb.ProgressBarComponent, id: "easy_to_groom", attribute: @breed.attributes.easy_to_groom, title: "Ease of grooming", lower_bound: "Low", upper_bound: "High" %>
+                        <%= live_component PuppiesWeb.ProgressBarComponent, id: "drolling", attribute: @breed.attributes.drooling_potential, title: "Drooling", lower_bound: "Not so much", upper_bound: "Yuck!" %>
+                        <%= live_component PuppiesWeb.ProgressBarComponent, id: "drooling_potential", attribute: @breed.attributes.drooling_potential, title: "Drooling potential", lower_bound: "Low", upper_bound: "High" %>
+                        <%= live_component PuppiesWeb.ProgressBarComponent, id: "potential_for_playfulness", attribute: @breed.attributes.potential_for_playfulness, title: "Playful", lower_bound: "No so much", upper_bound: "Brings you a leash" %>
+                        <%= live_component PuppiesWeb.ProgressBarComponent, id: "adaptability", attribute: @breed.attributes.adaptability, title: "Adaptability", lower_bound: "Needs routines", upper_bound: "Can adapt to anything" %>
+                        <%= live_component PuppiesWeb.ProgressBarComponent, id: "trainability", attribute: @breed.attributes.trainability, title: "Trainability", lower_bound: "Stubborn", upper_bound: "Eager to please" %>
+                        <%= live_component PuppiesWeb.ProgressBarComponent, id: "easy_to_train", attribute: @breed.attributes.easy_to_train, title: "Ease of training", lower_bound: "Low", upper_bound: "High" %>
+                        <%= live_component PuppiesWeb.ProgressBarComponent, id: "energy_level", attribute: @breed.attributes.energy_level, title: "Energy level", lower_bound: "Low energy", upper_bound: "High energy" %>
+                        <%= live_component PuppiesWeb.ProgressBarComponent, id: "intensity", attribute: @breed.attributes.intensity, title: "Intensity", lower_bound: "Low", upper_bound: "High" %>
+                        <%= live_component PuppiesWeb.ProgressBarComponent, id: "exercise_needs", attribute: @breed.attributes.exercise_needs, title: "Needs exercise", lower_bound: "Low", upper_bound: "High" %>
+                        <%= live_component PuppiesWeb.ProgressBarComponent, id: "physical_needs", attribute: @breed.attributes.physical_needs, title: "Physical needs", lower_bound: "Low", upper_bound: "High" %>
+                        <%= live_component PuppiesWeb.ProgressBarComponent, id: "health_and_grooming_needs", attribute: @breed.attributes.health_and_grooming_needs, title: "Grooming and health needs", lower_bound: "Low", upper_bound: "High" %>
+                        <%= live_component PuppiesWeb.ProgressBarComponent, id: "general_health", attribute: @breed.attributes.general_health, title: "Overall health", lower_bound: "Low", upper_bound: "High" %>
+                        <%= live_component PuppiesWeb.ProgressBarComponent, id: "potential_for_weight_gain", attribute: @breed.attributes.potential_for_weight_gain, title: "Potential to gain weight", lower_bound: "Low", upper_bound: "High" %>
+                        <%= live_component PuppiesWeb.ProgressBarComponent, id: "wanderlust_potential", attribute: @breed.attributes.wanderlust_potential, title: "Potential to wander", lower_bound: "Low", upper_bound: "High" %>
+                        <%= live_component PuppiesWeb.ProgressBarComponent, id: "potential_for_mouthiness", attribute: @breed.attributes.potential_for_mouthiness, title: "Prone to barking", lower_bound: "Never", upper_bound: "When a pin drops" %>
+                        <%= live_component PuppiesWeb.ProgressBarComponent, id: "prey_drive", attribute: @breed.attributes.prey_drive, title: "Prey Drive", lower_bound: "Low", upper_bound: "High" %>
+                        <%= live_component PuppiesWeb.ProgressBarComponent, id: "tolerates_hot_weather", attribute: @breed.attributes.tolerates_hot_weather, title: "Tolerates hot weather", lower_bound: "Low", upper_bound: "High" %>
+                        <%= live_component PuppiesWeb.ProgressBarComponent, id: "tolerates_cold_weather", attribute: @breed.attributes.tolerates_cold_weather, title: "Tolerates cold weather", lower_bound: "Low", upper_bound: "High" %>
+                        <%= live_component PuppiesWeb.ProgressBarComponent, id: "tolerates_being_alone", attribute: @breed.attributes.tolerates_being_alone, title: "Tolerates being alone", lower_bound: "Low", upper_bound: "High" %>
+                        <%= live_component PuppiesWeb.ProgressBarComponent, id: "sensitivity_level", attribute: @breed.attributes.sensitivity_level, title: "Sensitivity level", lower_bound: "Low", upper_bound: "High" %>
+                        <%= live_component PuppiesWeb.ProgressBarComponent, id: "good_for_novice_owners", attribute: @breed.attributes.good_for_novice_owners, title: "Good beginner dog", lower_bound: "Low", upper_bound: "High" %>
+                        <%= live_component PuppiesWeb.ProgressBarComponent, id: "adapts_well_to_apartment_living", attribute: @breed.attributes.adapts_well_to_apartment_living, title: "Adapts to apartments or small dwellings", lower_bound: "Low", upper_bound: "High" %>
+                      </div>
+
                   <% end %>
-
-
                   <%= if @pagination.count > 0 do %>
-                    <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4 my-4">
+                    <div class="grid grid-cols-2 sm:grid-cols-3 gap-4 my-4">
                         <%= for listing <- @matches do %>
                           <%= live_component  PuppiesWeb.Card, id: listing.id, listing: listing, user: @user %>
                         <% end %>
@@ -128,9 +170,9 @@ defmodule PuppiesWeb.BreedsShowLive do
                       <div class="bg-primary-700 rounded">
                         <div class="max-w-2xl mx-auto text-center py-16 px-4 sm:py-20 sm:px-6 lg:px-8">
                             <h2 class="text-3xl font-extrabold text-white sm:text-4xl">
-                                <span class="block capitalize"><%= Utilities.slug_to_string(@breed) %> found!</span>
+                                <span class="block capitalize"><%= @breed.name %> found!</span>
                             </h2>
-                            <p class="mt-4 text-lg leading-6 text-primary-200">There is <%= @pagination.count %> <%= Utilities.slug_to_string(@breed) %> waiting for you.</p>
+                            <p class="mt-4 text-lg leading-6 text-primary-200">There is <%= @pagination.count %> <%= @breed.name %> waiting for you.</p>
                             <%= link "Sign up for free", to: Routes.user_registration_path(@socket, :new), class: "mt-8 w-full inline-flex items-center justify-center px-5 py-3 border border-transparent text-base font-medium rounded-md text-primary-600 bg-white hover:bg-primary-50 sm:w-auto" %>
                         </div>
                     </div>
@@ -143,7 +185,7 @@ defmodule PuppiesWeb.BreedsShowLive do
                           </svg>
                           <h3 class="mt-2 text-sm font-medium text-gray-900">So Sorry!</h3>
                           <p class="mt-1 text-sm text-gray-500">
-                              No <span class="capitalize"> <%= Utilities.slug_to_string(@breed) %></span>. Maybe try <%= live_redirect "Search",  to: Routes.live_path(@socket, PuppiesWeb.SearchLive), class: "underline py-3 md:p-0 block text-base text-gray-500 hover:text-gray-900 nav-link" %>
+                              No <span class="capitalize"> <%= @breed.name %></span>. Maybe try <%= live_redirect "Search",  to: Routes.live_path(@socket, PuppiesWeb.SearchLive), class: "underline py-3 md:p-0 block text-base text-gray-500 hover:text-gray-900 nav-link" %>
                           </p>
                       </div>
                   </div>
