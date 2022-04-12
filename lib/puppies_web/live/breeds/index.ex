@@ -83,18 +83,36 @@ defmodule PuppiesWeb.BreedsIndexLive do
     ~H"""
       <div class="h-full max-w-7xl mx-auto px-4 py-6 sm:px-6 md:justify-start md:space-x-10 lg:px-8">
           <%= if @loading == false do %>
-              <div class='container mx-auto my-4 px-2 md:px-0 h-full'>
+              <div class='container mx-auto my-4 px-2 md:px-0 h-full' x-data="{ open: false }">
                 <div class='md:flex justify-between'>
                     <div class='flex'>
                         <div class="text-xl md:text-3xl">
                             <span class="capitalize">Breeds</span>.
                         </div>
                     </div>
-                    <div class="my-2">
-                      Autocomplete
+                    <div class="my-2 flex">
+                        <div>
+                          <div class="relative flex items-center">
+                            <input type="text" name="search" id="search" class="shadow-sm focus:ring-primary-500 focus:border-primary-500 block w-full pr-12 sm:text-sm border-gray-300 rounded" autocomplete="off">
+                          </div>
+                        </div>
+                        <button class="ml-2 inline-flex items-center px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-md shadow-sm text-white bg-primary-600 hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500" @click="open = ! open">Filter</button>
                     </div>
                 </div>
-                <span class="inline-flex items-center text-sm font-medium text-gray-900"> <%= length(@breeds) %> beautiful types of dogs.</span>
+                <div class="">
+                  <div class="text-sm font-medium text-gray-900"> <%= length(@breeds) %> beautiful types of dogs.</div>
+                </div>
+                <div
+                  class="p-2 my-2 border rounded bg-white"
+                  x-show="open"
+                  @click.outside="open = false"
+                  x-transition.opacity
+                  x-transition:enter.duration.500ms
+                  x-transition:leave.duration.400ms
+                  >
+
+                  Filter
+                </div>
                 <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 my-4">
                   <%= for breed <- @breeds do %>
                     <div class="relative rounded-lg  bg-white shadow-sm flex items-center space-x-3 hover:shadow-lg focus-within:ring-2 focus-within:ring-offset-2 focus-within:ring-primary-500">
