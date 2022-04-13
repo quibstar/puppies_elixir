@@ -164,7 +164,6 @@ defmodule Puppies.ES.ListingsSearch do
       }
     }
 
-    IO.inspect(body)
     Api.post("/listings/_search", body)
   end
 
@@ -204,5 +203,20 @@ defmodule Puppies.ES.ListingsSearch do
     {:ok, results} = query_state(state, (page - 1) * size, size)
     {:ok, res} = Jason.decode(results)
     %{matches: res["hits"]["hits"], count: res["hits"]["total"]["value"]}
+  end
+
+  def popular_breeds_aggregate() do
+    body = %{
+      size: 0,
+      aggs: %{
+        breeds: %{
+          terms: %{
+            field: "breeds_slug"
+          }
+        }
+      }
+    }
+
+    Api.post("/listings/_search", body)
   end
 end

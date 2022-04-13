@@ -7,6 +7,13 @@ defmodule Puppies.Breeds do
 
   alias Puppies.{Pagination, Utilities, Dogs.Breed}
 
+  def breeds_and_attributes() do
+    from(b in Breed,
+      preload: :attributes
+    )
+    |> Repo.all()
+  end
+
   def breeds_list() do
     Repo.all(
       from(b in Breed,

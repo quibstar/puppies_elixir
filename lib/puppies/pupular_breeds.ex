@@ -7,13 +7,13 @@ defmodule Puppies.PopularBreeds do
   alias Puppies.{Repo, PopularBreed}
 
   def daily_generation_of_most_popular do
-    {:ok, es_results} = Puppies.ES.BreedsSearch.popular_breeds_aggregate()
+    {:ok, es_results} = Puppies.ES.ListingsSearch.popular_breeds_aggregate()
     {:ok, to_map} = Jason.decode(es_results)
     breeds = to_map["aggregations"]["breeds"]["buckets"]
     Repo.delete_all(PopularBreed)
 
     Enum.each(breeds, fn breed ->
-      fetched_breed = Puppies.BreedsSearch.get_breed_by_slug(breed["key"])
+      fetched_breed = Puppies.Breeds.get_breed_by_slug(breed["key"])
 
       %PopularBreed{}
       |> PopularBreed.changeset(%{
