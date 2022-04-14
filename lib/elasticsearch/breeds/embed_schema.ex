@@ -7,7 +7,13 @@ defmodule Puppies.BreedsSearch do
     field(:size, :integer)
     field(:size_min, :integer, default: 1)
     field(:size_max, :integer, default: 5)
-    field(:kid_friendly, :integer)
+    field(:kid_friendly, :integer, default: 3)
+    field(:amount_of_shedding, :integer, default: 3)
+    field(:dog_friendly, :integer, default: 3)
+    field(:intelligence, :integer, default: 3)
+    field(:stranger_friendly, :integer, default: 3)
+    field(:tendency_to_bark_or_howl, :integer, default: 3)
+    field(:trainability, :integer, default: 3)
   end
 
   @doc false

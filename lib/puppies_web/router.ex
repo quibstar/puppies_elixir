@@ -98,6 +98,8 @@ defmodule PuppiesWeb.Router do
     # breeds
     live("/breeds", BreedsIndexLive)
     live("/breeds/:slug", BreedsShowLive)
+    live("/match-maker", BreedsMatchMakerLive)
+
     # listings
     live("/listings/:listing_id", ListingShow)
 
