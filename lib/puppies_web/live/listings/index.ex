@@ -62,31 +62,31 @@ defmodule PuppiesWeb.ListingsIndex do
                   <tbody class="divide-y divide-gray-200">
 
                   <%= for listing <- @listings do %>
-                      <tr>
-                        <td class="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-gray-900 sm:pl-6 md:pl-0">
-                          <%= if !is_nil(Utilities.first_image(listing.photos)) do %>
-                            <%= img_tag Utilities.first_image(listing.photos), class: "inline-block h-10 w-10 rounded-full ring-2 ring-primary-500 ring-offset-1" %>
-                          <% end %>
-                          <%= live_patch listing.name, to: Routes.live_path(@socket, PuppiesWeb.ListingShow, listing.id), class: "ml-2 text-primary-600 hover:text-primary-900" %>
-                        </td>
-                        <td class="whitespace-nowrap py-4 px-3 text-sm text-gray-500">$<%= listing.price %>.00</td>
-                        <td class="whitespace-nowrap py-4 px-3 text-sm text-green-500 capitalize"><%= listing.status %></td>
-                        <td class="whitespace-nowrap py-4 px-3 text-sm text-gray-500">
-                          <%= if listing.views > 0 do %>
-                            <span x-on:click.debounce="show_drawer = !show_drawer" class="cursor-pointer underline" phx-click="choose-listing" phx-value-id={listing.id} phx-target={@myself} >
-                              <%= listing.views %>
-                            </span>
-                          <% else %>
+                    <tr>
+                      <td class="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-gray-900 sm:pl-6 md:pl-0">
+                        <%= if !is_nil(Utilities.first_image(listing.photos)) do %>
+                          <%= img_tag Utilities.first_image(listing.photos), class: "inline-block h-10 w-10 rounded-full ring-2 ring-primary-500 ring-offset-1" %>
+                        <% end %>
+                        <%= live_patch listing.name, to: Routes.live_path(@socket, PuppiesWeb.ListingShow, listing.id), class: "ml-2 text-primary-600 hover:text-primary-900" %>
+                      </td>
+                      <td class="whitespace-nowrap py-4 px-3 text-sm text-gray-500">$<%= listing.price %>.00</td>
+                      <td class="whitespace-nowrap py-4 px-3 text-sm text-green-500 capitalize"><%= listing.status %></td>
+                      <td class="whitespace-nowrap py-4 px-3 text-sm text-gray-500">
+                        <%= if listing.views > 0 do %>
+                          <span x-on:click.debounce="show_drawer = !show_drawer" class="cursor-pointer underline" phx-click="choose-listing" phx-value-id={listing.id} phx-target={@myself} >
                             <%= listing.views %>
-                          <% end %>
-                        </td>
-                        <td class="whitespace-nowrap py-4 px-3 text-sm text-gray-500">
-                          0
-                        </td>
-                        <td class="relative whitespace-nowrap py-4 pl-3 pr-4 text-right text-sm font-medium sm:pr-6 md:pr-0">
-                          <%= live_patch "Edit Listing", to: Routes.live_path(@socket, PuppiesWeb.ListingsEdit, listing.id), class: "text-primary-600 hover:text-primary-900" %>
-                        </td>
-                      </tr>
+                          </span>
+                        <% else %>
+                          <%= listing.views %>
+                        <% end %>
+                      </td>
+                      <td class="whitespace-nowrap py-4 px-3 text-sm text-gray-500">
+                        0
+                      </td>
+                      <td class="relative whitespace-nowrap py-4 pl-3 pr-4 text-right text-sm font-medium sm:pr-6 md:pr-0">
+                        <%= live_patch "Edit Listing", to: Routes.live_path(@socket, PuppiesWeb.ListingsEdit, listing.id), class: "text-primary-600 hover:text-primary-900" %>
+                      </td>
+                    </tr>
                   <% end %>
                 </tbody>
               </table>

@@ -21,8 +21,66 @@ defmodule PuppiesWeb.BusinessPageLive do
 
     business = Businesses.get_business_by_slug(params["slug"])
 
-    listings = Listings.get_listings_by_user_id(business.user_id)
-    {:ok, assign(socket, user: user, loading: false, business: business, listings: listings)}
+    data = Listings.get_listings_by_user_id(business.user_id)
+
+    {:ok,
+     assign(socket,
+       user: user,
+       loading: false,
+       business: business,
+       listings: data.listings,
+       pagination: Map.get(data, :pagination, %{count: 0}),
+       match: %{
+         limit: "12",
+         page: "1"
+       }
+     )}
+  end
+
+  def handle_event("page-to", %{"page_id" => page_id}, socket) do
+    match =
+      socket.assigns.match
+      |> Map.put(:page, page_id)
+
+    {:noreply,
+     socket
+     |> push_redirect(
+       to:
+         Routes.live_path(
+           socket,
+           PuppiesWeb.BusinessPageLive,
+           socket.assigns.business.slug,
+           match: match
+         )
+     )}
+  end
+
+  def handle_params(params, _uri, socket) do
+    if params["match"] && socket.assigns.loading == false do
+      params = params["match"]
+
+      data =
+        Listings.get_listings_by_user_id(socket.assigns.business.user_id, %{
+          limit: params["limit"],
+          page: params["page"],
+          number_of_links: 7
+        })
+
+      socket =
+        assign(
+          socket,
+          listings: data.listings,
+          match: %{
+            limit: "12",
+            page: params["page"]
+          },
+          pagination: data.pagination
+        )
+
+      {:noreply, socket}
+    else
+      {:noreply, socket}
+    end
   end
 
   def render(assigns) do
@@ -61,6 +119,10 @@ defmodule PuppiesWeb.BusinessPageLive do
                   </div>
                 <% end %>
               </div>
+
+              <%= if @pagination.count > 12 do %>
+                <%= PuppiesWeb.PaginationComponent.render(%{pagination: @pagination, socket: @socket, page: @match.page, limit: @match.limit}) %>
+              <% end %>
 
               <div class="font-bold text-xl text-gray-900 sm:text-2xl">Reviews</div>
               <%= live_component  PuppiesWeb.Review, id: "review", rating: 5 %>

@@ -6,7 +6,7 @@ defmodule Puppies.Listings do
   import Ecto.Query, warn: false
   alias Puppies.Repo
 
-  alias Puppies.{Listings.Listing, Utilities}
+  alias Puppies.{Listings.Listing, Pagination, Utilities}
 
   @doc """
   Returns the list of listings.
@@ -56,15 +56,50 @@ defmodule Puppies.Listings do
     Repo.one(q)
   end
 
-  def get_listings_by_user_id(id) do
-    q =
-      from(b in Listing,
-        where: b.user_id == ^id,
-        order_by: [desc: :views]
-      )
-      |> preload([:breeds, :photos, :listing_breeds])
+  # def get_listings_by_user_id(id) do
+  #   q =
+  #     from(b in Listing,
+  #       where: b.user_id == ^id,
+  #       order_by: [desc: :views]
+  #     )
+  #     |> preload([:breeds, :photos, :listing_breeds])
 
-    Repo.all(q)
+  #   Repo.all(q)
+  # end
+
+  def get_listings_by_user_id(
+        id,
+        opt \\ %{limit: "12", page: "1", number_of_links: 7}
+      ) do
+    q =
+      from(l in Listing,
+        where: l.user_id == ^id
+      )
+
+    listings =
+      preload(q)
+      |> limit_offset(opt.limit, Utilities.set_offset(opt.page, opt.limit))
+      |> Repo.all()
+
+    paginate =
+      Repo.aggregate(
+        q,
+        :count,
+        :id
+      )
+
+    pagination = Pagination.pagination(paginate, opt.page, opt.limit, opt.number_of_links)
+
+    %{listings: listings, pagination: pagination}
+  end
+
+  def preload(q) do
+    from([b] in q, preload: [:breeds, :photos, :listing_breeds])
+  end
+
+  def limit_offset(q, limit, offset) do
+    limit = Utilities.convert_string_to_integer(limit)
+    from([b] in q, limit: ^limit, offset: ^offset)
   end
 
   def get_listing_by_user_id(id) do
