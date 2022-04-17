@@ -171,4 +171,43 @@ defmodule Puppies.Utilities do
       nil
     end
   end
+
+  def check_for_image?(slug) do
+    url = File.cwd!() <> "/priv/static/" <> slug
+    File.exists?(url)
+  end
+
+  # Stats
+
+  def members(views) do
+    Enum.reduce(views, 0, fn view, acc ->
+      if !is_nil(view.user_id) do
+        acc + 1
+      else
+        acc
+      end
+    end)
+  end
+
+  def organic(views) do
+    Enum.reduce(views, 0, fn view, acc ->
+      if is_nil(view.user_id) do
+        acc + 1
+      else
+        acc
+      end
+    end)
+  end
+
+  def unique(views) do
+    Enum.reduce(views, 0, fn view, acc ->
+      if view.unique do
+        acc + 1
+      else
+        acc
+      end
+    end)
+  end
+
+  #
 end

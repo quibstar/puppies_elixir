@@ -12,17 +12,9 @@ defmodule PuppiesWeb.ListingsForm do
         lst = Listings.get_listing!(assigns.listing_id)
         changeset = Listings.change_listing(lst)
 
-        max_uploads =
-          if 6 - length(lst.photos) > 0 do
-            6 - length(lst.photos)
-          else
-            0
-          end
-
         %{
           changeset: changeset,
           selected_breeds: Map.get(lst, :breeds, []),
-          max_uploads: max_uploads,
           photos: lst.photos
         }
       end
@@ -36,7 +28,7 @@ defmodule PuppiesWeb.ListingsForm do
       |> assign(:selected_breeds, results.selected_breeds)
       |> assign(:breed, "")
       |> assign(:uploaded_files, [])
-      |> allow_upload(:images, accept: ~w(.jpg .jpeg .png), max_entries: results.max_uploads)
+      |> allow_upload(:images, accept: ~w(.jpg .jpeg .png), max_entries: 6)
       |> assign(:remove_photos, [])
 
     {:ok, socket}
@@ -324,47 +316,51 @@ defmodule PuppiesWeb.ListingsForm do
 
                 <Divider.divider title="Photos" />
 
-                <div class="text-primary-600 text-base overflow-hidden">
-                  Drag and drop up to 6 photos.
-                </div>
+                <%= unless length(@current_photos) + length(@uploads.images.entries) >= 6 do %>
+                  <div class="text-primary-600 text-base overflow-hidden">
+                    Drag and drop up to 6 photos.
+                  </div>
 
-                <%= for err <- upload_errors(@uploads.images) do %>
-                  <AlertError.error>
-                    <%= error_to_string(err) %>
-                  </AlertError.error>
+                  <%= for err <- upload_errors(@uploads.images) do %>
+                    <AlertError.error>
+                      <%= error_to_string(err) %>
+                    </AlertError.error>
+                  <% end %>
+
+                  <div class="my-4 flex justify-center px-6 pt-5 pb-6 border-2 border-gray-300 border-dashed rounded-md" phx-drop-target={@uploads.images.ref}>
+                    <div class="space-y-1 text-center">
+                      <svg class="mx-auto h-12 w-12 text-gray-400" stroke="currentColor" fill="none" viewBox="0 0 48 48" aria-hidden="true">
+                        <path d="M28 8H12a4 4 0 00-4 4v20m32-12v8m0 0v8a4 4 0 01-4 4H12a4 4 0 01-4-4v-4m32-4l-3.172-3.172a4 4 0 00-5.656 0L28 28M8 32l9.172-9.172a4 4 0 015.656 0L28 28m0 0l4 4m4-24h8m-4-4v8m-12 4h.02" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+                      </svg>
+                      <div class="flex text-sm text-gray-600">
+                        <label  class="relative overflow-hidden underline bold cursor-pointer">
+                          <span>Upload a file</span>
+                            <div  class="h-0 overflow-hidden absolute">
+                              <%= live_file_input @uploads.images %>
+                            </div>
+                        </label>
+                        <p class="pl-1">or drag and drop</p>
+                      </div>
+                      <p class="text-xs text-gray-500">PNG, JPG, GIF up to 10MB</p>
+                    </div>
+                  </div>
                 <% end %>
 
-                <div class="my-4 flex justify-center px-6 pt-5 pb-6 border-2 border-gray-300 border-dashed rounded-md" phx-drop-target={@uploads.images.ref}>
-                  <div class="space-y-1 text-center">
-                    <svg class="mx-auto h-12 w-12 text-gray-400" stroke="currentColor" fill="none" viewBox="0 0 48 48" aria-hidden="true">
-                      <path d="M28 8H12a4 4 0 00-4 4v20m32-12v8m0 0v8a4 4 0 01-4 4H12a4 4 0 01-4-4v-4m32-4l-3.172-3.172a4 4 0 00-5.656 0L28 28M8 32l9.172-9.172a4 4 0 015.656 0L28 28m0 0l4 4m4-24h8m-4-4v8m-12 4h.02" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
-                    </svg>
-                    <div class="flex text-sm text-gray-600">
-                      <label  class="relative overflow-hidden underline bold cursor-pointer">
-                        <span>Upload a file</span>
-                          <div  class="h-0 overflow-hidden absolute">
-                            <%= live_file_input @uploads.images %>
-                          </div>
-                      </label>
-                      <p class="pl-1">or drag and drop</p>
-                    </div>
-                    <p class="text-xs text-gray-500">PNG, JPG, GIF up to 10MB</p>
-                  </div>
-                </div>
                 <div class="mt-4">
                   <div class="grid grid-cols-2 md:grid-cols-6 gap-4">
-                    <%= for photo <- @current_photos do %>
-                    <%= if  photo.delete == false do %>
-                      <div>
-                        <div class="my-4 mx-auto border-2 border-dashed rounded w-24 h-24 flex justify-center items-center overflow-hidden">
-                          <%= img_tag( photo.url, class: "object-cover w-full h-full") %>
-                        </div>
-                        <div class="flex flex-col justify-center ">
-                          <button type="button" class="text-sm underline uppercase text-gray-500" phx-click="remove-saved-image" phx-value-photo_id={photo.id} phx-target={@myself} >Remove Image</button>
-                        </div>
-                        </div>
+
+                      <%= for photo <- @current_photos do %>
+                        <%= if  photo.delete == false do %>
+                          <div>
+                            <div class="my-4 mx-auto border-2 border-dashed rounded w-24 h-24 flex justify-center items-center overflow-hidden">
+                              <%= img_tag( photo.url, class: "object-cover w-full h-full") %>
+                            </div>
+                            <div class="flex flex-col justify-center ">
+                              <button type="button" class="text-sm underline uppercase text-gray-500" phx-click="remove-saved-image" phx-value-photo_id={photo.id} phx-target={@myself} >Remove Image</button>
+                            </div>
+                          </div>
+                        <% end %>
                       <% end %>
-                    <% end %>
 
                     <%= for entry <- @uploads.images.entries do  %>
                       <div>

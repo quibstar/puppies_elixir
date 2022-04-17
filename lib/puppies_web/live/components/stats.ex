@@ -3,7 +3,7 @@ defmodule PuppiesWeb.Stats do
   Loading component
   """
   use PuppiesWeb, :live_component
-  alias Puppies.Views
+  alias Puppies.{Views, Utilities}
 
   def mount(_, socket) do
     {:ok, assign(socket, listing: nil, loading: true)}
@@ -33,36 +33,6 @@ defmodule PuppiesWeb.Stats do
      )}
   end
 
-  def members(views) do
-    Enum.reduce(views, 0, fn view, acc ->
-      if !is_nil(view.user_id) do
-        acc + 1
-      else
-        acc
-      end
-    end)
-  end
-
-  def organic(views) do
-    Enum.reduce(views, 0, fn view, acc ->
-      if is_nil(view.user_id) do
-        acc + 1
-      else
-        acc
-      end
-    end)
-  end
-
-  def unique(views) do
-    Enum.reduce(views, 0, fn view, acc ->
-      if view.unique do
-        acc + 1
-      else
-        acc
-      end
-    end)
-  end
-
   @spec render(any) :: Phoenix.LiveView.Rendered.t()
   def render(assigns) do
     ~H"""
@@ -85,17 +55,17 @@ defmodule PuppiesWeb.Stats do
 
                     <div>
                       <dt class="text-sm font-medium text-gray-500 truncate">Unique Views</dt>
-                      <dd class="mt-1 text-2xl font-semibold text-gray-900"><%= unique(@views) %></dd>
+                      <dd class="mt-1 text-2xl font-semibold text-gray-900"><%= Utilities.unique(@views) %></dd>
                     </div>
 
                     <div>
                       <dt class="text-sm font-medium text-gray-500 truncate">Member Views</dt>
-                      <dd class="mt-1 text-2xl font-semibold text-gray-900"><%= members(@views) %></dd>
+                      <dd class="mt-1 text-2xl font-semibold text-gray-900"><%= Utilities.members(@views) %></dd>
                     </div>
 
                     <div>
                       <dt class="text-sm font-medium text-gray-500 truncate">Non Registered Views</dt>
-                      <dd class="mt-1 text-2xl font-semibold text-gray-900"><%= organic(@views) %></dd>
+                      <dd class="mt-1 text-2xl font-semibold text-gray-900"><%= Utilities.organic(@views) %></dd>
                     </div>
 
                   </dl>

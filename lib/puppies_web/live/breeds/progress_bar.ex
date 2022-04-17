@@ -7,7 +7,7 @@ defmodule PuppiesWeb.ProgressBarComponent do
   def render(assigns) do
     ~H"""
       <div class="">
-        <div class="text-gray-500"><%= @title %></div>
+        <div class="text-gray-500 text-xs"><%= @title %></div>
         <div class="flex justify-between text-xs text-gray-400">
           <div><%= @lower_bound %></div>
           <div><%= @upper_bound %></div>

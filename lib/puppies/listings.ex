@@ -6,7 +6,7 @@ defmodule Puppies.Listings do
   import Ecto.Query, warn: false
   alias Puppies.Repo
 
-  alias Puppies.Listings.Listing
+  alias Puppies.{Listings.Listing, Utilities}
 
   @doc """
   Returns the list of listings.

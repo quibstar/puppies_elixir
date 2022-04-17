@@ -31,19 +31,14 @@ defmodule PuppiesWeb.BusinessPageLive do
         <%= if @loading do %>
           <%= live_component PuppiesWeb.LoadingComponent, id: "listing-loading" %>
         <% else %>
-            <div class="flex">
-              <%= img_tag @business.photo.url, class: " w-16 h-16 rounded-full overflow-hidden object-cover block ring-2 ring-yellow-500 ring-offset-1", alt: "Profile image"%>
-              <div class="ml-4">
-                <h3 class="font-bold text-xl text-gray-900 sm:text-2xl"><%= @business.name %></h3>
-                <div class="inline-block text-sm text-gray-500">Specializing in: </div>
-                <div class="inline-block">
-                  <%= for breed <- @business.breeds do %>
-                    <%= live_redirect breed.name, to: Routes.live_path(@socket, PuppiesWeb.BreedsShowLive, breed.slug), class: "inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-primary-100 text-primary-800"%>
-                  <% end %>
-                </div>
-              </div>
+          <div class="md:grid md:grid-cols-3 md:gap-4">
+            <div>
+              <%= live_component  PuppiesWeb.BusinessCard, id: "breeder_details",  user: @user, business: @business %>
+              <%= live_component  PuppiesWeb.ReviewStats, id: "listing_reviews" %>
+              <%= live_component  PuppiesWeb.ContactCTA, id: "contact_cta",  user: @user, business_or_listing: @business %>
             </div>
-              <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 my-4">
+            <div class="col-span-2 space-y-4">
+              <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
                 <%= for listing <- @listings do %>
                   <div class='relative col-span-1 bg-white rounded-lg shadow  overflow-hidden'>
                     <%= if listing.photos != [] do %>
@@ -66,6 +61,16 @@ defmodule PuppiesWeb.BusinessPageLive do
                   </div>
                 <% end %>
               </div>
+
+              <div class="font-bold text-xl text-gray-900 sm:text-2xl">Reviews</div>
+              <%= live_component  PuppiesWeb.Review, id: "review", rating: 5 %>
+              <%= live_component  PuppiesWeb.Review, id: "review-1", rating: 4 %>
+              <%= live_component  PuppiesWeb.Review, id: "review-2", rating: 3 %>
+              <%= live_component  PuppiesWeb.Review, id: "review-3", rating: 4 %>
+              <%= live_component  PuppiesWeb.Review, id: "review-4", rating: 1 %>
+            </div>
+          </div>
+
         <% end %>
       </div>
     """

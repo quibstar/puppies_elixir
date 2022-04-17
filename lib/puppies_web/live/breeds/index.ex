@@ -110,7 +110,11 @@ defmodule PuppiesWeb.BreedsIndexLive do
                   <%= for breed <- @breeds do %>
                     <div class="relative rounded-lg  bg-white shadow-sm flex items-center space-x-3 hover:shadow-lg focus-within:ring-2 focus-within:ring-offset-2 focus-within:ring-primary-500">
                       <div class="flex-shrink-0 rounded-tl-lg rounded-bl-lg overflow-hidden">
-                        <img class="h-16 w-16" src={"/uploads/dogs/#{Enum.random(1..16)}.jpg"} alt="">
+                        <%= if Puppies.Utilities.check_for_image?("/uploads/breeds/#{breed.slug}.jpg") do %>
+                          <img class="h-16 w-16 object-cover" src={"/uploads/breeds/#{breed.slug}.jpg"} alt="">
+                        <% else %>
+                          <img class="h-16 w-16" src={"/uploads/dogs/#{Enum.random(1..16)}.jpg"} alt="">
+                        <% end %>
                       </div>
                       <div class="flex-1 min-w-0">
                         <%= live_redirect to: Routes.live_path(@socket, PuppiesWeb.BreedsShowLive, breed.slug) do %>

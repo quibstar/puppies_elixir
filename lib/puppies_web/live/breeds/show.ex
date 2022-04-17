@@ -50,7 +50,10 @@ defmodule PuppiesWeb.BreedsShowLive do
     {:noreply,
      socket
      |> push_redirect(
-       to: Routes.live_path(socket, PuppiesWeb.BreedsShowLive, socket.assigns.breed, match: match)
+       to:
+         Routes.live_path(socket, PuppiesWeb.BreedsShowLive, socket.assigns.breed.slug,
+           match: match
+         )
      )}
   end
 
@@ -102,17 +105,48 @@ defmodule PuppiesWeb.BreedsShowLive do
           <%= if @loading == false do %>
               <div class='container mx-auto my-4 px-2 md:px-0 h-full'>
                   <%= if length(@matches) > 0 do %>
-                      <div class='md:flex justify-between'>
-                          <div class='flex'>
-                              <div class="text-xl md:text-3xl">
-                                 <span class="capitalize"><%= @breed.name %></span>.
-                              </div>
-                          </div>
-                          <div class="my-2 flex">
-                            <button class="inline-flex items-center px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-md shadow-sm text-white bg-primary-600 hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500" @click="open = ! open">View Traits</button>
-                          </div>
+                    <div class="md:grid md:grid-cols-3 md:gap-4">
+                      <div class="text-center space-y-4 bg-white px-6 py-9 border rounded">
+                        <img class="mx-auto w-44 h-44 rounded-full overflow-hidden object-cover block ring-2 ring-primary-500 ring-offset-1" src={"/uploads/breeds/#{@breed.slug}.jpg"} alt="">
+                        <h3 class="font-bold text-xl text-gray-900 sm:text-2xl"><%= @breed.name %></h3>
                       </div>
-                      <span class="inline-flex items-center px-2.5 py-0.5 rounded-md text-sm font-medium bg-primary-500 text-white"> <%= @pagination.count %> available! </span>
+                      <div class="bg-white px-6 py-9 border rounded col-span-2">
+                      	<div class="text-gray-600">
+                          <div class="py-2 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+                            <div class="text-sm font-medium text-gray-500">Breed Group</div>
+                            <div class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2"><%= @breed.attributes.dog_breed_group %></div>
+                          </div>
+                          <div class="py-2 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+                            <div class="text-sm font-medium text-gray-500">Size</div>
+                            <div class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">Small to Medium</div>
+                          </div>
+                          <div class="py-2 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+                            <div class="text-sm font-medium text-gray-500">Life span</div>
+                            <div class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
+                              <%= @breed.attributes.life_span %>
+                            </div>
+                          </div>
+                          <div class="py-2 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+                            <div class="text-sm font-medium text-gray-500">Height</div>
+                            <div class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
+                              <%= if is_nil(@breed.attributes.height), do: "N/A", else: @breed.attributes.height %>
+                            </div>
+                          </div>
+                          <div class="py-2 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+                            <div class="text-sm font-medium text-gray-500">Weight</div>
+                            <div class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
+                              <%= if is_nil(@breed.attributes.weight), do: "N/A", else: @breed.attributes.weight %>
+                            </div>
+                          </div>
+                          <div class="py-2 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+                            <div class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
+                              <button class="cursor-pointer underline" @click="open = ! open">View Traits</button>
+                            </div>
+                          </div>
+                        </div>
+
+                        </div>
+                    </div>
 
                       <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 my-4 p-4 bg-white rounded border"
                         x-show="open"
@@ -158,6 +192,7 @@ defmodule PuppiesWeb.BreedsShowLive do
 
                   <% end %>
                   <%= if @pagination.count > 0 do %>
+                    <span class="mt-4 inline-flex items-center px-2.5 py-0.5 rounded-md text-sm font-medium bg-primary-500 text-white"> <%= @pagination.count %> available! </span>
                     <div class="grid grid-cols-2 sm:grid-cols-3 gap-4 my-4">
                         <%= for listing <- @matches do %>
                           <%= live_component  PuppiesWeb.Card, id: listing.id, listing: listing, user: @user %>
@@ -167,6 +202,7 @@ defmodule PuppiesWeb.BreedsShowLive do
                         <%= PuppiesWeb.PaginationComponent.render(%{pagination: @pagination, socket: @socket, page: @match.page, limit: @match.limit}) %>
                     <% end %>
 
+                    <%= unless is_nil(@user) do %>
                       <div class="bg-primary-700 rounded">
                         <div class="max-w-2xl mx-auto text-center py-16 px-4 sm:py-20 sm:px-6 lg:px-8">
                             <h2 class="text-3xl font-extrabold text-white sm:text-4xl">
@@ -175,7 +211,8 @@ defmodule PuppiesWeb.BreedsShowLive do
                             <p class="mt-4 text-lg leading-6 text-primary-200">There is <%= @pagination.count %> <%= @breed.name %> waiting for you.</p>
                             <%= link "Sign up for free", to: Routes.user_registration_path(@socket, :new), class: "mt-8 w-full inline-flex items-center justify-center px-5 py-3 border border-transparent text-base font-medium rounded-md text-primary-600 bg-white hover:bg-primary-50 sm:w-auto" %>
                         </div>
-                    </div>
+                      </div>
+                    <% end %>
 
                   <% else %>
                     <div class="h-full flex justify-center items-center mx-auto">

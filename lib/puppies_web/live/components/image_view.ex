@@ -4,7 +4,7 @@ defmodule PuppiesWeb.ImageViewer do
   def render(assigns) do
     ~H"""
       <div
-      x-data="{ currentPhoto: '{@current_photo}', photoGallery: false  }"
+      x-data="{ currentPhoto: '{@current_photo}', photoGallery: false }"
       class="mt-4 md:mt-0 md:col-span-2 md:flex relative overflow-hidden"
       >
         <div @click="getCurrentIndexAndSetPrevNext"  x-on:click="photoGallery = ! photoGallery" id="photo-view" class="mr-2 h-64 md:h-full w-full bg-cover bg-center rounded cursor-pointer" style={"background-image: url(#{@current_photo});"}></div>

@@ -19,9 +19,7 @@ defmodule PuppiesWeb.BreedsMatchMakerLive do
         changeset: changeset,
         loading: false,
         breeds: [],
-        page_title: "Breeds",
-        width: 100,
-        left: 0
+        page_title: "Breeds"
       )
 
     {:ok, socket}
@@ -43,11 +41,7 @@ defmodule PuppiesWeb.BreedsMatchMakerLive do
       assign(
         socket,
         changeset: changeset,
-        breeds: breeds,
-        left: (String.to_integer(breeds_search["size_min"]) - 1) * 25,
-        width:
-          (String.to_integer(breeds_search["size_max"]) -
-             String.to_integer(breeds_search["size_min"])) * 25
+        breeds: breeds
       )
 
     {:noreply, socket}
@@ -67,11 +61,11 @@ defmodule PuppiesWeb.BreedsMatchMakerLive do
                 </div>
                 <div>
                   <div class="text-gray-900">
-                  Better results will show up at the top of the page.
+                    Let's find that new friend!
                   </div>
                 </div>
                 <.form let={f} for={@changeset} phx-change="change" >
-                  <%= live_component PuppiesWeb.FilterFormComponent, id: "filter", f: f, changeset: @changeset, left: @left, width: @width %>
+                  <%= live_component PuppiesWeb.FilterFormComponent, id: "filter", f: f, changeset: @changeset %>
                 </.form>
                 <%= unless @breeds == [] do %>
                   <span class="text-sm border border-primary-600 rounded-full bg-primary-500 text-white px-1"> <%= length(@breeds) %></span> results
@@ -82,7 +76,11 @@ defmodule PuppiesWeb.BreedsMatchMakerLive do
                     <%= live_redirect to: Routes.live_path(@socket, PuppiesWeb.BreedsShowLive, breed.slug) do %>
                       <div class="overflow-hidden relative rounded-lg bg-white shadow-sm hover:shadow-lg focus-within:ring-2 focus-within:ring-offset-2 focus-within:ring-primary-500">
                         <div class="">
-                          <img class="h-auto w-full" src={"/uploads/dogs/#{Enum.random(1..16)}.jpg"} alt="">
+                          <%= if Puppies.Utilities.check_for_image?("/uploads/breeds/#{breed.slug}.jpg") do %>
+                            <img class="w-full h-52 object-cover" src={"/uploads/breeds/#{breed.slug}.jpg"} alt="">
+                          <% else %>
+                            <img class="w-full h-52 object-cover" src={"/uploads/dogs/#{Enum.random(1..16)}.jpg"} alt="">
+                          <% end %>
                         </div>
                         <div class="p-4">
 

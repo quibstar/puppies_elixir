@@ -86,6 +86,7 @@ defmodule Puppies.ES.Breeds do
         properties: %{
           name: %{type: :text},
           slug: %{type: :text},
+          group: %{type: :text},
           size: %{type: :integer},
           dog_friendly: %{type: :integer},
           kid_friendly: %{type: :integer},

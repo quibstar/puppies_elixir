@@ -1,6 +1,20 @@
 defmodule PuppiesWeb.FilterFormComponent do
   use PuppiesWeb, :live_component
 
+  def set_min_percent(params, key) do
+    min = Map.get(params, key, "1")
+
+    (String.to_integer(min) - 1) * 25
+  end
+
+  def set_max_percent(params, min_key, max_key) do
+    min = Map.get(params, min_key, "1")
+    max = Map.get(params, max_key, "5")
+
+    (String.to_integer(max) -
+       String.to_integer(min)) * 25
+  end
+
   def render(assigns) do
     ~H"""
       <div>
@@ -14,7 +28,7 @@ defmodule PuppiesWeb.FilterFormComponent do
             <div class="relative mt-5">
               <%= range_input @f, :size_min, max: 5, min: 1, class: "absolute left-0 bottom-0 bg-transparent w-full h-2 appearance-none rounded" %>
               <%= range_input @f, :size_max, max: 5, min: 1, class: "absolute left-0 bottom-0 bg-primary-300 w-full h-2 appearance-none rounded" %>
-              <div class="absolute left-0 bottom-0 bg-primary-400  h-2 rounded" style={"left: #{@left}%; width: #{@width}%;"}></div>
+             <div class="absolute left-0 bottom-0 bg-primary-600  h-2 rounded" style={"left: #{set_min_percent(assigns.changeset.params, "size_min")}%; width: #{set_max_percent(assigns.changeset.params, "size_min", "size_max")}%;"}></div>
             </div>
           </div>
 

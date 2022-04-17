@@ -35,7 +35,11 @@ defmodule Puppies.Repo.Migrations.CreateBreedAttributes do
       add(:health_and_grooming_needs, :integer)
       add(:all_around_friendliness, :integer)
       add(:adaptability, :integer)
-
+      add(:dog_breed_group, :string)
+      add(:height, :string)
+      add(:weight, :string)
+      add(:life_span, :string)
+      add(:url, :string)
       timestamps()
     end
   end

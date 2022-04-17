@@ -34,6 +34,11 @@ defmodule Puppies.BreedAttribute do
     field(:tolerates_cold_weather, :integer)
     field(:tolerates_hot_weather, :integer)
     field(:wanderlust_potential, :integer)
+    field(:dog_breed_group, :string)
+    field(:height, :string)
+    field(:weight, :string)
+    field(:life_span, :string)
+    field(:url, :string)
     belongs_to(:breed, Puppies.Dogs.Breed)
 
     timestamps()
@@ -74,7 +79,12 @@ defmodule Puppies.BreedAttribute do
       :trainability,
       :health_and_grooming_needs,
       :all_around_friendliness,
-      :adaptability
+      :adaptability,
+      :dog_breed_group,
+      :height,
+      :weight,
+      :life_span,
+      :url
     ])
   end
 end

@@ -20,7 +20,7 @@ defmodule PuppiesWeb.Endpoint do
     at: "/",
     from: :puppies,
     gzip: false,
-    only: ~w(assets fonts images favicon.ico robots.txt uploads business dogs)
+    only: ~w(assets fonts images favicon.ico robots.txt uploads business dogs breeds)
   )
 
   # Code reloading can be explicitly enabled under the
