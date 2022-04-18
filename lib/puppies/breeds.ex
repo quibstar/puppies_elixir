@@ -52,7 +52,7 @@ defmodule Puppies.Breeds do
 
   def get_breed(
         slug,
-        opt \\ %{limit: "12", page: "1", sort: "reputation_level", number_of_links: 7}
+        opt \\ %{limit: "12", page: "1", sort: "views", number_of_links: 7}
       ) do
     q =
       from(l in Puppies.Listings.Listing,

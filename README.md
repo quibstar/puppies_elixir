@@ -1,67 +1,8 @@
 # Puppies remake for fun
 
-# Users
+### Review's
 
-- first name
-- last name
-- email
-- status
-
-# Business/Kennel name
-
-- name
-- website
-- location
-- phone
-- breeds available
-- description
-- federal license
-- state license
-- profile photo
-
-# Listing
-
-- Name
-- DOB or Expected DOB
-- Breed(s) [array]
-- Price
-- Sex
-- Designer, PureBread
-- Profile image
-- Other images
-- Coat
-- characteristics [Champion Sired
-  Show Quality
-  Champion Bloodline
-  Registered
-  Registrable
-  Current Vaccinations
-  Veterinary Exam
-  Health Certificate
-  Health Guarantee
-  Pedigree
-  Hypoallergenic
-  Microchip]
-- delivery [onsite, pickup, shipped]
-- requirements
-- limitations
-- status
-
-# Breed
-
-- Name
-- category
-
-# Search
-
-Params
-
-- State
-- Breed
-
-Filters
-
-- Sex
-- Designer, PureBread
-- Price Range
-- Age
+- [ ] Lister marks listing as sold,
+- [ ] we send an email to the user
+- [ ] Buyer hits the email link, signs up, and the listing is transferred to the user.
+- [ ] The new user can write a review.

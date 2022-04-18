@@ -53,8 +53,6 @@ defmodule PuppiesWeb.SearchLive do
           search_by: "state",
           matches: [],
           pagination: Puppies.Pagination.pagination(0, "1", @size),
-          limit: @size,
-          page: "1",
           sort: :newest
         }
       )
@@ -127,11 +125,6 @@ defmodule PuppiesWeb.SearchLive do
        changeset: changeset,
        results: []
      )}
-  end
-
-  def handle_event("page-to", %{"page_id" => page_id}, socket) do
-    params = socket.assigns.params |> Map.put("page", page_id)
-    update_url(socket, params)
   end
 
   def handle_event("search", %{"search" => search}, socket) do
@@ -388,7 +381,7 @@ defmodule PuppiesWeb.SearchLive do
             <% end %>
           </div>
           <%= if @pagination.count > String.to_integer(@params["limit"]) do %>
-            <%= PuppiesWeb.PaginationComponent.render(%{pagination: @pagination, socket: @socket, page: @params["page"], limit: @params["limit"]}) %>
+            <%= live_component PuppiesWeb.SearchPaginationComponent, id: "pagination", pagination: @pagination, socket: @socket, page: @pagination.page, limit: @pagination.limit, end_point: PuppiesWeb.SearchLive, params:  @params%>
           <% end %>
         <% end %>
       </div>

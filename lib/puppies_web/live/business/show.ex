@@ -29,51 +29,25 @@ defmodule PuppiesWeb.BusinessPageLive do
        loading: false,
        business: business,
        listings: data.listings,
-       pagination: Map.get(data, :pagination, %{count: 0}),
-       match: %{
-         limit: "12",
-         page: "1"
-       }
-     )}
-  end
-
-  def handle_event("page-to", %{"page_id" => page_id}, socket) do
-    match =
-      socket.assigns.match
-      |> Map.put(:page, page_id)
-
-    {:noreply,
-     socket
-     |> push_redirect(
-       to:
-         Routes.live_path(
-           socket,
-           PuppiesWeb.BusinessPageLive,
-           socket.assigns.business.slug,
-           match: match
-         )
+       pagination: Map.get(data, :pagination, %{count: 0})
      )}
   end
 
   def handle_params(params, _uri, socket) do
-    if params["match"] && socket.assigns.loading == false do
-      params = params["match"]
-
+    if params["page"] && socket.assigns.loading == false do
       data =
         Listings.get_listings_by_user_id(socket.assigns.business.user_id, %{
-          limit: params["limit"],
+          limit: "12",
           page: params["page"],
           number_of_links: 7
         })
+
+      IO.inspect("WTF")
 
       socket =
         assign(
           socket,
           listings: data.listings,
-          match: %{
-            limit: "12",
-            page: params["page"]
-          },
           pagination: data.pagination
         )
 
@@ -121,7 +95,7 @@ defmodule PuppiesWeb.BusinessPageLive do
               </div>
 
               <%= if @pagination.count > 12 do %>
-                <%= PuppiesWeb.PaginationComponent.render(%{pagination: @pagination, socket: @socket, page: @match.page, limit: @match.limit}) %>
+                <%= live_component PuppiesWeb.PaginationComponent, id: "pagination", pagination: @pagination, socket: @socket, params: %{"page" => @pagination.page, "limit" => @pagination.limit}, end_point: PuppiesWeb.BusinessPageLive, segment_id: @business.slug %>
               <% end %>
 
               <div class="font-bold text-xl text-gray-900 sm:text-2xl">Reviews</div>

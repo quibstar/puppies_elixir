@@ -56,24 +56,11 @@ defmodule Puppies.Listings do
     Repo.one(q)
   end
 
-  # def get_listings_by_user_id(id) do
-  #   q =
-  #     from(b in Listing,
-  #       where: b.user_id == ^id,
-  #       order_by: [desc: :views]
-  #     )
-  #     |> preload([:breeds, :photos, :listing_breeds])
-
-  #   Repo.all(q)
-  # end
-
-  def get_listings_by_user_id(
-        id,
-        opt \\ %{limit: "12", page: "1", number_of_links: 7}
-      ) do
+  def get_listings_by_user_id(id, opt \\ %{limit: "12", page: "1", number_of_links: 7}) do
     q =
       from(l in Listing,
-        where: l.user_id == ^id
+        where: l.user_id == ^id,
+        order_by: [desc: :views]
       )
 
     listings =

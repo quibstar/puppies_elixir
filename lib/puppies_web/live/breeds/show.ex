@@ -28,12 +28,8 @@ defmodule PuppiesWeb.BreedsShowLive do
         user: user,
         loading: false,
         matches: Map.get(matches, :matches, []),
-        pagination: Map.get(matches, :pagination, %{count: 0}),
-        match: %{
-          limit: "12",
-          page: "1",
-          sort: :newest
-        },
+        pagination:
+          Map.get(matches, :pagination, %{pagination: %{count: 0, page: "1", limit: "12"}}),
         breed: breed,
         page_title: "Breed "
       )
@@ -41,62 +37,27 @@ defmodule PuppiesWeb.BreedsShowLive do
     {:ok, socket}
   end
 
-  def handle_event("page-to", %{"page_id" => page_id}, socket) do
-    match =
-      socket.assigns.match
-      |> Map.put(:page, page_id)
-      |> Map.put(:sort, socket.assigns.match.sort)
-
-    {:noreply,
-     socket
-     |> push_redirect(
-       to:
-         Routes.live_path(socket, PuppiesWeb.BreedsShowLive, socket.assigns.breed.slug,
-           match: match
-         )
-     )}
-  end
-
   def handle_params(params, _uri, socket) do
-    if params["match"] do
-      match = params["match"]
-      page = match["page"]
-      limit = match["limit"]
-      sort = match["sort"]
+    page = Map.get(params, "page", "1")
+    limit = Map.get(params, "limit", "12")
+    sort = Map.get(params, "sort", "view")
 
-      matches =
-        Breeds.get_breed(params["slug"], %{
-          limit: limit,
-          page: page,
-          sort: sort,
-          number_of_links: 7
-        })
+    breeds =
+      Breeds.get_breed(params["slug"], %{
+        limit: limit,
+        page: page,
+        sort: sort,
+        number_of_links: 7
+      })
 
-      updated_match =
-        if Map.has_key?(socket.assigns, "match") do
-          socket.assigns.match
-          |> Map.put(:page, page)
-          |> Map.put(:limit, limit)
-          |> Map.put(:sort, sort)
-        else
-          %{}
-          |> Map.put(:page, page)
-          |> Map.put(:limit, limit)
-          |> Map.put(:sort, sort)
-        end
+    socket =
+      assign(
+        socket,
+        matches: breeds.matches,
+        pagination: breeds.pagination
+      )
 
-      socket =
-        assign(
-          socket,
-          matches: Map.get(matches, :matches, []),
-          pagination: Map.get(matches, :pagination, %{count: 0}),
-          match: updated_match
-        )
-
-      {:noreply, socket}
-    else
-      {:noreply, socket}
-    end
+    {:noreply, socket}
   end
 
   def render(assigns) do
@@ -198,8 +159,8 @@ defmodule PuppiesWeb.BreedsShowLive do
                           <%= live_component  PuppiesWeb.Card, id: listing.id, listing: listing, user: @user %>
                         <% end %>
                     </div>
-                    <%= if @pagination.count > String.to_integer(@match.limit) do %>
-                        <%= PuppiesWeb.PaginationComponent.render(%{pagination: @pagination, socket: @socket, page: @match.page, limit: @match.limit}) %>
+                    <%= if @pagination.count > 12 do %>
+                        <%= live_component PuppiesWeb.PaginationComponent, id: "pagination", pagination: @pagination, socket: @socket, params: %{"page" => @pagination.page, "limit" => @pagination.limit}, end_point: PuppiesWeb.BreedsShowLive, segment_id: @breed.slug %>
                     <% end %>
 
                     <%= unless is_nil(@user) do %>

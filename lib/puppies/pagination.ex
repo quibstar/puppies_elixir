@@ -13,7 +13,9 @@ defmodule Puppies.Pagination do
       count: count,
       last_page: last_page,
       previous: previous,
-      next: next
+      next: next,
+      page: page,
+      limit: limit
     }
 
     number_of_links =

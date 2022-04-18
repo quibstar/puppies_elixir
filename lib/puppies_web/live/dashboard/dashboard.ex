@@ -20,7 +20,7 @@ defmodule PuppiesWeb.UserDashboardLive do
       end
 
     user = Accounts.get_user_business_and_listings(user.id)
-    listings = Listings.get_listings_by_user_id(user.id)
+    data = Listings.get_listings_by_user_id(user.id)
     viewing_history = Views.my_views(user.id)
 
     {:ok,
@@ -28,9 +28,42 @@ defmodule PuppiesWeb.UserDashboardLive do
        user: user,
        loading: false,
        business: user.business,
-       listings: listings,
-       viewing_history: viewing_history
+       listings: data.listings,
+       viewing_history: viewing_history.views,
+       view_pagination: Map.get(viewing_history, :pagination, %{count: 0}),
+       pagination: Map.get(data, :pagination, %{count: 0})
      )}
+  end
+
+  def handle_params(params, _uri, socket) do
+    if (params["page"] || params["view_page"]) && socket.assigns.loading == false do
+      data =
+        Listings.get_listings_by_user_id(socket.assigns.business.user_id, %{
+          limit: "12",
+          page: Map.get(params, "page", "1"),
+          number_of_links: 7
+        })
+
+      viewing_history =
+        Views.my_views(socket.assigns.business.user_id, %{
+          limit: "5",
+          page: Map.get(params, "view_page", "1"),
+          number_of_links: 7
+        })
+
+      socket =
+        assign(
+          socket,
+          viewing_history: viewing_history.views,
+          view_pagination: Map.get(viewing_history, :pagination, %{count: 0}),
+          listings: data.listings,
+          pagination: data.pagination
+        )
+
+      {:noreply, socket}
+    else
+      {:noreply, socket}
+    end
   end
 
   def render(assigns) do
@@ -94,20 +127,18 @@ defmodule PuppiesWeb.UserDashboardLive do
               </div>
             </section>
             <%= unless is_nil(@user.business) do %>
-              <%= live_component PuppiesWeb.ListingsIndex, id: "listing", listings: @listings, listing: nil %>
+              <%= live_component PuppiesWeb.ListingsIndex, id: "listing", listings: @listings, listing: nil, pagination: @pagination  %>
             <% end %>
 
             <%= if is_nil(@user.business) do %>
               <div class="bg-white px-4 py-5 shadow sm:rounded-lg sm:px-6">
                 <h2 id="timeline-title" class="text-xlg font-medium text-gray-900">Messages</h2>
-
               </div>
             <% end %>
 
           </div>
 
           <section aria-labelledby="timeline-title" class="space-y-4">
-
             <div class="bg-white px-4 py-5 shadow sm:rounded-lg sm:px-6">
               <h2 id="timeline-title" class="text-xlg font-medium text-gray-900">Viewing History</h2>
               <ul role="list" class="divide-y divide-gray-200">
@@ -115,6 +146,11 @@ defmodule PuppiesWeb.UserDashboardLive do
                   <.live_component module={ListView} id={view.id}  listing={view.listing}} />
                 <% end %>
               </ul>
+
+              <%= if @view_pagination.count > 6 do %>
+                 <%= live_component PuppiesWeb.PaginationComponent, id: "view_pagination", pagination: @view_pagination, socket: @socket, params: %{"page" => @view_pagination.page, "limit" => @view_pagination.limit, "prefix" => "view_"}, end_point: PuppiesWeb.UserDashboardLive, segment_id: nil %>
+              <% end %>
+
             </div>
              <%= live_component PuppiesWeb.WatchListComponent, id: "watch_list", listings: @user.favorite_listings %>
           </section>

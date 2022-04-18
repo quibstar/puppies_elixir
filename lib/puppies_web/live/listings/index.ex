@@ -94,6 +94,9 @@ defmodule PuppiesWeb.ListingsIndex do
                 <div>Potential earnings</div>
                 <div>$<%= listings_sum(@listings) %>.00</div>
               </div>
+              <%= if @pagination.count > 12 do %>
+                 <%= live_component PuppiesWeb.PaginationComponent, id: "pagination", pagination: @pagination, socket: @socket, params: %{"page" => @pagination.page, "limit" => @pagination.limit}, end_point: PuppiesWeb.UserDashboardLive, segment_id: nil %>
+              <% end %>
             <% end %>
           </div>
         </div>
