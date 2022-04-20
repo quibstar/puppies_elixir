@@ -316,7 +316,7 @@ defmodule PuppiesWeb.SearchLive do
 
                 <div class="mr-2">
                     <%= label f, :distance, class: "block"%>
-                    <%= select f, :distance, [ {"15 Miles", 15}, {"20 Miles", 20}, {"25 Miles", 25}, {"50 Miles", 50},{"100 Miles", 100}, {"250 Miles", 250},{"500 Miles", 500}, {"Any distance", 0}], class: "shadow-sm focus:ring-primary-500 focus:border-primary-500 block w-full sm:text-sm border-gray-300 rounded-md", selected: @params["distance"] %>
+                    <%= select f, :distance, [ {"15 Miles", 15}, {"20 Miles", 20}, {"25 Miles", 25}, {"50 Miles", 50},{"100 Miles", 100}, {"250 Miles", 250},{"500 Miles", 500},{"1000 Miles", 1_000}, {"5000 Miles", 5_000},{"10000 Miles", 10_000}], class: "shadow-sm focus:ring-primary-500 focus:border-primary-500 block w-full sm:text-sm border-gray-300 rounded-md", selected: @params["distance"] %>
                 </div>
               <% end %>
 
