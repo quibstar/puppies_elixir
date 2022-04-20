@@ -49,6 +49,7 @@ defmodule PuppiesWeb.ListingShow do
       end
 
     business = Businesses.get_business_by_user_id(listing.user_id)
+    review_stats = Puppies.Reviews.review_stats(business.id)
 
     photos =
       Enum.reduce(listing.photos, [], fn photo, acc ->
@@ -71,7 +72,8 @@ defmodule PuppiesWeb.ListingShow do
        business: business,
        page_title: "#{business.name} #{listing.name} - ",
        favorites: favorites,
-       views: views
+       views: views,
+       review_stats: review_stats
      )}
   end
 
@@ -112,7 +114,8 @@ defmodule PuppiesWeb.ListingShow do
             <%= live_component  PuppiesWeb.BreederDetails, id: "breeder_details", listing: @listing, user: @user, business: @business, favorites: @favorites %>
             <%= live_component  PuppiesWeb.ImageViewer, id: "image_viewer", photos: @photos, current_photo: @current_photo %>
             <div>
-              <%= live_component  PuppiesWeb.ReviewStats, id: "listing_reviews" %>
+              <%= live_component  PuppiesWeb.ReviewStats, id: @business.id, review_stats: @review_stats %>
+              <%= live_component  PuppiesWeb.ContactCTA, id: "contact_cta",  user: @user, business_or_listing: @business %>
             </div>
             <%= live_component  PuppiesWeb.ListingDetails, id: "listing_details", listing: @listing, views: @views %>
           </div>

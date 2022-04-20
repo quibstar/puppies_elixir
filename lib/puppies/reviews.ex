@@ -113,7 +113,8 @@ defmodule Puppies.Reviews do
       |> Repo.all()
 
     stars_map =
-      Enum.reduce(stars, %{}, fn star, acc ->
+      Enum.reduce(stars, %{stars_5: 0, stars_4: 0, stars_3: 0, stars_2: 0, stars_1: 0}, fn star,
+                                                                                           acc ->
         case star.stars do
           5 ->
             Map.put(acc, :stars_5, star.rating)
@@ -140,8 +141,14 @@ defmodule Puppies.Reviews do
         select: avg(r.rating)
       )
       |> Repo.one()
-      |> Decimal.round(1)
-      |> Decimal.to_float()
+
+    average =
+      if is_nil(average) do
+        0
+      else
+        Decimal.round(average, 1)
+        |> Decimal.to_float()
+      end
 
     Map.merge(%{average: average}, stars_map)
   end

@@ -65,7 +65,9 @@ defmodule PuppiesWeb.BusinessPageLive do
           <div class="md:grid md:grid-cols-3 md:gap-4">
             <div>
               <%= live_component  PuppiesWeb.BusinessCard, id: "breeder_details",  user: @user, business: @business %>
-              <%= live_component  PuppiesWeb.ReviewStats, id: "listing_reviews", review_stats: @review_stats %>
+              <%= unless @review_stats.average == 0 do %>
+                <%= live_component  PuppiesWeb.ReviewStats, id: "listing_reviews", review_stats: @review_stats %>
+              <% end %>
               <%= live_component  PuppiesWeb.ContactCTA, id: "contact_cta",  user: @user, business_or_listing: @business %>
             </div>
             <div class="col-span-2 space-y-4">
@@ -97,10 +99,12 @@ defmodule PuppiesWeb.BusinessPageLive do
                 <%= live_component PuppiesWeb.PaginationComponent, id: "pagination", pagination: @pagination, socket: @socket, params: %{"page" => @pagination.page, "limit" => @pagination.limit}, end_point: PuppiesWeb.BusinessPageLive, segment_id: @business.slug %>
               <% end %>
 
-              <div class="font-bold text-xl text-gray-900 sm:text-2xl">Reviews</div>
+              <%= unless @business.reviews == [] do %>
+                <div class="font-bold text-xl text-gray-900 sm:text-2xl">Reviews</div>
                 <%= for review <- @business.reviews do %>
                   <%= live_component  PuppiesWeb.Review, id: review.id, review: review %>
                 <% end %>
+              <% end %>
             </div>
           </div>
 

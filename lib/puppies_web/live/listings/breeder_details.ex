@@ -49,7 +49,6 @@ defmodule PuppiesWeb.BreederDetails do
             <% end %>
           </div>
         </div>
-        <%= live_component  PuppiesWeb.ContactCTA, id: "contact_cta",  user: @user, business_or_listing: @business %>
       </div>
     """
   end
