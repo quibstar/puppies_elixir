@@ -114,7 +114,9 @@ defmodule PuppiesWeb.ListingShow do
             <%= live_component  PuppiesWeb.BreederDetails, id: "breeder_details", listing: @listing, user: @user, business: @business, favorites: @favorites %>
             <%= live_component  PuppiesWeb.ImageViewer, id: "image_viewer", photos: @photos, current_photo: @current_photo %>
             <div>
-              <%= live_component  PuppiesWeb.ReviewStats, id: @business.id, review_stats: @review_stats %>
+              <%= if @review_stats.average > 0 do %>
+                <%= live_component  PuppiesWeb.ReviewStats, id: @business.id, review_stats: @review_stats %>
+              <% end %>
               <%= live_component  PuppiesWeb.ContactCTA, id: "contact_cta",  user: @user, business_or_listing: @business %>
             </div>
             <%= live_component  PuppiesWeb.ListingDetails, id: "listing_details", listing: @listing, views: @views %>

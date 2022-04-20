@@ -24,8 +24,7 @@
         </nav>
         <%= if @current_user do %>
           <%= live_redirect "Dashboard", to:  Routes.live_path(assigns.conn, PuppiesWeb.UserDashboardLive), class:  "py-3 md:p-0 block text-base text-gray-500 hover:text-gray-900 nav-link" %>
-          <%= link "Settings", to: Routes.user_settings_path(@conn, :edit) %>
-          <%= link "Log out", to: Routes.user_session_path(@conn, :delete), method: :delete %>
+          <%= render "_user_dropdown.html", assigns %>
         <% else %>
           <div class="hidden md:flex items-center justify-end md:flex-1 lg:w-0">
             <%= link "Log in", to: Routes.user_session_path(@conn, :new), class: "whitespace-nowrap text-base font-medium text-gray-500 hover:text-gray-900" %>

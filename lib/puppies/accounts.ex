@@ -374,4 +374,18 @@ defmodule Puppies.Accounts do
     User.confirm_changeset(user)
     |> Repo.update!()
   end
+
+  # User settings
+  def change_user_profile(user, attrs \\ %{}) do
+    user = Repo.get!(User, user.id) |> Repo.preload(:user_location)
+    User.profile_changeset(user, attrs)
+  end
+
+  def update_user_profile(user, attrs) do
+    user = Repo.get!(User, user.id) |> Repo.preload(:user_location)
+
+    user
+    |> User.profile_changeset(attrs)
+    |> Repo.update()
+  end
 end

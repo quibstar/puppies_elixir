@@ -1,74 +1,51 @@
 defmodule PuppiesWeb.UserSettingsController do
   use PuppiesWeb, :controller
 
-  alias Puppies.Accounts
-  alias PuppiesWeb.UserAuth
-
-  plug :assign_email_and_password_changesets
+  alias Puppies.Settings
+  alias Puppies.UserSettings
 
   def edit(conn, _params) do
-    render(conn, "edit.html")
+    us = Settings.get_user_settings(conn.assigns.current_user.id)
+
+    user_settings =
+      if is_nil(us) do
+        %UserSettings{}
+      else
+        us
+      end
+
+    changeset = Settings.change_user_settings(user_settings)
+
+    render(conn, "edit.html", changeset: changeset)
   end
 
-  def update(conn, %{"action" => "update_email"} = params) do
-    %{"current_password" => password, "user" => user_params} = params
-    user = conn.assigns.current_user
+  def create(conn, params) do
+    %{"user_settings" => user_settings} = params
+    us = Map.merge(user_settings, %{"user_id" => conn.assigns.current_user.id})
 
-    case Accounts.apply_user_email(user, password, user_params) do
-      {:ok, applied_user} ->
-        Accounts.deliver_update_email_instructions(
-          applied_user,
-          user.email,
-          &Routes.user_settings_url(conn, :confirm_email, &1)
-        )
-
+    case Settings.create_user_settings(us) do
+      {:ok, _} ->
         conn
-        |> put_flash(
-          :info,
-          "A link to confirm your email change has been sent to the new address."
-        )
+        |> put_flash(:info, "Setting updated.")
         |> redirect(to: Routes.user_settings_path(conn, :edit))
 
       {:error, changeset} ->
-        render(conn, "edit.html", email_changeset: changeset)
+        render(conn, "edit.html", changeset: changeset)
     end
   end
 
-  def update(conn, %{"action" => "update_password"} = params) do
-    %{"current_password" => password, "user" => user_params} = params
-    user = conn.assigns.current_user
+  def update(conn, params) do
+    %{"user_settings" => user_settings} = params
+    us = Settings.get_user_settings(conn.assigns.current_user.id)
 
-    case Accounts.update_user_password(user, password, user_params) do
-      {:ok, user} ->
+    case Settings.update_user_settings(us, user_settings) do
+      {:ok, _} ->
         conn
-        |> put_flash(:info, "Password updated successfully.")
-        |> put_session(:user_return_to, Routes.user_settings_path(conn, :edit))
-        |> UserAuth.log_in_user(user)
+        |> put_flash(:info, "Setting updated.")
+        |> redirect(to: Routes.user_settings_path(conn, :edit))
 
       {:error, changeset} ->
-        render(conn, "edit.html", password_changeset: changeset)
+        render(conn, "edit.html", changeset: changeset)
     end
-  end
-
-  def confirm_email(conn, %{"token" => token}) do
-    case Accounts.update_user_email(conn.assigns.current_user, token) do
-      :ok ->
-        conn
-        |> put_flash(:info, "Email changed successfully.")
-        |> redirect(to: Routes.user_settings_path(conn, :edit))
-
-      :error ->
-        conn
-        |> put_flash(:error, "Email change link is invalid or it has expired.")
-        |> redirect(to: Routes.user_settings_path(conn, :edit))
-    end
-  end
-
-  defp assign_email_and_password_changesets(conn, _opts) do
-    user = conn.assigns.current_user
-
-    conn
-    |> assign(:email_changeset, Accounts.change_user_email(user))
-    |> assign(:password_changeset, Accounts.change_user_password(user))
   end
 end

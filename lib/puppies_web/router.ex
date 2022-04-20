@@ -93,7 +93,12 @@ defmodule PuppiesWeb.Router do
     post("/reviews/create", ReviewController, :create)
     get("/reviews/show/:id", ReviewController, :show)
 
+    get("/users/profile", UserProfileController, :edit)
+    put("/users/profile", UserProfileController, :update)
+    get("/users/security", UserSecurityController, :edit)
+    put("/users/security", UserSecurityController, :update)
     get("/users/settings", UserSettingsController, :edit)
+    post("/users/settings", UserSettingsController, :create)
     put("/users/settings", UserSettingsController, :update)
     get("/users/settings/confirm_email/:token", UserSettingsController, :confirm_email)
   end
@@ -119,8 +124,17 @@ defmodule PuppiesWeb.Router do
     post("/users/confirm", UserConfirmationController, :create)
     get("/users/confirm/:token", UserConfirmationController, :edit)
     post("/users/confirm/:token", UserConfirmationController, :update)
+
+    get("/suspended", SuspendedController, :index)
+    get("/email-not-confirmed", EmailNotConfirmedController, :index)
     get("/legal/term-of-service", LegalController, :terms_of_service)
     get("/legal/privacy", LegalController, :privacy)
+    get("/contacts/new", ContactController, :new)
+    post("/contacts", ContactController, :create)
+    get("/faq", FaqController, :index)
+    get("/sitemap.xml", SitemapController, :index)
+    live("/rooms/:status/:state", FindRoomLive.State, :state)
+
     live("/puppies-in/:state", FindPuppyLive.State, :state)
     live("/puppies-in/:city/:state", FindPuppyLive.CityState, :city_state)
   end

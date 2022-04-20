@@ -34,6 +34,7 @@ defmodule Puppies.Accounts.User do
     has_many(:listings, Puppies.Listings.Listing)
     has_many(:favorites, Puppies.Favorite, on_replace: :delete)
     many_to_many(:favorite_listings, Puppies.Listings.Listing, join_through: Puppies.Favorite)
+    has_one(:user_location, Puppies.UserLocation, on_delete: :delete_all)
 
     timestamps()
   end
@@ -180,5 +181,13 @@ defmodule Puppies.Accounts.User do
   def approved_changeset(user, attrs) do
     user
     |> cast(attrs, [:approved_to_sell])
+  end
+
+  def profile_changeset(user, attrs) do
+    user
+    |> cast(attrs, [:first_name, :last_name])
+    |> cast_assoc(:user_location)
+    |> validate_required([:first_name], message: "Please supply a first name")
+    |> validate_required([:last_name], message: "Please supply a last name")
   end
 end

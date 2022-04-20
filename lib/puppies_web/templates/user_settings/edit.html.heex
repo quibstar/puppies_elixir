@@ -1,53 +1,94 @@
-<h1>Settings</h1>
 
-<h3>Change email</h3>
-
-<.form let={f} for={@email_changeset} action={Routes.user_settings_path(@conn, :update)} id="update_email">
-  <%= if @email_changeset.action do %>
-    <div class="alert alert-danger">
-      <p>Oops, something went wrong! Please check the errors below.</p>
+<div class="p-4">
+<div class="space-y-6">
+    <div class="bg-white shadow px-4 py-5 sm:rounded-lg sm:p-6">
+      <div class="md:grid md:grid-cols-3 md:gap-6">
+        <div class="md:col-span-1">
+          <h3 class="text-lg font-medium leading-6 text-gray-900">Notifications</h3>
+          <p class="mt-1 text-sm text-gray-500">Decide which communications you'd like to receive and how.</p>
+        </div>
+        <div class="mt-5 md:mt-0 md:col-span-2">
+          <.form let={f} for={@changeset} action={Routes.user_settings_path(@conn, :update)} class="space-y-6">
+            <div class="space-y-8 divide-y divide-gray-200">
+              <div>
+                <%= hidden_input(f, :id) %>
+                <fieldset>
+                  <legend class="text-base font-medium text-gray-900">By Email</legend>
+                  <div class="mt-4 space-y-4">
+                    <div class="flex items-start">
+                      <div class="h-5 flex items-center">
+                          <%= checkbox(f, :email_new_matches, class: "focus:ring-primary-500 h-4 w-4 text-primary-600 border-gray-300") %>
+                      </div>
+                      <div class="ml-3 text-sm">
+                        <label for="comments" class="font-medium text-gray-700">New Match</label>
+                        <p class="text-gray-500">Get notified when you have a new match.</p>
+                      </div>
+                    </div>
+                    <div class="flex items-start">
+                      <div class="flex items-center h-5">
+                        <%= checkbox(f, :email_new_favorites, class: "focus:ring-primary-500 h-4 w-4 text-primary-600 border-gray-300") %>
+                      </div>
+                      <div class="ml-3 text-sm">
+                        <label for="candidates" class="font-medium text-gray-700">Favorited</label>
+                        <p class="text-gray-500">Get notified when someone adds you to their favorites.</p>
+                      </div>
+                    </div>
+                    <div class="flex items-start">
+                      <div class="flex items-center h-5">
+                        <%= checkbox(f, :email_offers, class: "focus:ring-primary-500 h-4 w-4 text-primary-600 border-gray-300") %>
+                      </div>
+                      <div class="ml-3 text-sm">
+                        <label for="offers" class="font-medium text-gray-700">Offers</label>
+                        <p class="text-gray-500">Get notified when Trending Puppies has a new offer for you.</p>
+                      </div>
+                    </div>
+                  </div>
+                </fieldset>
+                <fieldset class="mt-5">
+                  <div>
+                    <legend class="text-base font-medium text-gray-900">Push Notifications</legend>
+                    <p class="text-sm text-gray-500">These are delivered via SMS to your mobile phone.</p>
+                    <div class="mt-4 space-y-4">
+                      <div class="flex items-start">
+                        <div class="h-5 flex items-center">
+                          <%= checkbox(f, :push_new_matches, class: "focus:ring-primary-500 h-4 w-4 text-primary-600 border-gray-300") %>
+                        </div>
+                        <div class="ml-3 text-sm">
+                          <label for="comments" class="font-medium text-gray-700">New Match</label>
+                          <p class="text-gray-500">Get notified when you have a new match.</p>
+                        </div>
+                      </div>
+                      <div class="flex items-start">
+                        <div class="flex items-center h-5">
+                          <%= checkbox(f, :push_new_favorites, class: "focus:ring-primary-500 h-4 w-4 text-primary-600 border-gray-300") %>
+                        </div>
+                        <div class="ml-3 text-sm">
+                          <label for="candidates" class="font-medium text-gray-700">Favorited</label>
+                          <p class="text-gray-500">Get notified when someone adds you to their favorites.</p>
+                        </div>
+                      </div>
+                      <div class="flex items-start">
+                        <div class="flex items-center h-5">
+                          <%= checkbox(f, :push_offers, class: "focus:ring-primary-500 h-4 w-4 text-primary-600 border-gray-300") %>
+                        </div>
+                        <div class="ml-3 text-sm">
+                          <label for="offers" class="font-medium text-gray-700">Offers</label>
+                          <p class="text-gray-500">Get notified when Trending Puppies has a new offer for you.</p>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </fieldset>
+              </div>
+              <div class="flex justify-end pt-5">
+                <button type="button" class="bg-white py-2 px-4 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500">Cancel</button>
+                <button type="submit" class="ml-3 inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-primary-600 hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500">Save</button>
+              </div>
+            </div>
+          </.form>
+        </div>
+      </div>
     </div>
-  <% end %>
 
-  <%= hidden_input f, :action, name: "action", value: "update_email" %>
-
-  <%= label f, :email %>
-  <%= email_input f, :email, required: true %>
-  <%= error_tag f, :email %>
-
-  <%= label f, :current_password, for: "current_password_for_email" %>
-  <%= password_input f, :current_password, required: true, name: "current_password", id: "current_password_for_email" %>
-  <%= error_tag f, :current_password %>
-
-  <div>
-    <%= submit "Change email" %>
   </div>
-</.form>
-
-<h3>Change password</h3>
-
-<.form let={f} for={@password_changeset} action={Routes.user_settings_path(@conn, :update)} id="update_password">
-  <%= if @password_changeset.action do %>
-    <div class="alert alert-danger">
-      <p>Oops, something went wrong! Please check the errors below.</p>
-    </div>
-  <% end %>
-
-  <%= hidden_input f, :action, name: "action", value: "update_password" %>
-
-  <%= label f, :password, "New password" %>
-  <%= password_input f, :password, required: true %>
-  <%= error_tag f, :password %>
-
-  <%= label f, :password_confirmation, "Confirm new password" %>
-  <%= password_input f, :password_confirmation, required: true %>
-  <%= error_tag f, :password_confirmation %>
-
-  <%= label f, :current_password, for: "current_password_for_password" %>
-  <%= password_input f, :current_password, required: true, name: "current_password", id: "current_password_for_password" %>
-  <%= error_tag f, :current_password %>
-
-  <div>
-    <%= submit "Change password" %>
-  </div>
-</.form>
+</div>
