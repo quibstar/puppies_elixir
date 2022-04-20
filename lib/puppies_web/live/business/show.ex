@@ -20,8 +20,8 @@ defmodule PuppiesWeb.BusinessPageLive do
       end
 
     business = Businesses.get_business_by_slug(params["slug"])
-
-    data = Listings.get_listings_by_user_id(business.user_id)
+    data = Listings.get_active_listings_by_user_id(business.user_id)
+    review_stats = Puppies.Reviews.review_stats(business.id)
 
     {:ok,
      assign(socket,
@@ -29,6 +29,7 @@ defmodule PuppiesWeb.BusinessPageLive do
        loading: false,
        business: business,
        listings: data.listings,
+       review_stats: review_stats,
        pagination: Map.get(data, :pagination, %{count: 0})
      )}
   end
@@ -36,13 +37,11 @@ defmodule PuppiesWeb.BusinessPageLive do
   def handle_params(params, _uri, socket) do
     if params["page"] && socket.assigns.loading == false do
       data =
-        Listings.get_listings_by_user_id(socket.assigns.business.user_id, %{
+        Listings.get_active_listings_by_user_id(socket.assigns.business.user_id, %{
           limit: "12",
           page: params["page"],
           number_of_links: 7
         })
-
-      IO.inspect("WTF")
 
       socket =
         assign(
@@ -66,7 +65,7 @@ defmodule PuppiesWeb.BusinessPageLive do
           <div class="md:grid md:grid-cols-3 md:gap-4">
             <div>
               <%= live_component  PuppiesWeb.BusinessCard, id: "breeder_details",  user: @user, business: @business %>
-              <%= live_component  PuppiesWeb.ReviewStats, id: "listing_reviews" %>
+              <%= live_component  PuppiesWeb.ReviewStats, id: "listing_reviews", review_stats: @review_stats %>
               <%= live_component  PuppiesWeb.ContactCTA, id: "contact_cta",  user: @user, business_or_listing: @business %>
             </div>
             <div class="col-span-2 space-y-4">
@@ -99,11 +98,9 @@ defmodule PuppiesWeb.BusinessPageLive do
               <% end %>
 
               <div class="font-bold text-xl text-gray-900 sm:text-2xl">Reviews</div>
-              <%= live_component  PuppiesWeb.Review, id: "review", rating: 5 %>
-              <%= live_component  PuppiesWeb.Review, id: "review-1", rating: 4 %>
-              <%= live_component  PuppiesWeb.Review, id: "review-2", rating: 3 %>
-              <%= live_component  PuppiesWeb.Review, id: "review-3", rating: 4 %>
-              <%= live_component  PuppiesWeb.Review, id: "review-4", rating: 1 %>
+                <%= for review <- @business.reviews do %>
+                  <%= live_component  PuppiesWeb.Review, id: review.id, review: review %>
+                <% end %>
             </div>
           </div>
 

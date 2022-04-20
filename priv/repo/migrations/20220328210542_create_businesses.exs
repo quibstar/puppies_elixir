@@ -16,5 +16,6 @@ defmodule Puppies.Repo.Migrations.CreateBusinesses do
     end
 
     create(index(:businesses, [:user_id]))
+    create(index(:businesses, [:slug]))
   end
 end

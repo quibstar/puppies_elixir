@@ -36,4 +36,4 @@ config :puppies,
   elasticsearch_base_url: "http://localhost:9200"
 
 # config/test.exs
-config :puppies, Oban, testing: true
+config :puppies, Oban, queues: false, plugins: false

@@ -11,15 +11,30 @@ defmodule Puppies.ListingsFixtures do
     {:ok, listing} =
       attrs
       |> Enum.into(%{
-        coat: "some coat",
-        description: "some description",
+        coat_color_pattern: "some value",
+        description: "some value",
         dob: ~N[2022-03-27 21:17:00],
-        limitations: "some limitations",
-        name: "some name",
-        price: 42,
-        requirements: "some requirements",
-        sex: "some sex",
-        status: "some status"
+        name: "spike",
+        price: 500,
+        sex: "Male",
+        status: "available",
+        views: 200,
+        deliver_on_site: true,
+        deliver_pick_up: true,
+        delivery_shipped: true,
+        champion_sired: true,
+        show_quality: true,
+        champion_bloodline: true,
+        registered: true,
+        registrable: true,
+        current_vaccinations: true,
+        veterinary_exam: true,
+        health_certificate: true,
+        health_guarantee: true,
+        pedigree: true,
+        hypoallergenic: true,
+        microchip: true,
+        purebred: true
       })
       |> Puppies.Listings.create_listing()
 

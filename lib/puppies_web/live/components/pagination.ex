@@ -6,7 +6,6 @@ defmodule PuppiesWeb.PaginationComponent do
 
   defp url_builder(socket, end_point, segment_id, page, params) do
     params = Map.put(params, "page", page)
-    IO.inspect(params["limit"])
 
     params =
       if Map.has_key?(params, "prefix") do

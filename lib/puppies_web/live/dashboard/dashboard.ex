@@ -20,8 +20,10 @@ defmodule PuppiesWeb.UserDashboardLive do
       end
 
     user = Accounts.get_user_business_and_listings(user.id)
-    data = Listings.get_listings_by_user_id(user.id)
+    data = Listings.get_active_listings_by_user_id(user.id)
     viewing_history = Views.my_views(user.id)
+    on_hold = Listings.get_listing_by_user_id_and_status(user.id, "on hold")
+    sold = Listings.get_listing_by_user_id_and_status(user.id, "sold")
 
     {:ok,
      assign(socket,
@@ -31,14 +33,16 @@ defmodule PuppiesWeb.UserDashboardLive do
        listings: data.listings,
        viewing_history: viewing_history.views,
        view_pagination: Map.get(viewing_history, :pagination, %{count: 0}),
-       pagination: Map.get(data, :pagination, %{count: 0})
+       pagination: Map.get(data, :pagination, %{count: 0}),
+       on_hold: on_hold,
+       sold: sold
      )}
   end
 
   def handle_params(params, _uri, socket) do
     if (params["page"] || params["view_page"]) && socket.assigns.loading == false do
       data =
-        Listings.get_listings_by_user_id(socket.assigns.business.user_id, %{
+        Listings.get_active_listings_by_user_id(socket.assigns.business.user_id, %{
           limit: "12",
           page: Map.get(params, "page", "1"),
           number_of_links: 7
@@ -127,7 +131,63 @@ defmodule PuppiesWeb.UserDashboardLive do
               </div>
             </section>
             <%= unless is_nil(@user.business) do %>
-              <%= live_component PuppiesWeb.ListingsIndex, id: "listing", listings: @listings, listing: nil, pagination: @pagination  %>
+
+              <div class="bg-white shadow sm:rounded-lg" x-data="{ tab: 'available' }">
+                <div class="flex justify-between p-4 pb-0">
+                  <h2 id="applicant-information-title" class="text-xlg leading-6 font-medium text-gray-900">Listings</h2>
+                  <%= live_patch "New Listing", to: Routes.live_path(@socket, PuppiesWeb.ListingsNew), class: "inline-block px-6 py-2 text-xs font-medium leading-6 text-center text-white uppercase transition bg-primary-500 rounded shadow hover:shadow-lg hover:bg-primary-600 focus:outline-none disabled:opacity-50" %>
+                </div>
+
+                <div class="sm:hidden">
+                  <label for="tabs" class="sr-only">Select a tab</label>
+                  <!-- Use an "onChange" listener to redirect the user to the selected tab URL. -->
+                  <select id="tabs" name="tabs" class="block w-full focus:ring-primary-500 focus:border-primary-500 border-gray-300 rounded-md">
+                    <option>Available</option>
+
+                    <option>On Hold</option>
+
+                    <option>Sold</option>
+                  </select>
+                </div>
+                <div class="hidden sm:block">
+                  <div class="border-b border-gray-200">
+                    <nav class="-mb-px flex" aria-label="Tabs">
+
+                      <a :class="{ 'border-primary-500 text-primary-600': tab === 'available' }"  x-on:click.prevent="tab = 'available'" href="#" class="border-transparent text-gray-500 hover:text-gray-700 hover:text-gray-700 hover:border-gray-300 w-1/4 py-4 px-1 text-center border-b-2 font-medium text-sm">
+                        Active
+                        <%= if @pagination.count > 0 do %>
+                          (<%= @pagination.count %>)
+                        <% end %>
+                      </a>
+
+                      <a :class="{ 'border-primary-500 text-primary-600': tab === 'on-hold' }"  x-on:click.prevent="tab = 'on-hold'"  href="#" class="border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 w-1/4 py-4 px-1 text-center border-b-2 font-medium text-sm">
+                        On Hold/Sale Pending
+                        <%= unless @on_hold == [] do %>
+                          (<%= length(@on_hold ) %>)
+                        <% end %>
+                      </a>
+                      <a :class="{ 'border-primary-500 text-primary-600': tab === 'sold' }"  x-on:click.prevent="tab = 'sold'"  href="#" class="border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 w-1/4 py-4 px-1 text-center border-b-2 font-medium text-sm" aria-current="page">
+                        Sold
+                        <%= unless @sold == [] do %>
+                          (<%= length(@sold ) %>)
+                        <% end %>
+                      </a>
+                    </nav>
+                  </div>
+                </div>
+                <div class="px-4 py-5 sm:px-6">
+                  <div x-show="tab === 'available'" >
+                    <%= live_component PuppiesWeb.ListingsActive, id: "available-listing", listings: @listings, listing: nil, pagination: @pagination  %>
+                  </div>
+                  <div x-show="tab === 'on-hold'" >
+                    <%= live_component PuppiesWeb.ListingsOnHold, id: "on-hold-listing", listings: @on_hold %>
+                  </div>
+                  <div x-show="tab === 'sold'" >
+                    <%= live_component PuppiesWeb.ListingsSold, id: "sold-listing", listings: @sold %>
+                  </div>
+                </div>
+              </div>
+
             <% end %>
 
             <%= if is_nil(@user.business) do %>

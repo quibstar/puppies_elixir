@@ -1,0 +1,22 @@
+<%= form_for @changeset, Routes.review_path(@conn, :create), fn f -> %>
+	<div class="md:grid grid-cols-2 gap-4">
+		<%= hidden_input f, :email, value: @review_link.email %>
+		<%= hidden_input f, :uuid, value: @review_link.uuid %>
+		<%= hidden_input f, :business_id, value: @listing.user.business.id %>
+		<%= hidden_input f, :user_id, value: @user.id %>
+
+		<div class="mt-4">
+			<%= label f, :rating, class: "inline-block text-sm font-medium text-gray-700" %>
+			<%= select f, :rating, [1, 2, 3, 4, 5], selected: 5, class: "block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-primary-500 focus:border-primary-500 sm:text-sm rounded-md" %>
+		</div>
+
+		<div class="mt-4 col-span-2">
+			<%= label f, :review, class: "inline-block text-sm font-medium text-gray-700" %> <small class="text-xs text-red-500">*</small>
+			<%= textarea f, :review, rows: 12, class: "shadow-sm focus:ring-indigo-500 focus:border-indigo-500 block w-full sm:text-sm border-gray-300 rounded-md" %>
+			<%= error_tag f, :review %>
+		</div>
+		<div class="col-span-2 flex justify-end">
+			<%= submit "Submit", phx_disable_with: "Saving...",  class: "inline-block px-6 py-2 text-xs font-medium leading-6 text-center text-white uppercase transition bg-primary-500 rounded shadow hover:shadow-lg hover:bg-primary-600 focus:outline-none disabled:opacity-50" %>
+		</div>
+	</div>
+<% end %>

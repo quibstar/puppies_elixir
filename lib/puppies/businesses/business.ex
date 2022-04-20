@@ -23,12 +23,13 @@ defmodule Puppies.Businesses.Business do
     field(:phone, :string)
     field(:state_license, :boolean, default: false)
     field(:website, :string)
+    field(:location_autocomplete, :string, virtual: true)
     belongs_to(:user, Puppies.Accounts.User)
+    has_many(:reviews, Puppies.Reviews.Review)
     has_many(:business_breeds, Puppies.BusinessBreed, on_replace: :delete)
     many_to_many(:breeds, Puppies.Dogs.Breed, join_through: Puppies.BusinessBreed)
     has_one(:location, Puppies.Location, on_replace: :delete)
     has_one(:photo, Puppies.Photos.Photo)
-    field(:location_autocomplete, :string, virtual: true)
 
     timestamps()
   end

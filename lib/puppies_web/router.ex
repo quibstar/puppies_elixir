@@ -21,13 +21,13 @@ defmodule PuppiesWeb.Router do
     plug(:accepts, ["json"])
   end
 
-  scope "/", PuppiesWeb do
-    pipe_through(:browser)
+  # scope "/", PuppiesWeb do
+  #   pipe_through(:browser)
 
-    get("/", PageController, :index)
-    live("/search", SearchLive)
-    live("/business/:slug", BusinessPageLive)
-  end
+  #   get("/", PageController, :index)
+  #   live("/search", SearchLive)
+  #   live("/business/:slug", BusinessPageLive)
+  # end
 
   # Other scopes may use custom stacks.
   # scope "/api", PuppiesWeb do
@@ -86,7 +86,12 @@ defmodule PuppiesWeb.Router do
     live("/users/business/:id/edit", BusinessEdit)
     # listings
     live("/listings/new", ListingsNew)
+    live("/listings/:listing_id/status", ListingsStatusUpdateForm)
     live("/listings/:listing_id/edit", ListingsEdit)
+    # reviews
+    get("/reviews/new", ReviewController, :new)
+    post("/reviews/create", ReviewController, :create)
+    get("/reviews/show/:id", ReviewController, :show)
 
     get("/users/settings", UserSettingsController, :edit)
     put("/users/settings", UserSettingsController, :update)
@@ -95,6 +100,12 @@ defmodule PuppiesWeb.Router do
 
   scope "/", PuppiesWeb do
     pipe_through([:browser])
+
+    get("/", PageController, :index)
+
+    live("/search", SearchLive)
+    live("/business/:slug", BusinessPageLive)
+
     # breeds
     live("/breeds", BreedsIndexLive)
     live("/breeds/:slug", BreedsShowLive)

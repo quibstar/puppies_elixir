@@ -30,6 +30,21 @@ defmodule Puppies.Listings do
     Repo.all(q)
   end
 
+  def listing_for_elastic_search_reindexing(id) do
+    q =
+      from(l in Listing,
+        where: l.id == ^id
+      )
+      |> preload([
+        :photos,
+        :breeds,
+        :listing_breeds,
+        user: [business: [:location, :breeds, :photo]]
+      ])
+
+    Repo.one(q)
+  end
+
   @doc """
   Gets a single listing.
 
@@ -56,10 +71,29 @@ defmodule Puppies.Listings do
     Repo.one(q)
   end
 
-  def get_listings_by_user_id(id, opt \\ %{limit: "12", page: "1", number_of_links: 7}) do
+  def get_listing_for_review(id) do
+    q =
+      from(b in Listing,
+        where: b.id == ^id
+      )
+      |> preload(user: :business)
+
+    Repo.one(q)
+  end
+
+  def get_listing_by_user_id_and_status(id, status) do
+    from(l in Listing,
+      where: l.user_id == ^id and l.status == ^status,
+      order_by: [desc: :views],
+      preload: [:breeds, :photos, :listing_breeds]
+    )
+    |> Repo.all()
+  end
+
+  def get_active_listings_by_user_id(id, opt \\ %{limit: "12", page: "1", number_of_links: 7}) do
     q =
       from(l in Listing,
-        where: l.user_id == ^id,
+        where: l.user_id == ^id and l.status == "available",
         order_by: [desc: :views]
       )
 

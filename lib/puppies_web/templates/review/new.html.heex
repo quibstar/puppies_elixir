@@ -1,0 +1,27 @@
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+
+  <div class="max-w-3xl mx-auto my-4 shadow rounded p-4 bg-white">
+    <%= cond do %>
+      <% is_nil(@review_link) -> %>
+        <h1>Sorry</h1>
+        <p>Review not found.</p>
+
+      <% @review_link.expired-> %>
+        <h1>Review Expired</h1>
+        <p>Sorry the review time period has expired.</p>
+
+      <% @status == "fraudulent" -> %>
+        <h1>Nice try</h1>
+        <p>You cannot review yourself.</p>
+
+      <% true -> %>
+        <div class="space-y-2">
+        <h1>Congratulations</h1>
+        <p>You've been selected to review your recent purchase of <%= @listing.name %> from <%= @listing.user.business.name %>.</p>
+        <p>We hope your experience was a good one. Please leave an accurate review of your experience with <%= @listing.user.business.name %></p>
+        <p>We ask that you please refrain from any course language, remember all reviews are approved by a human.</p>
+        </div>
+        <%= render "_form.html", assigns %>
+    <% end %>
+  </div>
+</div>

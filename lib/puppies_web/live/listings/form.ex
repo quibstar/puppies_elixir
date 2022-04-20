@@ -1,7 +1,7 @@
 defmodule PuppiesWeb.ListingsForm do
   use PuppiesWeb, :live_component
 
-  alias Puppies.{Listings, Listings.Listing, Dogs, Photos}
+  alias Puppies.{Listings, Listings.Listing, Dogs, Photos, ES}
 
   def update(assigns, socket) do
     results =
@@ -87,7 +87,7 @@ defmodule PuppiesWeb.ListingsForm do
     case listing do
       {:ok, listing} ->
         save_photo(socket, listing)
-
+        ES.Listings.re_index_listing(listing.id)
         changeset = Listings.change_listing(%Listing{sex: "male", breeds: []})
 
         {
@@ -196,7 +196,7 @@ defmodule PuppiesWeb.ListingsForm do
 
   def render(assigns) do
     ~H"""
-    <section aria-labelledby="listing-form">
+      <section aria-labelledby="listing-form">
         <div class="bg-white shadow sm:rounded-lg my-4">
           <div class="px-4 py-5 sm:px-6">
             <h1>Listing</h1>
@@ -209,7 +209,6 @@ defmodule PuppiesWeb.ListingsForm do
                   <%= label f, :name, class: "inline-block text-sm font-medium text-gray-700" %> <small class="text-xs text-red-500">*</small>
                   <%= text_input f, :name, class: "shadow-sm focus:ring-primary-500 focus:border-primary-500 block w-full sm:text-sm border-gray-300 rounded-md" %>
                   <%= error_tag f, :name %>
-
                 </div>
 
                 <div class="mt-4">

@@ -4,6 +4,13 @@ defmodule Puppies.ES.Listings do
   """
   alias Puppies.{ES.Api, ES.Indexing, Listings}
 
+  def re_index_listing(id) do
+    listing = Listings.listing_for_elastic_search_reindexing(id)
+    res = transform_to_flat_data(listing)
+    res = Api.post("/listings/_doc/#{listing.id}", res)
+    IO.inspect(res)
+  end
+
   def create_mappings_and_index() do
     date_time = DateTime.utc_now() |> DateTime.to_unix()
     listing = "listings_#{date_time}"

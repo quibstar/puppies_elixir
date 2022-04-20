@@ -39,6 +39,19 @@ defmodule PuppiesWeb.ListingDetails do
     end
   end
 
+  def status(status) do
+    case status do
+      "available" ->
+        "I'm currently available"
+
+      "on hold" ->
+        "I'm currently on hold"
+
+      "sold" ->
+        "Sorry, I'm sold. I have a new home!"
+    end
+  end
+
   def render(assigns) do
     ~H"""
       <div class="col-span-2 mb-4">
@@ -48,7 +61,7 @@ defmodule PuppiesWeb.ListingDetails do
             <div class="grid grid-cols-1 sm:grid-cols-3">
               <div>
                 <h3 class="text-lg leading-6 font-medium text-gray-900">Hi, I'm <span class="text-primary-600"><%=@listing.name %></span></h3>
-                <p class="mt-1 max-w-2xl text-sm text-gray-500">I'm currently <%= @listing.status %> </p>
+                <p class="mt-1 max-w-2xl text-sm text-gray-500"><%= status(@listing.status) %></p>
               </div>
               <div class="col-span-2 text-center flex justify-between">
                 <div>
