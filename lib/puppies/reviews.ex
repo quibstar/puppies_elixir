@@ -103,10 +103,7 @@ defmodule Puppies.Reviews do
   end
 
   def review_stats(business_id) do
-    res =
-      from(r in Review,
-        where: r.business_id == ^business_id
-      )
+    res = from(r in Review, where: r.business_id == ^business_id)
 
     stars =
       from(r in res,
