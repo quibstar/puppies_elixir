@@ -1,0 +1,85 @@
+
+  <div class="p-4">
+    <div class="space-y-6">
+      <div class="bg-white shadow px-4 py-5 sm:rounded-lg sm:p-6">
+
+        <div class="md:grid md:grid-cols-3 md:gap-6">
+          <div class="md:col-span-1">
+            <h3 class="text-lg font-medium leading-6 text-gray-900">Personal Information</h3>
+            <p class="mt-1 text-sm text-gray-500">Use a permanent address where you can receive mail.</p>
+          </div>
+          <div class="mt-5 md:mt-0 md:col-span-2">
+            <%= form_for @changeset, Routes.user_profile_path(@conn, :update), fn f -> %>
+                <div class="space-y-8 divide-y divide-gray-200">
+                  <div class="space-y-8 divide-y divide-gray-200">
+                    <div class="pt-8">
+                      <div>
+                        <h3 class="text-lg leading-6 font-medium text-gray-900">
+                          Personal Information
+                        </h3>
+                      </div>
+                        <%= hidden_input f, :action, name: "action", value: "update_name" %>
+                      <div class="mt-6 grid grid-cols-1 gap-y-6 gap-x-4 sm:grid-cols-6">
+                        <div class="col-span-6 sm:col-span-6 lg:col-span-2">
+                          <label for="first-name" class="block text-sm font-medium text-gray-700">
+                            First name
+                          </label>
+                          <div class="mt-1">
+                            <%= text_input f, :first_name, class: "shadow-sm focus:ring-primary-500 focus:border-primary-500 block w-full sm:text-sm border-gray-300 rounded-md" %>
+                          </div>
+                        </div>
+
+                        <div class="col-span-6 sm:col-span-6 lg:col-span-2">
+                          <label for="last-name" class="block text-sm font-medium text-gray-700">
+                            Last name
+                          </label>
+                          <div class="mt-1">
+                            <%= text_input f, :last_name, class: "shadow-sm focus:ring-primary-500 focus:border-primary-500 block w-full sm:text-sm border-gray-300 rounded-md" %>
+                          </div>
+                        </div>
+                        <%= inputs_for f, :user_location, fn loc -> %>
+
+                          <div class="col-span-6 sm:col-span-3">
+                            <label for="country" class="block text-sm font-medium text-gray-700">Country</label>
+                            <%= select loc, :country, ["United States", "Canada", "Mexico"],  class: "mt-1 block w-full py-2 px-3 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-primary-500 focus:border-primary-500 sm:text-sm" %>
+                          </div>
+
+                          <div class="col-span-6">
+                            <label for="street-address" class="block text-sm font-medium text-gray-700">Street address</label>
+                            <%= text_input loc, :street_address, class: "mt-1 focus:ring-primary-500 focus:border-primary-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md" %>
+                          </div>
+
+                          <div class="col-span-6 sm:col-span-6 lg:col-span-2">
+                            <label for="city" class="block text-sm font-medium text-gray-700">City</label>
+                            <%= text_input loc, :city, class: "mt-1 focus:ring-primary-500 focus:border-primary-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md" %>
+                          </div>
+
+                          <div class="col-span-6 sm:col-span-3 lg:col-span-2">
+                            <label for="region" class="block text-sm font-medium text-gray-700">State / Province</label>
+                            <%= text_input loc, :region, class: "mt-1 focus:ring-primary-500 focus:border-primary-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md" %>
+                          </div>
+
+                          <div class="col-span-6 sm:col-span-3 lg:col-span-2">
+                            <label for="postal-code" class="block text-sm font-medium text-gray-700">ZIP / Postal code</label>
+                            <%= text_input loc, :postal_code, class: "mt-1 focus:ring-primary-500 focus:border-primary-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md" %>
+                          </div>
+                        <% end %>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="pt-5">
+                    <div class="flex justify-end">
+                      <button type="submit" class="ml-3 inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-primary-600 hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500">
+                        Save
+                      </button>
+                    </div>
+                  </div>
+                </div>
+            <% end  %>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>

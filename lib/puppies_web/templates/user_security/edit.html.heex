@@ -1,0 +1,120 @@
+    <div class="p-4">
+      <div class="space-y-6">
+        <div class="bg-white shadow px-4 py-5 sm:rounded-lg sm:p-6">
+
+          <div class="md:grid md:grid-cols-3 md:gap-6">
+            <div class="md:col-span-1">
+              <h3 class="text-lg font-medium leading-6 text-gray-900">Change Email</h3>
+              <p class="mt-1 text-sm text-gray-500">Use a permanent address where you can receive mail.</p>
+            </div>
+            <div class="mt-5 md:mt-0 md:col-span-2">
+              <%= form_for @email_changeset, Routes.user_security_path(@conn, :update), fn f -> %>
+                <div class="space-y-8 divide-y divide-gray-200">
+                  <div class="space-y-8 divide-y divide-gray-200">
+                    <div class="pt-8">
+                      <div>
+                        <h3 class="text-lg leading-6 font-medium text-gray-900">
+                          Change Email
+                        </h3>
+                      </div>
+                      <div class="mt-6 grid grid-cols-1 gap-y-6 gap-x-4 sm:grid-cols-6">
+                        <%= hidden_input f, :action, name: "action", value: "update_email" %>
+                        <div class="sm:col-span-3">
+                          <label for="first-name" class="block text-sm font-medium text-gray-700">
+                            Email
+                          </label>
+                          <div class="mt-1">
+                            <%= email_input f, :email, required: true, class: "shadow-sm focus:ring-primary-500 focus:border-primary-500 block w-full sm:text-sm border-gray-300 rounded-md" %>
+                            <%= error_tag f, :emain %>
+                          </div>
+                        </div>
+
+                        <div class="sm:col-span-3">
+                          <label for="last-name" class="block text-sm font-medium text-gray-700">
+                            Current password
+                          </label>
+                          <div class="mt-1">
+                            <%= password_input f, :current_password, required: true, name: "current_password", id: "current_password_for_email", class: "shadow-sm focus:ring-primary-500 focus:border-primary-500 block w-full sm:text-sm border-gray-300 rounded-md" %>
+                            <%= error_tag f, :current_password %>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="pt-5">
+                    <div class="flex justify-end">
+                      <button type="submit" class="ml-3 inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-primary-600 hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500">
+                        Save
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              <% end  %>
+            </div>
+          </div>
+
+          <div class="md:grid md:grid-cols-3 md:gap-6">
+            <div class="md:col-span-1">
+              <h3 class="text-lg font-medium leading-6 text-gray-900">New Password</h3>
+              <p class="mt-1 text-sm text-gray-500">Must be at least 8 characters.</p>
+            </div>
+            <div class="mt-5 md:mt-0 md:col-span-2">
+              <%= form_for @password_changeset, Routes.user_security_path(@conn, :update), fn f -> %>
+                <div class="space-y-8 divide-y divide-gray-200">
+                  <div class="space-y-8 divide-y divide-gray-200">
+                    <div class="pt-8">
+                      <div>
+                        <h3 class="text-lg leading-6 font-medium text-gray-900">
+                          New Password
+                        </h3>
+                      </div>
+                      <div class="mt-6 grid grid-cols-1 gap-y-6 gap-x-4 sm:grid-cols-6">
+                        <%= hidden_input f, :action, name: "action", value: "update_password" %>
+
+                        <div class="sm:col-span-2">
+                          <label for="last-name" class="block text-sm font-medium text-gray-700">
+                            Current password
+                          </label>
+                          <div class="mt-1">
+                            <%= password_input f, :current_password, required: true, name: "current_password", id: "current_password", class: "shadow-sm focus:ring-primary-500 focus:border-primary-500 block w-full sm:text-sm border-gray-300 rounded-md" %>
+                          </div>
+                        </div>
+
+                        <div class="sm:col-span-2">
+                          <label for="first-name" class="block text-sm font-medium text-gray-700">
+                            New password
+                          </label>
+                          <div class="mt-1">
+                            <%= password_input f, :password, required: true, class: "shadow-sm focus:ring-primary-500 focus:border-primary-500 block w-full sm:text-sm border-gray-300 rounded-md" %>
+                            <%= error_tag f, :password %>
+                          </div>
+                        </div>
+
+                        <div class="sm:col-span-2">
+                          <label for="last-name" class="block text-sm font-medium text-gray-700">
+                            Confirm new password
+                          </label>
+                          <div class="mt-1">
+                            <%= password_input f, :password_confirmation, required: true, name: "password_confirmation", id: "password_confirmation", class: "shadow-sm focus:ring-primary-500 focus:border-primary-500 block w-full sm:text-sm border-gray-300 rounded-md" %>
+                            <%= error_tag f, :password_confirmation %>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="pt-5">
+                    <div class="flex justify-end">
+                      <button type="submit" class="ml-3 inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-primary-600 hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500">
+                        Save
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              <% end  %>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
