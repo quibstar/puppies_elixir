@@ -93,8 +93,7 @@ defmodule PuppiesWeb.Router do
     post("/reviews/create", ReviewController, :create)
     get("/reviews/show/:id", ReviewController, :show)
 
-    get("/users/profile", UserProfileController, :edit)
-    put("/users/profile", UserProfileController, :update)
+    live("/users/profile", UserProfile)
     get("/users/security", UserSecurityController, :edit)
     put("/users/security", UserSecurityController, :update)
     get("/users/settings", UserSettingsController, :edit)

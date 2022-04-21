@@ -175,3 +175,9 @@ input[type='range']::-webkit-slider-thumb {
   -webkit-appearance: none;
   @apply bg-primary-400 cursor-pointer appearance-none w-4 h-4 rounded-full z-10 relative border border-primary-600;
 }
+
+#profile-image > img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}

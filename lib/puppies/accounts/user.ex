@@ -35,6 +35,7 @@ defmodule Puppies.Accounts.User do
     has_many(:favorites, Puppies.Favorite, on_replace: :delete)
     many_to_many(:favorite_listings, Puppies.Listings.Listing, join_through: Puppies.Favorite)
     has_one(:user_location, Puppies.UserLocation, on_delete: :delete_all)
+    has_one(:photo, Puppies.Photos.Photo)
 
     timestamps()
   end

@@ -79,8 +79,8 @@ defmodule PuppiesWeb.Stats do
             <ul role="list" class="divide-y divide-gray-200">
               <%= for view <- @view_users do %>
                 <li class="py-4 flex items-center">
+                  <%= PuppiesWeb.Avatar.show(%{business: view.user.business, user: view.user, square: 10, extra_classes: "text-2xl"}) %>
                   <%= unless is_nil(view.user.business) do %>
-                    <%= img_tag view.user.business.photo.url, class: "mx-auto w-10 h-10 rounded-full overflow-hidden object-cover block ring-2 ring-yellow-500 ring-offset-1", alt: "Profile image"%>
                     <div class="ml-3 flex-grow">
                       <p class="text-sm font-medium text-gray-900">
                         <%= live_redirect view.user.business.name, to: Routes.live_path(@socket, PuppiesWeb.BusinessPageLive, view.user.business.slug), class: "underline cursor-pointer"%>
@@ -90,7 +90,6 @@ defmodule PuppiesWeb.Stats do
                       </p>
                     </div>
                   <% else %>
-                    <img class="mx-auto w-10 h-10 rounded-full overflow-hidden object-cover block ring-2 ring-yellow-500 ring-offset-1" src={"/uploads/dogs/#{Enum.random(1..16)}.jpg"} alt="random dog image">
                     <div class="ml-3 flex-grow">
                       <%= view.user.first_name %> <%= view.user.last_name %>
                       <p class="text-xs font-medium text-gray-500">

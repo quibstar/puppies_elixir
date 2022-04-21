@@ -145,4 +145,11 @@ defmodule Puppies.Photos do
       |> upload_to_cloud()
     end)
   end
+
+  def get_photo_by_user(id) do
+    from(p in Photo,
+      where: p.user_id == ^id
+    )
+    |> Repo.one()
+  end
 end

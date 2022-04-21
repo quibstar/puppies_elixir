@@ -63,7 +63,7 @@ defmodule PuppiesWeb.BusinessForm do
       if target == ["business", "name"] do
         Puppies.Utilities.string_to_slug(params["name"])
       else
-        ""
+        Puppies.Utilities.string_to_slug(socket.assigns.business.name)
       end
 
     params = Map.put(params, "slug", slug)
@@ -91,6 +91,7 @@ defmodule PuppiesWeb.BusinessForm do
 
   def handle_event("save_business", %{"business" => params}, socket) do
     %{"id" => id} = params
+    old_photo = socket.assigns.business.photo
 
     business_breeds =
       Enum.reduce(socket.assigns.selected_breeds, [], fn breed, acc ->
@@ -115,7 +116,11 @@ defmodule PuppiesWeb.BusinessForm do
 
     case business do
       {:ok, business} ->
-        save_photo(socket, business)
+        if old_photo && old_photo.delete do
+          Photos.delete_photo(old_photo)
+        else
+          save_photo(socket, business)
+        end
 
         changeset = Businesses.change_business(%Business{})
 
@@ -190,10 +195,10 @@ defmodule PuppiesWeb.BusinessForm do
   end
 
   def handle_event("remove-business-image", _, socket) do
-    {:noreply,
-     assign(socket,
-       hide_current_photo: true
-     )}
+    photo = socket.assigns.business.photo
+    photo = Map.put(photo, :delete, true)
+    business = Map.put(socket.assigns.business, :photo, photo)
+    {:noreply, assign(socket, hide_current_photo: true, business: business)}
   end
 
   # file upload
@@ -228,7 +233,6 @@ defmodule PuppiesWeb.BusinessForm do
       case Photos.create_photo(%{
              url: photo.url,
              name: photo.name,
-             is_profile_image: true,
              business_id: business.id
            }) do
         {:ok, photo} ->

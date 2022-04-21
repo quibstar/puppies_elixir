@@ -1,7 +1,7 @@
 defmodule PuppiesWeb.UserDashboardLive do
   use PuppiesWeb, :live_view
 
-  alias Puppies.{Accounts, Listings, Views}
+  alias Puppies.{Accounts, Listings, Views, Photos}
 
   alias PuppiesWeb.{UI.Drawer, BusinessForm, ListView}
 
@@ -88,13 +88,7 @@ defmodule PuppiesWeb.UserDashboardLive do
         <div class="mt-4 max-w-3xl mx-auto px-4 sm:px-6 md:flex md:items-center md:justify-between md:space-x-5 lg:max-w-7xl lg:px-8">
           <div class="flex items-center space-x-5">
             <div class="flex-shrink-0">
-              <div class="relative">
-                <%= if is_nil(@business) do %>
-                  <img class="mx-auto w-10 h-10 rounded-full overflow-hidden object-cover block ring-2 ring-yellow-500 ring-offset-1" src={"/uploads/dogs/#{Enum.random(1..16)}.jpg"} alt="random dog image">
-                <% else %>
-                  <%= img_tag( @business.photo.url, class: "h-16 w-16 rounded-full border border-2 border-primary-500 object-cover") %>
-                <% end %>
-              </div>
+              <%= PuppiesWeb.Avatar.show(%{business: @business, user: @user, square: "16", extra_classes: "text-4xl pt-0.5"}) %>
             </div>
             <div>
               <h1 class="text-2xl font-bold text-gray-900"><%= @user.first_name %> <%=@user.last_name%></h1>
@@ -106,7 +100,9 @@ defmodule PuppiesWeb.UserDashboardLive do
             </div>
           </div>
           <div class="mt-6 flex flex-col-reverse justify-stretch space-y-4 space-y-reverse sm:flex-row-reverse sm:justify-end sm:space-x-reverse sm:space-y-0 sm:space-x-3 md:mt-0 md:flex-row md:space-x-3">
-            <button type="button" x-on:click="show_drawer = !show_drawer" type="button" class="inline-flex items-center justify-center px-4 py-2 border border-gray-300 shadow-sm text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-100 focus:ring-blue-500">Business/Personal Details</button>
+            <%= if @user.is_seller do %>
+              <button type="button" x-on:click="show_drawer = !show_drawer" type="button" class="inline-flex items-center justify-center px-4 py-2 border border-gray-300 shadow-sm text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-100 focus:ring-blue-500">Business/Personal Details</button>
+            <% end %>
           </div>
         </div>
 
@@ -130,6 +126,7 @@ defmodule PuppiesWeb.UserDashboardLive do
                 </div>
               </div>
             </section>
+
             <%= unless is_nil(@user.business) do %>
 
               <div class="bg-white shadow sm:rounded-lg" x-data="{ tab: 'available' }">
