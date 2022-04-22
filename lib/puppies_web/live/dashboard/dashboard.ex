@@ -88,7 +88,7 @@ defmodule PuppiesWeb.UserDashboardLive do
         <div class="mt-4 max-w-3xl mx-auto px-4 sm:px-6 md:flex md:items-center md:justify-between md:space-x-5 lg:max-w-7xl lg:px-8">
           <div class="flex items-center space-x-5">
             <div class="flex-shrink-0">
-              <%= PuppiesWeb.Avatar.show(%{business: @business, user: @user, square: "16", extra_classes: "text-4xl pt-0.5"}) %>
+              <%= PuppiesWeb.Avatar.show(%{business: @business, user: @user}) %>
             </div>
             <div>
               <h1 class="text-2xl font-bold text-gray-900"><%= @user.first_name %> <%=@user.last_name%></h1>

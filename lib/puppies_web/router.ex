@@ -79,20 +79,25 @@ defmodule PuppiesWeb.Router do
 
   scope "/", PuppiesWeb do
     pipe_through([:browser, :require_authenticated_user])
+
     # dashboard
     live("/users/dashboard", UserDashboardLive)
+
     # business
     live("/users/business/new", BusinessNew)
     live("/users/business/:id/edit", BusinessEdit)
+
     # listings
     live("/listings/new", ListingsNew)
     live("/listings/:listing_id/status", ListingsStatusUpdateForm)
     live("/listings/:listing_id/edit", ListingsEdit)
+
     # reviews
     get("/reviews/new", ReviewController, :new)
     post("/reviews/create", ReviewController, :create)
     get("/reviews/show/:id", ReviewController, :show)
 
+    # user
     live("/users/profile", UserProfile)
     get("/users/security", UserSecurityController, :edit)
     put("/users/security", UserSecurityController, :update)
@@ -100,6 +105,9 @@ defmodule PuppiesWeb.Router do
     post("/users/settings", UserSettingsController, :create)
     put("/users/settings", UserSettingsController, :update)
     get("/users/settings/confirm_email/:token", UserSettingsController, :confirm_email)
+
+    # messages
+    live("/messages", MessagesLive)
   end
 
   scope "/", PuppiesWeb do

@@ -8,7 +8,7 @@ defmodule PuppiesWeb.BusinessCard do
     ~H"""
       <div>
         <div class="text-center space-y-4 bg-white px-6 py-9 border rounded">
-          <%= img_tag @business.photo.url, class: "mx-auto w-44 h-44 rounded-full overflow-hidden object-cover block ring-2 ring-primary-500 ring-offset-1", alt: "Profile image"%>
+          <%= PuppiesWeb.Avatar.show(%{business: @business, user: @business.user}) %>
           <div>
             <div class="inline-block text-sm text-gray-500">Presented by</div>
             <h3 class="font-bold text-xl text-gray-900 sm:text-2xl"><%= @business.name %></h3>
