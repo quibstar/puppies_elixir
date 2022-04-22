@@ -7,7 +7,12 @@ defmodule PuppiesWeb.MessagesLive do
   def render(assigns) do
     ~H"""
       <div class='flex h-full' x-data="{ open: false }">
-        <ul class="flex-none w-45 border-r-[1px] bg-white">
+        <ul class="flex-none w-45 border-r-[1px] bg-white"
+          x-show="!open"
+          x-transition:enter="transform transition ease-in-out duration-500 sm:duration-700"
+          x-transition:enter-start="-translate-x-full"
+          x-transition:enter-end="translate-x-0"
+          >
            <li x-on:click="open = !open" class="p-4 flex rounded-lg shadow-md border border-primary-500 m-2 space-x-4">
               <img class="mx-auto w-10 h-10 rounded-full overflow-hidden object-cover block ring-2 ring-yellow-500 ring-offset-1" src={"/uploads/dogs/#{Enum.random(1..16)}.jpg"} alt="random dog image">
               <div class="ml-3 flex-grow">
@@ -38,13 +43,18 @@ defmodule PuppiesWeb.MessagesLive do
               x-transition:enter="transform transition ease-in-out duration-500 sm:duration-700"
               x-transition:enter-start="-translate-x-full"
               x-transition:enter-end="translate-x-0"
-              x-transition:leave="transform transition ease-in-out duration-500 sm:duration-700"
-              x-transition:leave-start="translate-x-0"
-              x-transition:leave-end="-translate-x-full"
+
             >
-              <svg x-on:click="open = !open" xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 m-2 stroke-primary-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                <path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7" />
-              </svg>
+
+              <button x-on:click="open = !open" class="block flex items-center">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 m-2 stroke-primary-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7" />
+                </svg>
+                <div class="text-sm text-primary-500">
+                  Regarding Sadie
+                </div>
+              </button>
+
               <ul >
                 <li class="p-4 flex rounded-lg  hover:shadow-md border border-transparent hover:border-primary-500 m-2 space-x-4">
                     <img class="mx-auto w-10 h-10 rounded-full overflow-hidden object-cover block ring-2 ring-yellow-500 ring-offset-1" src={"/uploads/dogs/#{Enum.random(1..16)}.jpg"} alt="random dog image">
