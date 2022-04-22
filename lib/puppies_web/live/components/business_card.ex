@@ -8,7 +8,7 @@ defmodule PuppiesWeb.BusinessCard do
     ~H"""
       <div>
         <div class="text-center space-y-4 bg-white px-6 py-9 border rounded">
-          <%= PuppiesWeb.Avatar.show(%{business: @business, user: @business.user}) %>
+          <%= PuppiesWeb.Avatar.show(%{business: @business, user: @business.user, square: 44, extra_classes: "text8_5xl"}) %>
           <div>
             <div class="inline-block text-sm text-gray-500">Presented by</div>
             <h3 class="font-bold text-xl text-gray-900 sm:text-2xl"><%= @business.name %></h3>

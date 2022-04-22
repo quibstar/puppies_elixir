@@ -79,7 +79,7 @@ defmodule PuppiesWeb.Stats do
             <ul role="list" class="divide-y divide-gray-200">
               <%= for view <- @view_users do %>
                 <li class="py-4 flex items-center">
-                  <%= PuppiesWeb.Avatar.show(%{business: view.user.business, user: view.user}) %>
+                  <%= PuppiesWeb.Avatar.show(%{business: view.user.business, user: view.user, square: 10, extra_classes: "text-2xl"}) %>
                   <%= unless is_nil(view.user.business) do %>
                     <div class="ml-3 flex-grow">
                       <p class="text-sm font-medium text-gray-900">

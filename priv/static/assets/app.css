@@ -1059,10 +1059,6 @@ h1, h2, h3, h4, h5 {
   height: 1rem;
 }
 
-.h-28 {
-  height: 7rem;
-}
-
 .h-6 {
   height: 1.5rem;
 }
@@ -1149,10 +1145,6 @@ h1, h2, h3, h4, h5 {
 
 .w-5 {
   width: 1.25rem;
-}
-
-.w-28 {
-  width: 7rem;
 }
 
 .w-screen {
@@ -2693,9 +2685,9 @@ input[type='range']::-webkit-slider-thumb {
   height: 100%;
 }
 
-.text4_rem {
-  font-size: 4rem;
-  line-height: 1.7;
+.text8_5xl {
+  font-size: 7rem;
+  line-height: 1.5;
 }
 
 .focus-within\:outline-none:focus-within {
