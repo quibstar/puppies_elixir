@@ -780,6 +780,14 @@ h1, h2, h3, h4, h5 {
   right: 100%;
 }
 
+.bottom-2 {
+  bottom: 0.5rem;
+}
+
+.left-0\.5 {
+  left: 0.125rem;
+}
+
 .z-0 {
   z-index: 0;
 }
@@ -1756,6 +1764,11 @@ h1, h2, h3, h4, h5 {
 .bg-amber-50 {
   --tw-bg-opacity: 1;
   background-color: rgb(255 251 235 / var(--tw-bg-opacity));
+}
+
+.bg-red-500 {
+  --tw-bg-opacity: 1;
+  background-color: rgb(239 68 68 / var(--tw-bg-opacity));
 }
 
 .bg-opacity-75 {
@@ -3266,6 +3279,10 @@ input[type='range']::-webkit-slider-thumb {
 
   .md\:flex-row {
     flex-direction: row;
+  }
+
+  .md\:flex-col {
+    flex-direction: column;
   }
 
   .md\:items-center {

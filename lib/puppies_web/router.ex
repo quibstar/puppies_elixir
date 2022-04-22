@@ -108,6 +108,9 @@ defmodule PuppiesWeb.Router do
 
     # messages
     live("/messages", MessagesLive)
+
+    # notifications
+    live("/notifications", NotificationsLive)
   end
 
   scope "/", PuppiesWeb do
