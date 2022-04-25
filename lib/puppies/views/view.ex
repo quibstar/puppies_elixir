@@ -13,5 +13,6 @@ defmodule Puppies.Views.View do
   def changeset(view, attrs) do
     view
     |> cast(attrs, [:user_id, :listing_id, :unique])
+    |> validate_required([:user_id, :listing_id])
   end
 end

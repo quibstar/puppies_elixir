@@ -68,7 +68,7 @@ defmodule PuppiesWeb.BusinessPageLive do
               <%= unless @review_stats.average == 0 do %>
                 <%= live_component  PuppiesWeb.ReviewStats, id: "listing_reviews", review_stats: @review_stats %>
               <% end %>
-              <%= live_component  PuppiesWeb.ContactCTA, id: "contact_cta",  user: @user, business_or_listing: @business %>
+              <%= live_component PuppiesWeb.ContactCTA, id: "contact_cta",  user: @user, business_or_listing: @business %>
             </div>
             <div class="col-span-2 space-y-4">
               <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">

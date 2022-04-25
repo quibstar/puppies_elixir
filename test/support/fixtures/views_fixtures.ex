@@ -10,9 +10,6 @@ defmodule Puppies.ViewsFixtures do
   def view_fixture(attrs \\ %{}) do
     {:ok, view} =
       attrs
-      |> Enum.into(%{
-
-      })
       |> Puppies.Views.create_view()
 
     view

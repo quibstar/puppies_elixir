@@ -4,7 +4,7 @@ defmodule PuppiesWeb.ListingShow do
   """
   use PuppiesWeb, :live_view
 
-  alias Puppies.{Accounts, Listings, Businesses, Favorites, Views}
+  alias Puppies.{Accounts, Listings, Businesses, Favorites, Views, Threads}
 
   def mount(%{"listing_id" => listing_id}, session, socket) do
     case connected?(socket) do
@@ -62,6 +62,8 @@ defmodule PuppiesWeb.ListingShow do
 
     views = Views.list_views(listing_id)
 
+    conversation_started = Threads.conversation_started(user.id, listing.id)
+
     {:ok,
      assign(socket,
        loading: false,
@@ -73,7 +75,8 @@ defmodule PuppiesWeb.ListingShow do
        page_title: "#{business.name} #{listing.name} - ",
        favorites: favorites,
        views: views,
-       review_stats: review_stats
+       review_stats: review_stats,
+       conversation_started: conversation_started
      )}
   end
 
@@ -111,7 +114,7 @@ defmodule PuppiesWeb.ListingShow do
           </div>
 
           <div class="md:grid md:grid-cols-3 md:gap-4">
-            <%= live_component  PuppiesWeb.BreederDetails, id: "breeder_details", listing: @listing, user: @user, business: @business, favorites: @favorites %>
+            <%= live_component  PuppiesWeb.BreederDetails, id: "breeder_details", listing: @listing, user: @user, business: @business, favorites: @favorites, conversation_started: @conversation_started %>
             <%= live_component  PuppiesWeb.ImageViewer, id: "image_viewer", photos: @photos, current_photo: @current_photo %>
             <div>
               <%= if @review_stats.average > 0 do %>
