@@ -115,7 +115,7 @@ defmodule Puppies.Threads do
 
   def get_first_100_messages() do
     from(m in Message,
-      order_by: [desc: :updated_at],
+      order_by: [desc: :id],
       limit: 100
     )
   end

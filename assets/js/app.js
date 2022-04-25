@@ -19,6 +19,8 @@
 //
 
 // Include phoenix_html to handle method=PUT/DELETE in forms and buttons.
+import moment from 'moment';
+
 import 'phoenix_html';
 // Establish Phoenix Socket and LiveView configuration.
 import { Socket } from 'phoenix';
@@ -117,3 +119,26 @@ const nextAction = () => {
   }
   galleryViewer.src = photoUrl[currentPhotoIndex];
 };
+
+// messages dates
+document.addEventListener('phx:update', () => {
+  const timeElements = document.querySelectorAll('.message-time');
+  let i = 0;
+  while (i < timeElements.length) {
+    let ele = timeElements[i];
+    let time = timeElements[i].getAttribute('data-time');
+    let newTime = moment.utc(time).local().format('h:mm a');
+    ele.innerText = newTime;
+    i++;
+  }
+
+  const messageDates = document.querySelectorAll('.messages-date');
+  let j = 0;
+  while (j < messageDates.length) {
+    let ele = messageDates[j];
+    let time = messageDates[j].getAttribute('data-time');
+    let newTime = moment.utc(time).format('MM/DD/YYYY');
+    ele.innerText = newTime;
+    j++;
+  }
+});

@@ -52,16 +52,7 @@ defmodule PuppiesWeb.ListingsSold do
                   <td class="whitespace-nowrap py-4 px-3 text-sm text-gray-500">$<%= listing.price %>.00</td>
                   <td class="whitespace-nowrap py-4 px-3 text-sm text-red-500 capitalize"><%= listing.status %></td>
                   <td class="whitespace-nowrap py-4 px-3 text-sm text-gray-500">
-                    <%= if listing.views > 0 do %>
-                      <span x-on:click.debounce="show_drawer = !show_drawer" class="cursor-pointer underline" phx-click="show-stats" phx-value-id={listing.id} phx-target={@myself} >
-                        <%= listing.views %>
-                      </span>
-                    <% else %>
-                      <%= listing.views %>
-                    <% end %>
-                  </td>
-                  <td class="whitespace-nowrap py-4 px-3 text-sm text-gray-500">
-                    0
+                    <%= listing.views %>
                   </td>
                 </tr>
               <% end %>

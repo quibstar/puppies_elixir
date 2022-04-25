@@ -1,5 +1,6 @@
 {
   "dependencies": {
-    "alpinejs": "^3.9.5"
+    "alpinejs": "^3.9.5",
+    "moment": "^2.29.3"
   }
 }

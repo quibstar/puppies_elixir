@@ -3,7 +3,7 @@ defmodule PuppiesWeb.UserDashboardLive do
 
   alias Puppies.{Accounts, Listings, Views, Photos}
 
-  alias PuppiesWeb.{UI.Drawer, BusinessForm, ListView}
+  alias PuppiesWeb.{UI.Drawer, BusinessForm}
 
   def mount(_params, session, socket) do
     case connected?(socket) do
@@ -196,20 +196,21 @@ defmodule PuppiesWeb.UserDashboardLive do
           </div>
 
           <section aria-labelledby="timeline-title" class="space-y-4">
-            <div class="bg-white px-4 py-5 shadow sm:rounded-lg sm:px-6">
-              <h2 id="timeline-title" class="text-xlg font-medium text-gray-900">Viewing History</h2>
-              <ul role="list" class="divide-y divide-gray-200">
-                <%= for view <- @viewing_history do %>
-                  <.live_component module={ListView} id={view.id}  listing={view.listing}} />
-                <% end %>
-              </ul>
-
-              <%= if @view_pagination.count > 6 do %>
-                 <%= live_component PuppiesWeb.PaginationComponent, id: "view_pagination", pagination: @view_pagination, socket: @socket, params: %{"page" => @view_pagination.page, "limit" => @view_pagination.limit, "prefix" => "view_"}, end_point: PuppiesWeb.UserDashboardLive, segment_id: nil %>
-              <% end %>
-
-            </div>
+             <%= PuppiesWeb.ViewHistoryComponent.show(%{viewing_history: @viewing_history, view_pagination: @view_pagination, socket: @socket}) %>
              <%= live_component PuppiesWeb.WatchListComponent, id: "watch_list", listings: @user.favorite_listings %>
+             <%= if !@user.is_seller do %>
+              <div class="bg-white px-4 py-5 shadow sm:rounded-lg sm:px-6">
+                <h2 id="timeline-title" class="text-xlg font-medium text-gray-900">Listings</h2>
+                <p class="mt-1 max-w-2xl text-gray-500 text-sm">If you want to post a listing you must first:</p>
+                <ol class="my-2 text-gray-500 list-decimal ml-4 text-sm">
+                  <li>Update your <%= live_redirect "profile", to: Routes.live_path(@socket, PuppiesWeb.UserProfile), class: "underline" %> to become a lister</li>
+                  <li>Fill out Business/Personal Details</li>
+                  <li>Verify your ID</li>
+                  <li>Choose your plan</li>
+                  <li>Create some listing!</li>
+                </ol>
+              </div>
+             <% end %>
           </section>
         </div>
       <% end %>
