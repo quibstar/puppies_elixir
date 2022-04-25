@@ -80,7 +80,7 @@ defmodule Puppies.Threads do
         [listing: :photos],
         receiver: [business: :photo],
         sender: [business: :photo],
-        messages: ^get_first_20_messages()
+        messages: ^get_first_100_messages()
       ]
     )
     |> Repo.one()
@@ -92,7 +92,7 @@ defmodule Puppies.Threads do
       order_by: :updated_at,
       preload: [
         [listing: :photos],
-        :messages,
+        messages: ^get_first_100_messages(),
         receiver: [business: :photo],
         sender: [business: :photo]
       ]
@@ -107,16 +107,16 @@ defmodule Puppies.Threads do
         [listing: :photos],
         receiver: [business: :photo],
         sender: [business: :photo],
-        messages: ^get_first_20_messages()
+        messages: ^get_first_100_messages()
       ]
     )
     |> Repo.one()
   end
 
-  def get_first_20_messages() do
+  def get_first_100_messages() do
     from(m in Message,
-      order_by: :updated_at,
-      limit: 20
+      order_by: [desc: :updated_at],
+      limit: 100
     )
   end
 

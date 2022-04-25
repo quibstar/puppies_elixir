@@ -1123,6 +1123,18 @@ h1, h2, h3, h4, h5 {
   height: 1.75rem;
 }
 
+.h-\[calc\(100vh-50px\)\] {
+  height: calc(100vh - 50px);
+}
+
+.h-\[calc\(100vh-150px\)\] {
+  height: calc(100vh - 150px);
+}
+
+.h-\[calc\(100vh-148px\)\] {
+  height: calc(100vh - 148px);
+}
+
 .max-h-60 {
   max-height: 15rem;
 }

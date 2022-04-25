@@ -32,6 +32,7 @@ defmodule PuppiesWeb.MessagesLive do
     current_thread = Threads.get_first_listing_thread_and_messages(user.id)
     changeset = Messages.message_changes(%{})
     socket = assign(socket, :messages, current_thread.messages)
+    subscribe(current_thread.uuid)
 
     {:ok,
      assign(socket,
@@ -45,9 +46,13 @@ defmodule PuppiesWeb.MessagesLive do
      )}
   end
 
-  @spec subscribe :: any
-  def subscribe() do
-    PubSub.subscribe(Puppies.PubSub, "liveview_chat")
+  def subscribe(thread_id) do
+    PuppiesWeb.Endpoint.subscribe(thread_id)
+  end
+
+  def unsubscribe_subscribe(old_thread_id, new_thread_id) do
+    PuppiesWeb.Endpoint.unsubscribe(old_thread_id)
+    subscribe(new_thread_id)
   end
 
   def handle_params(params, _uri, socket) do
@@ -59,10 +64,15 @@ defmodule PuppiesWeb.MessagesLive do
 
       listing = Listings.get_listing!(listing_id)
 
+      IO.inspect(socket.assigns.current_thread.uuid)
+
       current_thread =
         if is_nil(params["thread"]) do
-          List.first(listing_threads)
+          thread = List.first(listing_threads)
+          unsubscribe_subscribe(socket.assigns.current_thread.uuid, thread.uuid)
+          thread
         else
+          unsubscribe_subscribe(socket.assigns.current_thread.uuid, params["thread"])
           Threads.current_thread(socket.assigns.user.id, params["thread"])
         end
 
@@ -124,6 +134,9 @@ defmodule PuppiesWeb.MessagesLive do
     case message do
       {:ok, message} ->
         changeset = Messages.message_changes(%{})
+        uuid = socket.assigns.current_thread.uuid
+
+        PuppiesWeb.Endpoint.broadcast_from(self(), uuid, "message", message)
 
         socket =
           socket
@@ -137,6 +150,14 @@ defmodule PuppiesWeb.MessagesLive do
       {:error, %Ecto.Changeset{} = changeset} ->
         {:noreply, assign(socket, changeset: changeset)}
     end
+  end
+
+  def handle_info(%{event: "message", payload: state}, socket) do
+    socket =
+      socket
+      |> update(:messages, fn messages -> [state | messages] end)
+
+    {:noreply, socket}
   end
 
   def render(assigns) do
@@ -213,45 +234,42 @@ defmodule PuppiesWeb.MessagesLive do
               </div>
             <% end %>
           </div>
-
-          <div class="grow">
-            <div class="relative h-[calc(100vh-100px)]">
-              <ul class="p-4 space-y-4  h-[calc(100vh-295px)] overflow-scroll" id="chat-messages" phx-update="append">
-                <%= if  @messages != [] do %>
-                  <%= for message <- @messages do %>
-                    <%= if message.sent_by != @user.id do %>
-                      <li class="flex items-end" id={"#{message.id}"}>
-                        <%= PuppiesWeb.Avatar.show(%{business: @current_thread.receiver.business, user: @current_thread.receiver, square: 10, extra_classes: "text-2xl mx-4"}) %>
-                        <div class="p-4 shadow rounded text-sm bg-white">
-                          <%= message.message %>
-                        </div>
-                      </li>
-                    <% else %>
-                      <li class="flex items-end flex-row-reverse" id={"#{message.id}"}>
-                         <%= PuppiesWeb.Avatar.show(%{business: @current_thread.sender.business, user: @current_thread.sender, square: 10, extra_classes: "text-2xl mx-4"}) %>
-                        <div class="p-4 shadow rounded text-sm bg-white">
-                          <%= message.message %>
-                        </div>
-                      </li>
-                    <% end %>
-                  <% end %>
-                <% else %>
-                  No messages
-                <% end %>
-              </ul>
-              <div class="bg-white absolute bottom-0 w-full border-t-[1px]">
-                <div class="p-4">
-                  <div class="mt-1">
-                    <.form let={f} for={@changeset} id="chat-form" phx-submit="save_message" phx_change="validate">
-                      <%= hidden_input f , :sent_by, value: @current_thread.sender.id %>
-                      <%= hidden_input f , :received_by, value: @current_thread.receiver.id %>
-                      <%= hidden_input f , :thread_uuid, value: @current_thread.uuid %>
-                      <%= textarea f, :message, class: "focus:ring-primary-500 focus:border-primary-500 block w-full sm:text-sm border-gray-300 rounded-md" %>
-                      <div class="mt-4 flex justify-end">
-                         <%= submit "Submit", phx_disable_with: "Saving...",  disabled: !@changeset.valid?,  class: "inline-block px-6 py-2 text-xs font-medium leading-6 text-center text-white uppercase transition bg-primary-500 rounded shadow hover:shadow-lg hover:bg-primary-600 focus:outline-none disabled:opacity-50" %>
+          <div class="w-full">
+            <ul class="h-[calc(100vh-295px)] overflow-scroll flex flex-col-reverse" id="chat-messages" phx-hook="chatMessages" phx-update="prepend">
+              <%= if  @messages != [] do %>
+                <%= for message <- @messages do %>
+                  <%= if message.sent_by != @user.id do %>
+                    <li class="flex items-end my-2" id={"#{message.id}"}>
+                      <%= PuppiesWeb.Avatar.show(%{business: @current_thread.receiver.business, user: @current_thread.receiver, square: 10, extra_classes: "text-2xl mx-4"}) %>
+                      <div class="p-4 shadow rounded text-sm bg-white">
+                        <%= message.message %>
                       </div>
-                    </.form>
-                  </div>
+                    </li>
+                  <% else %>
+                    <li class="flex items-end flex-row-reverse my-2" id={"#{message.id}"}>
+                        <%= PuppiesWeb.Avatar.show(%{business: @current_thread.sender.business, user: @current_thread.sender, square: 10, extra_classes: "text-2xl mx-4"}) %>
+                      <div class="p-4 shadow rounded text-sm bg-white">
+                        <%= message.message %>
+                      </div>
+                    </li>
+                  <% end %>
+                <% end %>
+              <% else %>
+                No messages
+              <% end %>
+            </ul>
+            <div class="bg-white border-t-[1px]">
+              <div class="p-4">
+                <div class="mt-1">
+                  <.form let={f} for={@changeset} id="chat-form" phx-submit="save_message" phx_change="validate">
+                    <%= hidden_input f , :sent_by, value: @current_thread.sender.id %>
+                    <%= hidden_input f , :received_by, value: @current_thread.receiver.id %>
+                    <%= hidden_input f , :thread_uuid, value: @current_thread.uuid %>
+                    <%= textarea f, :message, class: "focus:ring-primary-500 focus:border-primary-500 block w-full sm:text-sm border-gray-300 rounded-md" %>
+                    <div class="mt-4 flex justify-end">
+                        <%= submit "Submit", phx_disable_with: "Saving...",  disabled: !@changeset.valid?,  class: "inline-block px-6 py-2 text-xs font-medium leading-6 text-center text-white uppercase transition bg-primary-500 rounded shadow hover:shadow-lg hover:bg-primary-600 focus:outline-none disabled:opacity-50" %>
+                    </div>
+                  </.form>
                 </div>
               </div>
             </div>

@@ -43,6 +43,19 @@ let liveSocket = new LiveSocket('/live', Socket, {
   hooks: Hooks,
 });
 
+Hooks.chatMessages = {
+  mounted() {
+    this.el.scrollTop = this.el.scrollHeight;
+  },
+  updated() {
+    this.el.scrollTop = this.el.scrollHeight;
+    // let input = document.getElementById('messages_message');
+    // if (input) {
+    //   input.focus();
+    // }
+  },
+};
+
 // Show progress bar on live navigation and form submits
 topbar.config({ barColors: { 0: '#29d' }, shadowColor: 'rgba(0, 0, 0, .3)' });
 window.addEventListener('phx:page-loading-start', (info) => topbar.show());
