@@ -59,6 +59,7 @@ defmodule PuppiesWeb.StartChat do
 
             <div>
               <%= hidden_input form, :listing_id, value: @listing.id %>
+              <%= hidden_input form, :business_id, value: @business.id %>
               <%= hidden_input form, :receiver_id, value: @business.user_id %>
               <%= hidden_input form, :sender_id, value: @user.id %>
               <%= submit "Submit", phx_disable_with: "Saving...",  disabled: !@changeset.valid?,  class: "w-full px-6 py-2 text-xs font-medium leading-6 text-center text-white uppercase transition bg-primary-500 rounded shadow hover:shadow-lg hover:bg-primary-600 focus:outline-none disabled:opacity-50" %>

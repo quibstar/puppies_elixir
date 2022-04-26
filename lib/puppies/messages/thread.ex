@@ -7,6 +7,7 @@ defmodule Puppies.Thread do
     belongs_to(:user, Puppies.Accounts.User)
     field(:receiver_id, :integer)
     belongs_to(:listing, Puppies.Listings.Listing)
+    belongs_to(:business, Puppies.Businesses.Business)
 
     has_many(:messages, Puppies.Message,
       references: :uuid,
@@ -29,7 +30,7 @@ defmodule Puppies.Thread do
   @doc false
   def changeset(thread, attrs) do
     thread
-    |> cast(attrs, [:uuid, :listing_id, :user_id, :receiver_id])
-    |> validate_required([:uuid, :listing_id, :user_id, :receiver_id])
+    |> cast(attrs, [:uuid, :listing_id, :user_id, :receiver_id, :business_id])
+    |> validate_required([:uuid, :listing_id, :user_id, :receiver_id, :business_id])
   end
 end

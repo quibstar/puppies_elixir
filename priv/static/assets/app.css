@@ -820,6 +820,10 @@ h1, h2, h3, h4, h5 {
   grid-column: span 6 / span 6;
 }
 
+.col-span-3 {
+  grid-column: span 3 / span 3;
+}
+
 .m-2 {
   margin: 0.5rem;
 }
@@ -1376,6 +1380,10 @@ h1, h2, h3, h4, h5 {
   grid-template-columns: repeat(4, minmax(0, 1fr));
 }
 
+.grid-cols-5 {
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+}
+
 .flex-row-reverse {
   flex-direction: row-reverse;
 }
@@ -1394,6 +1402,10 @@ h1, h2, h3, h4, h5 {
 
 .place-content-center {
   place-content: center;
+}
+
+.content-center {
+  align-content: center;
 }
 
 .items-start {

@@ -1,7 +1,7 @@
 defmodule PuppiesWeb.UserDashboardLive do
   use PuppiesWeb, :live_view
 
-  alias Puppies.{Accounts, Listings, Views, Photos}
+  alias Puppies.{Accounts, Listings, Views, Photos, Threads}
 
   alias PuppiesWeb.{UI.Drawer, BusinessForm}
 
@@ -24,6 +24,7 @@ defmodule PuppiesWeb.UserDashboardLive do
     viewing_history = Views.my_views(user.id)
     on_hold = Listings.get_listing_by_user_id_and_status(user.id, "on hold")
     sold = Listings.get_listing_by_user_id_and_status(user.id, "sold")
+    messages = Threads.get_user_communication_with_business(user.id)
 
     {:ok,
      assign(socket,
@@ -35,7 +36,9 @@ defmodule PuppiesWeb.UserDashboardLive do
        view_pagination: Map.get(viewing_history, :pagination, %{count: 0}),
        pagination: Map.get(data, :pagination, %{count: 0}),
        on_hold: on_hold,
-       sold: sold
+       sold: sold,
+       thread_businesses: messages.businesses,
+       thread_listings: messages.listings
      )}
   end
 
@@ -188,11 +191,8 @@ defmodule PuppiesWeb.UserDashboardLive do
             <% end %>
 
             <%= if is_nil(@user.business) do %>
-              <div class="bg-white px-4 py-5 shadow sm:rounded-lg sm:px-6">
-                <h2 id="timeline-title" class="text-xlg font-medium text-gray-900">Messages</h2>
-              </div>
+              <%= live_component PuppiesWeb.BuyerMessages, id: "buyer-messages", thread_businesses: @thread_businesses, thread_listings: @thread_listings, user: @user %>
             <% end %>
-
           </div>
 
           <section aria-labelledby="timeline-title" class="space-y-4">
@@ -214,7 +214,6 @@ defmodule PuppiesWeb.UserDashboardLive do
           </section>
         </div>
       <% end %>
-
     </div>
     """
   end

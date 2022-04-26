@@ -7,6 +7,7 @@ defmodule Puppies.Repo.Migrations.CreateThreads do
       add(:user_id, references(:users, on_delete: :nothing))
       add(:receiver_id, references(:users, on_delete: :nothing))
       add(:listing_id, references(:listings, on_delete: :nothing))
+      add(:business_id, :integer)
 
       timestamps()
     end
@@ -14,5 +15,6 @@ defmodule Puppies.Repo.Migrations.CreateThreads do
     create(index(:threads, [:user_id]))
     create(index(:threads, [:listing_id]))
     create(index(:threads, [:uuid]))
+    create(index(:threads, [:business_id]))
   end
 end

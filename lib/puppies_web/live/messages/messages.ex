@@ -101,10 +101,10 @@ defmodule PuppiesWeb.MessagesLive do
   end
 
   def business_or_user_name(receiver) do
-    if Map.has_key?(receiver, :business) do
+    if Map.has_key?(receiver, :business) && !is_nil(receiver.business) do
       receiver.business.name
     else
-      receiver.name
+      [receiver.first_name, " ", String.first(receiver.last_name)]
     end
   end
 

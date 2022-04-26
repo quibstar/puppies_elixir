@@ -23,7 +23,8 @@ defmodule Puppies.Threads do
         "listing_id" => listing_id,
         "message" => message,
         "receiver_id" => receiver_id,
-        "sender_id" => sender_id
+        "sender_id" => sender_id,
+        "business_id" => business_id
       }) do
     uuid = Ecto.UUID.generate()
 
@@ -32,7 +33,8 @@ defmodule Puppies.Threads do
         uuid: uuid,
         user_id: sender_id,
         receiver_id: receiver_id,
-        listing_id: listing_id
+        listing_id: listing_id,
+        business_id: business_id
       })
 
     buyer =
@@ -40,7 +42,8 @@ defmodule Puppies.Threads do
         uuid: uuid,
         user_id: receiver_id,
         receiver_id: sender_id,
-        listing_id: listing_id
+        listing_id: listing_id,
+        business_id: business_id
       })
 
     message =
@@ -140,5 +143,33 @@ defmodule Puppies.Threads do
       where: t.user_id == ^user_id and t.listing_id == ^listing_id
     )
     |> Repo.one()
+  end
+
+  # not seller dashboard
+
+  def get_user_communication_with_business(user_id) do
+    businesses =
+      from(t in Thread,
+        where: t.user_id == ^user_id,
+        distinct: :business_id,
+        preload: [business: :photo]
+      )
+      |> Repo.all()
+
+    listings =
+      from(t in Thread,
+        where: t.user_id == ^user_id,
+        preload: [[listing: :photos], messages: ^not_read()]
+      )
+      |> Repo.all()
+
+    %{businesses: businesses, listings: listings}
+  end
+
+  def not_read() do
+    from(m in Message,
+      where: m.read == false,
+      select: %{sent_by: m.sent_by}
+    )
   end
 end
