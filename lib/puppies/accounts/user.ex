@@ -30,6 +30,7 @@ defmodule Puppies.Accounts.User do
     field(:terms_of_service, :boolean)
     field(:is_seller, :boolean, default: false)
     field(:approved_to_sell, :boolean, default: false)
+    field(:reputation_level, :integer, default: 0)
     has_one(:business, Puppies.Businesses.Business)
     has_many(:listings, Puppies.Listings.Listing)
     has_many(:favorites, Puppies.Favorite, on_replace: :delete)

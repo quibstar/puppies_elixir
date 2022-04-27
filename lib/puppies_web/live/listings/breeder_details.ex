@@ -7,7 +7,12 @@ defmodule PuppiesWeb.BreederDetails do
     ~H"""
       <div >
         <div class="text-center space-y-4 bg-white px-6 py-9 border rounded">
-          <%= PuppiesWeb.Avatar.show(%{business: @business, user: @business.user, square: 44, extra_classes: "text8_5xl"}) %>
+          <div>
+            <%= PuppiesWeb.Avatar.show(%{business: @business, user: @business.user, square: 44, extra_classes: "text8_5xl"}) %>
+            <div class="relative -mt-4 z-10">
+              <PuppiesWeb.ReputationLevel.badge reputation_level={@user.reputation_level} />
+            </div>
+          </div>
           <div>
             <div class="inline-block text-sm text-gray-500">Presented by</div>
             <h3 class="font-bold text-xl text-gray-900 sm:text-2xl">
@@ -24,10 +29,11 @@ defmodule PuppiesWeb.BreederDetails do
           <div class="mx-auto">
             <%= if !is_nil(@user) && @user.id != @listing.user_id do %>
               <div class="flex place-content-center">
+
                 <%= if is_nil(@conversation_started) do %>
                   <.live_component module={ChatIcon} id="chat_icon" business={@business} user={@user} listing={@listing} return_to={ Routes.live_path(@socket, PuppiesWeb.ListingShow, @listing.id)}/>
                 <% else %>
-                  <%= live_redirect to: Routes.live_path(@socket, PuppiesWeb.MessagesLive, uuid: @conversation_started.uuid  ) do %>
+                  <%= live_redirect to: Routes.live_path(@socket, PuppiesWeb.MessagesLive, listing_id: @listing.id, thread: @conversation_started.uuid  ) do %>
                       <svg class="w-6 h-6 mr-2" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4" />
                       </svg>

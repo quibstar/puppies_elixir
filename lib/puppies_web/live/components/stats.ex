@@ -93,7 +93,7 @@ defmodule PuppiesWeb.Stats do
                     <div class="ml-3 flex-grow">
                       <%= view.user.first_name %> <%= view.user.last_name %>
                       <p class="text-xs font-medium text-gray-500">
-                        Registered Member. Peruser of fine fidos
+                        Registered Member.
                       </p>
                     </div>
                   <% end %>

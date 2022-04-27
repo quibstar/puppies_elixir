@@ -1,7 +1,7 @@
 defmodule PuppiesWeb.ListingDetails do
   use PuppiesWeb, :live_component
 
-  alias Puppies.{Utilities}
+  alias Puppies.{Utilities, Favorites}
 
   def update(assigns, socket) do
     {:ok,
@@ -52,16 +52,44 @@ defmodule PuppiesWeb.ListingDetails do
     end
   end
 
+  def is_favorite?(is_favorite) do
+    if is_favorite do
+      "fill-red-500"
+    else
+      "fill-gray-400"
+    end
+  end
+
+  def handle_event("favorite", _, socket) do
+    fav = socket.assigns.is_favorite
+    user_id = socket.assigns.user_id
+    listing = socket.assigns.listing
+
+    if socket.assigns.is_favorite do
+      Favorites.delete_favorite(user_id, listing.id)
+    else
+      Favorites.create_favorite(%{user_id: user_id, listing_id: listing.id})
+    end
+
+    socket = assign(socket, is_favorite: !fav)
+    {:noreply, socket}
+  end
+
   def render(assigns) do
     ~H"""
       <div class="col-span-2 mb-4">
-
         <div class="">
           <div class="px-4 py-5 sm:px-6">
             <div class="grid grid-cols-1 sm:grid-cols-3">
               <div>
-                <h3 class="text-lg leading-6 font-medium text-gray-900">Hi, I'm <span class="text-primary-600"><%=@listing.name %></span></h3>
+                <div class="text-lg leading-6 font-medium text-gray-900 flex space-x-2">
+                  <h3>Hi, I'm <span class="text-primary-600"><%=@listing.name %></span></h3>
+                  <svg class={"w-6 h-6 mr-2 cursor-pointer #{is_favorite?(@is_favorite)}"} phx-click="favorite" phx-target={@myself} xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" >
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
+                  </svg>
+                </div>
                 <p class="mt-1 max-w-2xl text-sm text-gray-500"><%= status(@listing.status) %></p>
+
               </div>
               <div class="col-span-2 text-center flex justify-between">
                 <div>

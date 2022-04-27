@@ -32,7 +32,7 @@ defmodule PuppiesWeb.BuyerMessages do
                   </div>
                 </div>
               </div>
-              <div class="col-span-3">
+              <div class="col-span-4">
                 <div class="text-gray-600">Regarding:</div>
                 <div class="flex flex-wrap items-center">
                   <%= for listing_thread <- @thread_listings do %>

@@ -41,13 +41,6 @@ defmodule PuppiesWeb.ListingShow do
       |> Oban.insert()
     end
 
-    favorites =
-      if is_nil(user) do
-        []
-      else
-        Favorites.get_favorite_ids(user.id)
-      end
-
     business = Businesses.get_business_by_user_id(listing.user_id)
     review_stats = Puppies.Reviews.review_stats(business.id)
 
@@ -62,7 +55,7 @@ defmodule PuppiesWeb.ListingShow do
 
     views = Views.list_views(listing_id)
 
-    conversation_started = Threads.conversation_started(user.id, listing.id)
+    conversation_started = Threads.conversation_started(user.id, listing.user_id, listing.id)
 
     {:ok,
      assign(socket,
@@ -73,7 +66,7 @@ defmodule PuppiesWeb.ListingShow do
        photos: photos,
        business: business,
        page_title: "#{business.name} #{listing.name} - ",
-       favorites: favorites,
+       is_favorite: Favorites.is_favorite(user.id, listing.id),
        views: views,
        review_stats: review_stats,
        conversation_started: conversation_started
@@ -114,7 +107,7 @@ defmodule PuppiesWeb.ListingShow do
           </div>
 
           <div class="md:grid md:grid-cols-3 md:gap-4">
-            <%= live_component  PuppiesWeb.BreederDetails, id: "breeder_details", listing: @listing, user: @user, business: @business, favorites: @favorites, conversation_started: @conversation_started %>
+            <%= live_component  PuppiesWeb.BreederDetails, id: "breeder_details", listing: @listing, user: @user, business: @business,  conversation_started: @conversation_started %>
             <%= live_component  PuppiesWeb.ImageViewer, id: "image_viewer", photos: @photos, current_photo: @current_photo %>
             <div>
               <%= if @review_stats.average > 0 do %>
@@ -122,7 +115,7 @@ defmodule PuppiesWeb.ListingShow do
               <% end %>
               <%= live_component  PuppiesWeb.ContactCTA, id: "contact_cta",  user: @user, business_or_listing: @business %>
             </div>
-            <%= live_component  PuppiesWeb.ListingDetails, id: "listing_details", listing: @listing, views: @views %>
+            <%= live_component  PuppiesWeb.ListingDetails, id: "listing_details", user_id: @user.id, listing: @listing, views: @views, is_favorite: @is_favorite %>
           </div>
         <% end %>
       </div>

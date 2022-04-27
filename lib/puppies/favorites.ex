@@ -32,4 +32,12 @@ defmodule Puppies.Favorites do
 
     Repo.delete_all(q)
   end
+
+  def is_favorite(user_id, listing_id) do
+    Repo.exists?(
+      from(f in Favorite,
+        where: f.user_id == ^user_id and f.listing_id == ^listing_id
+      )
+    )
+  end
 end

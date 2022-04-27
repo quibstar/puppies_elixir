@@ -100,6 +100,7 @@ defmodule PuppiesWeb.UserDashboardLive do
                   <%= live_redirect @business.name, to: Routes.live_path(@socket, PuppiesWeb.BusinessPageLive, @business.slug), class: "text-gray-900 underline cursor-pointer"%>
                 </p>
               <% end %>
+              <PuppiesWeb.ReputationLevel.badge reputation_level={@user.reputation_level} />
             </div>
           </div>
           <div class="mt-6 flex flex-col-reverse justify-stretch space-y-4 space-y-reverse sm:flex-row-reverse sm:justify-end sm:space-x-reverse sm:space-y-0 sm:space-x-3 md:mt-0 md:flex-row md:space-x-3">
@@ -114,18 +115,30 @@ defmodule PuppiesWeb.UserDashboardLive do
             <section aria-labelledby="applicant-information-title">
               <div class="bg-white shadow sm:rounded-lg">
                 <div class="px-4 py-5 sm:px-6">
-                  <h2 id="applicant-information-title" class="text-xlg leading-6 font-medium text-gray-900">Dashboard</h2>
-                  <%= if @user.is_seller do %>
-                    <p class="mt-1 max-w-2xl text-gray-500">Good evening, to get started listing you must first:</p>
-                    <ol class="my-2 text-gray-500 list-decimal ml-4">
-                      <li class={if is_nil(@business), do: "",else: "line-through"}>Fill out
-                        <span x-on:click="show_drawer = !show_drawer" class="cursor-pointer underline">Business/Personal Details</span>
-                      </li>
-                      <li>Verify your ID</li>
-                      <li>Choose your plan</li>
-                      <li class={if @listings == [], do: "",else: "line-through"}>Create some listing!</li>
+                  <h2 id="applicant-information-title" class="text-xlg leading-6 font-medium text-gray-900">Hello <%= @user.first_name %> <%= @user.last_name %></h2>
+                  <div class="text-gray-500">
+                    <%= if @user.is_seller do %>
+                      <p class="mt-1 max-w-2xl">Hello <%= @user.first_name %> <%= @user.last_name %>, to get started listing you must first:</p>
+                      <ol class="my-2 list-decimal ml-4">
+                        <li class={if is_nil(@business), do: "",else: "line-through"}>Fill out
+                          <span x-on:click="show_drawer = !show_drawer" class="cursor-pointer underline">Business/Personal Details.</span>
+                        </li>
+                        <li>Choose your plan.</li>
+                        <li class={if @listings == [], do: "",else: "line-through"}>Create some listing!</li>
+                      </ol>
+                    <% else %>
+                      <%= unless @user.confirmed_at do %>
+                        <p class="text-red-500">To get started please confirm your email.</p>
+                      <% end %>
+
+                    <% end %>
+                    <p>Our community is built on reputation. Please consider the following:</p>
+                    <ol class="list-decimal ml-4">
+                      <li>Verify your phone (optional). Silver status.</li>
+                      <li>Verify your ID (optional). Gold status.</li>
                     </ol>
-                  <% end %>
+                    <p>Learn more about our <%= link "reputation system", to: Routes.faq_path(@socket, :index), class: "underline" %>.</p>
+                  </div>
                 </div>
               </div>
             </section>
@@ -143,9 +156,7 @@ defmodule PuppiesWeb.UserDashboardLive do
                   <!-- Use an "onChange" listener to redirect the user to the selected tab URL. -->
                   <select id="tabs" name="tabs" class="block w-full focus:ring-primary-500 focus:border-primary-500 border-gray-300 rounded-md">
                     <option>Available</option>
-
                     <option>On Hold</option>
-
                     <option>Sold</option>
                   </select>
                 </div>
@@ -190,22 +201,24 @@ defmodule PuppiesWeb.UserDashboardLive do
 
             <% end %>
 
-            <%= if is_nil(@user.business) do %>
+            <%= unless @user.is_seller do %>
               <%= live_component PuppiesWeb.BuyerMessages, id: "buyer-messages", thread_businesses: @thread_businesses, thread_listings: @thread_listings, user: @user %>
             <% end %>
           </div>
 
           <section aria-labelledby="timeline-title" class="space-y-4">
-             <%= PuppiesWeb.ViewHistoryComponent.show(%{viewing_history: @viewing_history, view_pagination: @view_pagination, socket: @socket}) %>
-             <%= live_component PuppiesWeb.WatchListComponent, id: "watch_list", listings: @user.favorite_listings %>
+            <%= PuppiesWeb.ViewHistoryComponent.show(%{viewing_history: @viewing_history, view_pagination: @view_pagination, socket: @socket}) %>
+            <%= live_component PuppiesWeb.WatchListComponent, id: "watch_list", listings: @user.favorite_listings %>
              <%= if !@user.is_seller do %>
               <div class="bg-white px-4 py-5 shadow sm:rounded-lg sm:px-6">
-                <h2 id="timeline-title" class="text-xlg font-medium text-gray-900">Listings</h2>
+                <h2 id="timeline-title" class="text-xlg font-medium text-gray-900">Want to List?</h2>
                 <p class="mt-1 max-w-2xl text-gray-500 text-sm">If you want to post a listing you must first:</p>
                 <ol class="my-2 text-gray-500 list-decimal ml-4 text-sm">
                   <li>Update your <%= live_redirect "profile", to: Routes.live_path(@socket, PuppiesWeb.UserProfile), class: "underline" %> to become a lister</li>
+                  <li>Verify your email</li>
                   <li>Fill out Business/Personal Details</li>
-                  <li>Verify your ID</li>
+                  <li>Verify your phone (optional). Silver status. </li>
+                  <li>Verify your ID (optional). Gold status.</li>
                   <li>Choose your plan</li>
                   <li>Create some listing!</li>
                 </ol>

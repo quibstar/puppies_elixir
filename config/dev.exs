@@ -74,35 +74,4 @@ config :phoenix, :stacktrace_depth, 20
 # Initialize plugs at runtime for faster development compilation
 config :phoenix, :plug_init_mode, :runtime
 
-import Config
-
-config :puppies,
-  mapbox_key:
-    "pk.eyJ1IjoicXVpYnN0YXIiLCJhIjoiY2p0Z2swbTg1MGwxeTQzcGRkaGVuanZtbCJ9.MWATWztvdPMOhAAv24c78w",
-  cognito_api_Key: "sandbox_key_f0509c0192c780a6505681d057546b07",
-  cognito_api_secret:
-    "sandbox_secret_9d58f096f2cd42bc7bc0b92c51143b6e4b5244bba26507fc942104d11fba7f2c",
-  elasticsearch_base_url: "http://localhost:9200",
-  the_captain_base_url: "https://the-captain-java-staging.herokuapp.com/v3",
-  the_captain_api_key: "tbd",
-  ip_stack_api_key: "tbd",
-  twilio_account_sid: "tbd",
-  twilio_auth_token: "tbd",
-  twilio_service: "tbd"
-
-config :stripity_stripe,
-  api_key: "tbd",
-  publishable_key: "tbd",
-  signing_secret: "tbd"
-
-config :ex_aws,
-  debug_requests: true,
-  access_key_id: "tbd",
-  secret_access_key: "tbd",
-  s3: [
-    scheme: "https://",
-    host: "reputable-rooms-staging.s3.amazonaws.com",
-    region: "us-east-1"
-  ]
-
-config :puppies, Puppies.Mailer, adapter: Swoosh.Adapters.Local
+import_config "dev.secret.exs"

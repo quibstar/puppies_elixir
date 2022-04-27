@@ -138,9 +138,10 @@ defmodule Puppies.Threads do
     |> Ecto.Changeset.validate_required([:listing_id, :message, :receiver_id, :sender_id])
   end
 
-  def conversation_started(user_id, listing_id) do
+  def conversation_started(user_id, receiver_id, listing_id) do
     from(t in Thread,
-      where: t.user_id == ^user_id and t.listing_id == ^listing_id
+      where:
+        t.user_id == ^user_id and t.receiver_id == ^receiver_id and t.listing_id == ^listing_id
     )
     |> Repo.one()
   end

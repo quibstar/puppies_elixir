@@ -16,16 +16,14 @@ review_link: email, uuid, listing_id
 mix phx.gen.context Reviews Review reviews first_name:string rating:integer description:text email:string
 mix phx.gen.context ReviewLinks ReviewLink review_links email:string listing_id:references:listing uuid:uuid
 
-# Threads
+# Next
 
-id
-uuid
-user_id
-listing_id
-
-# Messages
-
-id
-thread_uuid
-user_id
-message
+- [x] Favorites
+- [ ] Site maps
+- [ ] Plans page
+- [ ] verify phone
+- [ ] verify ID
+- [ ] delete user
+- [ ] Messages based on reputation level
+- [ ] background notifications
+- [ ] Email set up
