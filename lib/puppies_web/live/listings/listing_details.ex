@@ -78,8 +78,8 @@ defmodule PuppiesWeb.ListingDetails do
   def render(assigns) do
     ~H"""
       <div class="col-span-2 mb-4">
-        <div class="">
-          <div class="px-4 py-5 sm:px-6">
+        <div class="bg-white px-6  border rounded">
+          <div class="py-5">
             <div class="grid grid-cols-1 sm:grid-cols-3">
               <div>
                 <div class="text-lg leading-6 font-medium text-gray-900 flex space-x-2">
@@ -110,7 +110,7 @@ defmodule PuppiesWeb.ListingDetails do
             </div>
 
           </div>
-          <div class="border-t border-gray-200 px-4 py-5 sm:px-6">
+          <div class="border-t border-gray-200 py-5">
             <dl class="grid grid-cols-1 gap-x-4 gap-y-8 sm:grid-cols-2">
               <div class="sm:col-span-1">
                 <dt class="text-sm font-medium text-gray-500">Age</dt>
@@ -140,11 +140,11 @@ defmodule PuppiesWeb.ListingDetails do
               <div class="w-full border-t border-gray-300"></div>
             </div>
             <div class="relative flex justify-center">
-              <span class="px-2 bg-gray-50 text-sm text-gray-500"> Health </span>
+              <span class="px-2 bg-white text-sm text-gray-500"> Health </span>
             </div>
           </div>
 
-          <div class="px-4 py-5 sm:px-6">
+          <div class="py-5">
             <dl class="grid grid-cols-1 gap-x-4 gap-y-8 sm:grid-cols-3">
               <div>
                 <dt class="text-sm font-medium text-gray-500">Current Vaccinations</dt>
@@ -173,11 +173,11 @@ defmodule PuppiesWeb.ListingDetails do
               <div class="w-full border-t border-gray-300"></div>
             </div>
             <div class="relative flex justify-center">
-              <span class="px-2 bg-gray-50 text-sm text-gray-500"> Bloodline </span>
+              <span class="px-2 bg-white text-sm text-gray-500"> Bloodline </span>
             </div>
           </div>
 
-          <div class="px-4 py-5 sm:px-6">
+          <div class="py-5">
             <dl class="grid grid-cols-1 gap-x-4 gap-y-8 sm:grid-cols-3">
               <div>
                 <dt class="text-sm font-medium text-gray-500">Pedigree</dt>
@@ -216,11 +216,11 @@ defmodule PuppiesWeb.ListingDetails do
               <div class="w-full border-t border-gray-300"></div>
             </div>
             <div class="relative flex justify-center">
-              <span class="px-2 bg-gray-50 text-sm text-gray-500"> Extras </span>
+              <span class="px-2 bg-white text-sm text-gray-500"> Extras </span>
             </div>
           </div>
 
-          <div class="px-4 py-5 sm:px-6">
+          <div class="py-5">
             <dl class="grid grid-cols-1 gap-x-4 gap-y-8 sm:grid-cols-3">
               <div>
                 <dt class="text-sm font-medium text-gray-500">Hypoallergenic</dt>
@@ -240,11 +240,11 @@ defmodule PuppiesWeb.ListingDetails do
               <div class="w-full border-t border-gray-300"></div>
             </div>
             <div class="relative flex justify-center">
-              <span class="px-2 bg-gray-50 text-sm text-gray-500"> Delivery </span>
+              <span class="px-2 bg-white text-sm text-gray-500"> Delivery </span>
             </div>
           </div>
 
-          <div class="px-4 py-5 sm:px-6">
+          <div class="py-5">
             <dl class="grid grid-cols-1 gap-x-4 gap-y-8 sm:grid-cols-3">
               <div>
                 <dt class="text-sm font-medium text-gray-500">On Site</dt>

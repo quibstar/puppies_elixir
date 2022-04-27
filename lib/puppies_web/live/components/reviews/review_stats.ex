@@ -6,7 +6,7 @@ defmodule PuppiesWeb.ReviewStats do
 
   def render(assigns) do
     ~H"""
-    <div class="bg-white mt-4 border rounded">
+    <div class="bg-white  border rounded">
        <div class="lg:grid grid-cols-3 p-4">
         <div class="lg:mt-4 lg:mx-auto w-24 h-24 bg-primary-500 text-white rounded-full py-6 px-2 text-center">
           <div class="text-2xl"><%= @review_stats.average %></div>

@@ -7,7 +7,7 @@ defmodule PuppiesWeb.ImageViewer do
       x-data="{ currentPhoto: '{@current_photo}', photoGallery: false }"
       class="mt-4 md:mt-0 md:col-span-2 md:flex relative overflow-hidden"
       >
-        <div @click="getCurrentIndexAndSetPrevNext"  x-on:click="photoGallery = ! photoGallery" id="photo-view" class="mr-2 h-64 md:h-full w-full bg-cover bg-center rounded cursor-pointer" style={"background-image: url(#{@current_photo});"}></div>
+        <div @click="getCurrentIndexAndSetPrevNext"  x-on:click="photoGallery = ! photoGallery" id="photo-view" class="mr-2 h-64 md:h-full w-full bg-cover bg-center rounded cursor-pointer"></div>
         <div id="photo-container" class="md:w-20 space-x-2 md:space-x-0 mt-2 md:mt-0 flex md:block md:space-y-2 overflow-scroll md:max-h-96 rounded">
           <%= for {photo, index} <- Enum.with_index(@photos) do %>
             <div @click={"() => showImage(#{index})"}  class='cursor-pointer rounded-sm overflow-hidden relative  md:min-h-20'>

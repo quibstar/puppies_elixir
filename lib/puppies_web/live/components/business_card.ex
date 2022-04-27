@@ -25,7 +25,7 @@ defmodule PuppiesWeb.BusinessCard do
             </div>
           </div>
         </div>
-         <div class="bg-white px-6 py-9 border rounded mt-4">
+         <div class="bg-white px-6 py-9 border rounded my-4">
           <div class="text-gray-900 font-bold">About: <%= @business.name %></div>
           <div class="text-sm text-gray-500"><%= @business.description %></div>
         </div>
