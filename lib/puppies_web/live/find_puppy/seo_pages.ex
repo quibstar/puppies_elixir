@@ -20,20 +20,16 @@ defmodule PuppiesWeb.FindPuppyLive do
     state = Map.get(params, "state", nil)
     city = Map.get(params, "city", nil)
     breed = Map.get(params, "breed", nil)
-    IO.inspect([state, city, breed])
 
     matches =
       case {state, city, breed} do
         {state, nil, nil} ->
-          IO.puts("state")
           ListingsSearch.state(state, "1", @size)
 
         {state, city, nil} ->
-          IO.puts("state, city")
           ListingsSearch.city_state(city, state, "1", @size)
 
         {state, city, breed} ->
-          IO.puts("state, city breed")
           ListingsSearch.city_state_breed(city, state, breed, "1", @size)
       end
 
@@ -69,9 +65,7 @@ defmodule PuppiesWeb.FindPuppyLive do
 
     {:noreply,
      socket
-     |> push_redirect(
-       to: Routes.find_puppy_state_path(socket, :state, socket.assigns.state, match: match)
-     )}
+     |> push_redirect(to: url_based_on_params(socket, match))}
   end
 
   def handle_event("changed", %{"match" => match}, socket) do
@@ -86,9 +80,7 @@ defmodule PuppiesWeb.FindPuppyLive do
 
     {:noreply,
      socket
-     |> push_redirect(
-       to: Routes.find_puppy_state_path(socket, :state, socket.assigns.state, match: match)
-     )}
+     |> push_redirect(to: url_based_on_params(socket, match))}
   end
 
   def handle_params(params, _uri, socket) do
@@ -129,6 +121,30 @@ defmodule PuppiesWeb.FindPuppyLive do
     end
   end
 
+  def url_based_on_params(socket, match) do
+    state = socket.assigns.state
+    city = socket.assigns.city
+    breed = socket.assigns.breed
+
+    cond do
+      {state, city, breed} ->
+        Routes.live_path(
+          socket,
+          PuppiesWeb.FindPuppyLive,
+          city,
+          state,
+          breed,
+          match: match
+        )
+
+      is_nil(city) && is_nil(breed) ->
+        Routes.live_path(socket, PuppiesWeb.FindPuppyLive, state, match: match)
+
+      {is_nil(breed)} ->
+        Routes.live_path(socket, PuppiesWeb.FindPuppyLive, city, state, match: match)
+    end
+  end
+
   def render(assigns) do
     ~H"""
       <div class="h-full max-w-7xl mx-auto px-4 py-6 sm:px-6 md:justify-start md:space-x-10 lg:px-8">
@@ -138,13 +154,14 @@ defmodule PuppiesWeb.FindPuppyLive do
                       <div class='md:flex justify-between'>
                           <div class='flex'>
                               <div class="text-xl md:text-3xl">
-                              <%=  cond do %>
+                              <%= cond do %>
+                                <% {@state, @city, @breed} -> %>
+                                  <span class="capitalize"><%= Utilities.slug_to_string(@breed) %></span> puppies in <span class="capitalize"><%= Utilities.slug_to_string(@city) %>, <%= Utilities.state_to_human_readable(@state) %></span>.
                                  <% is_nil(@city) && is_nil(@breed) -> %>
                                   Puppies in <span class="capitalize"><%= Utilities.state_to_human_readable(@state) %></span>.
                                  <% {is_nil(@breed)} -> %>
                                   Puppies in <span class="capitalize"><%= Utilities.slug_to_string(@city) %>, <%= Utilities.state_to_human_readable(@state) %></span>.
-                                 <% {@state, @city, @breed} -> %>
-                                  <span class="capitalize"><%= Utilities.slug_to_string(@breed) %></span> puppies in <span class="capitalize"><%= Utilities.slug_to_string(@city) %>, <%= Utilities.state_to_human_readable(@state) %></span>.
+
                               <% end %>
 
                               </div>
