@@ -3,11 +3,11 @@ defmodule PuppiesWeb.SitemapController do
   plug(:put_layout, false)
 
   def index(conn, _params) do
-    # looking_for_a_room = ReputableRooms.SiteMap.looking_for_a_room()
-    # has_a_room = ReputableRooms.SiteMap.has_for_a_room()
+    url_list = Puppies.SiteMap.puppies_city_state()
+    city_state_breed = Puppies.SiteMap.site_map_generator()
 
     conn
     |> put_resp_content_type("text/xml")
-    |> render("index.xml", site_map: "site-map")
+    |> render("index.xml", url_list: url_list, city_state_breed: city_state_breed)
   end
 end

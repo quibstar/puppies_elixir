@@ -147,7 +147,6 @@ defmodule PuppiesWeb.Router do
     post("/contacts", ContactController, :create)
     get("/faq", FaqController, :index)
     get("/sitemap.xml", SitemapController, :index)
-    live("/rooms/:status/:state", FindRoomLive.State, :state)
 
     live("/puppies-in/:state", FindPuppyLive.State, :state)
     live("/puppies-in/:city/:state", FindPuppyLive.CityState, :city_state)

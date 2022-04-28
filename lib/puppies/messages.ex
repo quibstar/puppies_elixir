@@ -21,6 +21,12 @@ defmodule Puppies.Messages do
     |> Repo.insert()
   end
 
+  def update(%Message{} = message, attrs) do
+    message
+    |> Message.changeset(attrs)
+    |> Repo.update()
+  end
+
   def message_changes(attrs \\ %{}) do
     Message.changeset(%Message{}, attrs)
   end

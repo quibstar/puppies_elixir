@@ -45,14 +45,14 @@ defmodule PuppiesWeb.UserDashboardLive do
   def handle_params(params, _uri, socket) do
     if (params["page"] || params["view_page"]) && socket.assigns.loading == false do
       data =
-        Listings.get_active_listings_by_user_id(socket.assigns.business.user_id, %{
+        Listings.get_active_listings_by_user_id(socket.assigns.user.id, %{
           limit: "12",
           page: Map.get(params, "page", "1"),
           number_of_links: 7
         })
 
       viewing_history =
-        Views.my_views(socket.assigns.business.user_id, %{
+        Views.my_views(socket.assigns.user.id, %{
           limit: "5",
           page: Map.get(params, "view_page", "1"),
           number_of_links: 7

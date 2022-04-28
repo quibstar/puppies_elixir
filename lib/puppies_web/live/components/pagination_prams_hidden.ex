@@ -1,4 +1,4 @@
-defmodule PuppiesWeb.PaginationOLDComponent do
+defmodule PuppiesWeb.PaginationParamsHiddenComponent do
   @moduledoc """
   Module for show links for pagination
   """

@@ -41,8 +41,10 @@ defmodule PuppiesWeb.BuyerMessages do
                         <div class="flex items-center space-x-2 m-2">
                           <%= PuppiesWeb.PuppyAvatar.show(%{listing: listing_thread.listing, square: 10, extra_classes: "text8_5xl"}) %>
                           <div>
-                            <div class="underline"><%= listing_thread.listing.name %></div>
-                            <div class="text-xs text-gray-500">Unread: <%= un_read_messages(listing_thread.messages, @user.id) %></div>
+                            <span class="underline"><%= listing_thread.listing.name %></span>
+                            <%= if un_read_messages(listing_thread.messages, @user.id) > 0 do %>
+                             <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs bg-red-500 text-white"> <%= un_read_messages(listing_thread.messages, @user.id) %></span>
+                            <% end %>
                           </div>
                         </div>
                       <% end %>

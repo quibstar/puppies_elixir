@@ -42,6 +42,10 @@ defmodule PuppiesWeb.MessagesLive do
       socket = assign(socket, :messages, current_thread.messages)
       subscribe(current_thread.uuid)
 
+      if current_thread.messages != [] do
+        mark_messages_as_read(current_thread.messages)
+      end
+
       {:ok,
        assign(socket,
          loading: false,
@@ -53,6 +57,12 @@ defmodule PuppiesWeb.MessagesLive do
          temporary_assigns: [messages: []]
        )}
     end
+  end
+
+  def mark_messages_as_read(messages) do
+    Enum.each(messages, fn message ->
+      Messages.update(message, %{read: true})
+    end)
   end
 
   def subscribe(thread_id) do

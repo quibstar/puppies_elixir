@@ -1,17 +1,23 @@
 defmodule PuppiesWeb.FindPuppyLive.CityState do
   use PuppiesWeb, :live_view
-  alias Puppies.{FindPuppy, Utilities}
-
+  alias Puppies.{ES.ListingsSearch, Utilities, Accounts}
+  @size "12"
   def mount(params, session, socket) do
     case connected?(socket) do
-      true -> connected_mount(session, params, socket)
+      true -> connected_mount(params, session, socket)
       false -> {:ok, assign(socket, loading: true)}
     end
   end
 
-  def connected_mount(_, params, socket) do
-    %{"status" => status, "city" => city, "state" => state} = params
-    matches = FindPuppy.city_state(status, city, state)
+  def connected_mount(params, session, socket) do
+    user =
+      if connected?(socket) && Map.has_key?(session, "user_token") do
+        %{"user_token" => user_token} = session
+        Accounts.get_user_by_session_token(user_token)
+      end
+
+    %{"city" => city, "state" => state} = params
+    matches = ListingsSearch.city_state(city, state, "1", @size)
 
     socket =
       assign(
@@ -26,8 +32,8 @@ defmodule PuppiesWeb.FindPuppyLive.CityState do
         },
         city: city,
         state: state,
-        status: status,
-        page_title: "Rooms #{status} in #{city}, #{state} "
+        page_title: "Puppies in #{state} ",
+        user: user
       )
 
     {:ok, socket}
@@ -39,15 +45,15 @@ defmodule PuppiesWeb.FindPuppyLive.CityState do
 
   def state_to_human_readable(state) do
     if String.length(state) == 2 do
-      String.upcase(state) |> String.to_atom() |> Utilities.state_abbreviations()
+      String.upcase(state) |> String.to_atom() |> PuppiesWeb.StateUtilities.abbrev_to_state()
     else
       state
     end
   end
 
-  def handle_event("show_profile", %{"profile_id" => profile_id}, socket) do
-    {:noreply, socket |> push_redirect(to: Routes.profile_show_path(socket, :show, profile_id))}
-  end
+  # def handle_event("show_profile", %{"profile_id" => profile_id}, socket) do
+  #   {:noreply, socket |> push_redirect(to: Routes.profile_show_path(socket, :show, profile_id))}
+  # end
 
   def handle_event("page-to", %{"page_id" => page_id}, socket) do
     match =
@@ -59,10 +65,9 @@ defmodule PuppiesWeb.FindPuppyLive.CityState do
      socket
      |> push_redirect(
        to:
-         Routes.find_room_city_state_path(
+         Routes.find_puppy_city_state_path(
            socket,
            :city_state,
-           socket.assigns.status,
            socket.assigns.city,
            socket.assigns.state,
            match: match
@@ -84,10 +89,9 @@ defmodule PuppiesWeb.FindPuppyLive.CityState do
      socket
      |> push_redirect(
        to:
-         Routes.find_room_city_state_path(
+         Routes.find_puppy_city_state_path(
            socket,
            :city_state,
-           socket.assigns.status,
            socket.assigns.city,
            socket.assigns.state,
            match: match
@@ -103,15 +107,8 @@ defmodule PuppiesWeb.FindPuppyLive.CityState do
       sort = match["sort"]
       state = params["state"]
       city = params["city"]
-      status = params["status"]
 
-      matches =
-        FindRoom.city_state(status, city, state, %{
-          limit: limit,
-          page: page,
-          sort: sort,
-          number_of_links: 7
-        })
+      matches = ListingsSearch.city_state(city, state, page, limit)
 
       updated_match =
         if Map.has_key?(socket.assigns, "match") do
@@ -151,7 +148,7 @@ defmodule PuppiesWeb.FindPuppyLive.CityState do
                       <div class='md:flex justify-between'>
                           <div class='flex'>
                               <div class="text-xl md:text-3xl">
-                                Rooms <%= @status %> in <span class="capitalize"><%= remove_slug(@city) %>, <%= state_to_human_readable(@state) %></span>.
+                                Puppies in <span class="capitalize"><%= remove_slug(@city) %>, <%= state_to_human_readable(@state) %></span>.
                               </div>
                           </div>
                           <div class="my-2">
@@ -163,25 +160,25 @@ defmodule PuppiesWeb.FindPuppyLive.CityState do
 
 
                   <%= if length(@matches) > 0 do %>
-                      <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-4 my-4">
-                          <%= for match <- @matches do %>
-                              <.live_component module={PuppiesWeb.CardComponent} id={match.id} profile={match.space.profile} space={match.space} user={nil} favorites={nil} />
-                          <% end %>
-                      </div>
-                      <%= if @pagination.count > String.to_integer(@match.limit) do %>
-                          <%= PuppiesWeb.PaginationComponent.render(%{pagination: @pagination, socket: @socket, page: @match.page, limit: @match.limit}) %>
-                      <% end %>
+                    <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4 my-4">
+                        <%= for listing <- @matches do %>
+                          <%= live_component  PuppiesWeb.StateSearchCard, id: listing["_id"], listing: listing["_source"], user: @user %>
+                        <% end %>
+                    </div>
+                    <%= if @pagination.count > String.to_integer(@match.limit) do %>
+                        <%= PuppiesWeb.PaginationParamsHiddenComponent.render(%{pagination: @pagination, socket: @socket, page: @match.page, limit: @match.limit}) %>
+                    <% end %>
 
-                       <div class="bg-primary-700 rounded">
-                          <div class="max-w-2xl mx-auto text-center py-16 px-4 sm:py-20 sm:px-6 lg:px-8">
-                              <h2 class="text-3xl font-extrabold text-white sm:text-4xl">
-                                  <span class="block capitalize"><%= remove_slug(@city) %>, <%= state_to_human_readable(@state) %></span>
-                                  <span class="block">is waiting for you.</span>
-                              </h2>
-                              <p class="mt-4 text-lg leading-6 text-primary-200">There are <%= @pagination.count %> new opportunities.</p>
-                              <%= link "Sign up for free", to: Routes.user_registration_path(@socket, :new), class: "mt-8 w-full inline-flex items-center justify-center px-5 py-3 border border-transparent text-base font-medium rounded-md text-primary-600 bg-white hover:bg-primary-50 sm:w-auto" %>
-                          </div>
-                      </div>
+                      <div class="bg-primary-700 rounded">
+                        <div class="max-w-2xl mx-auto text-center py-16 px-4 sm:py-20 sm:px-6 lg:px-8">
+                            <h2 class="text-3xl font-extrabold text-white sm:text-4xl">
+                                <span class="block capitalize"><%= remove_slug(@city) %>, <%= state_to_human_readable(@state) %></span>
+                                <span class="block">is waiting for you.</span>
+                            </h2>
+                            <p class="mt-4 text-lg leading-6 text-primary-200">There are <%= if @pagination.count > length(@matches), do: @pagination.count, else: length(@matches) %> new opportunities.</p>
+                            <%= link "Sign up for free", to: Routes.user_registration_path(@socket, :new), class: "mt-8 w-full inline-flex items-center justify-center px-5 py-3 border border-transparent text-base font-medium rounded-md text-primary-600 bg-white hover:bg-primary-50 sm:w-auto" %>
+                        </div>
+                    </div>
 
                   <% else %>
                     <div class="h-full flex justify-center items-center mx-auto">
@@ -191,7 +188,7 @@ defmodule PuppiesWeb.FindPuppyLive.CityState do
                           </svg>
                           <h3 class="mt-2 text-sm font-medium text-gray-900">So Sorry!</h3>
                           <p class="mt-1 text-sm text-gray-500">
-                              No rooms available in <span class="capitalize"><%= remove_slug(@city) %> <%= state_to_human_readable(@state) %></span>. Maybe try <%= live_redirect "searching", to: Routes.search_index_path(@socket, :index), class: "underline py-3 md:p-0 block text-base text-gray-500 hover:text-gray-900 nav-link" %>
+                              No rooms available in <span class="capitalize"> <%= remove_slug(@city) %> <%= Utilities.state_to_human_readable(@state) %></span>. Maybe try <%= live_redirect "searching", to: Routes.live_path(@socket, PuppiesWeb.SearchLive), class: "underline py-3 md:p-0 block text-base text-gray-500 hover:text-gray-900 nav-link" %>
                           </p>
                       </div>
                   </div>

@@ -123,6 +123,7 @@ defmodule Puppies.Threads do
     )
   end
 
+  # Changeset for validating a message from a listing profile
   def changes(params) do
     data = %{}
 
@@ -147,7 +148,6 @@ defmodule Puppies.Threads do
   end
 
   # not seller dashboard
-
   def get_user_communication_with_business(user_id) do
     businesses =
       from(t in Thread,

@@ -19,11 +19,16 @@ mix phx.gen.context ReviewLinks ReviewLink review_links email:string listing_id:
 # Next
 
 - [x] Favorites
-- [ ] Site maps
-- [ ] Plans page
+- [x] Plans page
+- [x] Message read when viewed
+- [ ] Site maps generation
+- [ ] Popular breeds generation gen_server
+- [ ] create products on Stripe
+- [ ] Checkout
 - [ ] verify phone
 - [ ] verify ID
 - [ ] delete user
-- [ ] Messages based on reputation level
-- [ ] background notifications
+- [ ] Message access based on reputation level
 - [ ] Email set up
+- [ ] Filter for search
+- [ ] background notifications

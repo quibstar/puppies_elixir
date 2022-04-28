@@ -205,6 +205,45 @@ defmodule Puppies.ES.ListingsSearch do
     %{matches: res["hits"]["hits"], count: res["hits"]["total"]["value"]}
   end
 
+  ##################################
+  # city State                          #
+  ##################################
+
+  def query_city_state(city, state, page, size) do
+    s =
+      if String.length(state) > 2 do
+        %{region_slug: state}
+      else
+        %{region_short_code: state}
+      end
+
+    body = %{
+      sort: [
+        %{updated_at: "desc"}
+      ],
+      from: page,
+      size: size,
+      query: %{
+        bool: %{
+          must: [
+            %{term: s},
+            %{term: %{place_slug: city}}
+          ]
+        }
+      }
+    }
+
+    Api.post("/listings/_search", body)
+  end
+
+  def city_state(city, state, page, size) do
+    page = String.to_integer(page)
+    size = String.to_integer(size)
+    {:ok, results} = query_city_state(city, state, (page - 1) * size, size)
+    {:ok, res} = Jason.decode(results)
+    %{matches: res["hits"]["hits"], count: res["hits"]["total"]["value"]}
+  end
+
   def popular_breeds_aggregate() do
     body = %{
       size: 0,

@@ -133,11 +133,11 @@ defmodule PuppiesWeb.FindPuppyLive.State do
                   <%= if length(@matches) > 0 do %>
                     <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4 my-4">
                       <%= for listing <- @matches do %>
-                          <%= live_component  PuppiesWeb.StateSearchCard, id: listing["_id"], listing: listing["_source"], user: @user %>
+                        <%= live_component  PuppiesWeb.StateSearchCard, id: listing["_id"], listing: listing["_source"], user: @user %>
                       <% end %>
                     </div>
                     <%= if @pagination.count > String.to_integer(@match.limit) do %>
-                      <%= PuppiesWeb.PaginationComponent.render(%{pagination: @pagination, socket: @socket, page: @match.page, limit: @match.limit}) %>
+                      <%= PuppiesWeb.PaginationParamsHiddenComponent.render(%{pagination: @pagination, socket: @socket, page: @match.page, limit: @match.limit}) %>
                     <% end %>
 
                     <div class="bg-primary-700 rounded">
