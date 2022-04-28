@@ -88,7 +88,18 @@ defmodule PuppiesWeb.ListingDetails do
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
                   </svg>
                 </div>
-                <p class="mt-1 max-w-2xl text-sm text-gray-500"><%= status(@listing.status) %></p>
+
+                <p class="mt-1 max-w-2xl text-sm text-gray-500">
+                  I'm a <%= if @listing.purebred do %>
+                    purebred
+                  <% else %>
+                    mixed
+                  <% end %>
+                  <%= Puppies.Utilities.breed_names(@listing.breeds) %>
+                </p>
+                <p class="mt-1 max-w-2xl text-sm text-gray-500">
+                  <%= status(@listing.status) %>
+                </p>
 
               </div>
               <div class="col-span-2 text-center flex justify-between">

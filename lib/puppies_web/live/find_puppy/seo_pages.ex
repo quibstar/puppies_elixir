@@ -1,4 +1,4 @@
-defmodule PuppiesWeb.FindPuppyLive.State do
+defmodule PuppiesWeb.FindPuppyLive do
   use PuppiesWeb, :live_view
   alias Puppies.{ES.ListingsSearch, Utilities, Accounts}
 
@@ -17,9 +17,26 @@ defmodule PuppiesWeb.FindPuppyLive.State do
         Accounts.get_user_by_session_token(user_token)
       end
 
-    %{"state" => state} = params
+    state = Map.get(params, "state", nil)
+    city = Map.get(params, "city", nil)
+    breed = Map.get(params, "breed", nil)
+    IO.inspect([state, city, breed])
 
-    matches = ListingsSearch.state(state, "1", @size)
+    matches =
+      case {state, city, breed} do
+        {state, nil, nil} ->
+          IO.puts("state")
+          ListingsSearch.state(state, "1", @size)
+
+        {state, city, nil} ->
+          IO.puts("state, city")
+          ListingsSearch.city_state(city, state, "1", @size)
+
+        {state, city, breed} ->
+          IO.puts("state, city breed")
+          ListingsSearch.city_state_breed(city, state, breed, "1", @size)
+      end
+
     count = Map.get(matches, :count, 0)
 
     socket =
@@ -35,7 +52,10 @@ defmodule PuppiesWeb.FindPuppyLive.State do
           sort: :newest
         },
         state: state,
-        page_title: "Puppies in #{state} "
+        page_title: "Puppies in #{state} ",
+        city: city,
+        state: state,
+        breed: breed
       )
 
     {:ok, socket}
@@ -100,8 +120,7 @@ defmodule PuppiesWeb.FindPuppyLive.State do
           socket,
           matches: Map.get(matches, :matches, []),
           pagination: Puppies.Pagination.pagination(count, page, @size),
-          match: updated_match,
-          state: state
+          match: updated_match
         )
 
       {:noreply, socket}
@@ -119,7 +138,15 @@ defmodule PuppiesWeb.FindPuppyLive.State do
                       <div class='md:flex justify-between'>
                           <div class='flex'>
                               <div class="text-xl md:text-3xl">
-                                Puppies in <span class="capitalize"><%= Utilities.state_to_human_readable(@state) %></span>.
+                              <%=  cond do %>
+                                 <% is_nil(@city) && is_nil(@breed) -> %>
+                                  Puppies in <span class="capitalize"><%= Utilities.state_to_human_readable(@state) %></span>.
+                                 <% {is_nil(@breed)} -> %>
+                                  Puppies in <span class="capitalize"><%= Utilities.slug_to_string(@city) %>, <%= Utilities.state_to_human_readable(@state) %></span>.
+                                 <% {@state, @city, @breed} -> %>
+                                  <span class="capitalize"><%= Utilities.slug_to_string(@breed) %></span> puppies in <span class="capitalize"><%= Utilities.slug_to_string(@city) %>, <%= Utilities.state_to_human_readable(@state) %></span>.
+                              <% end %>
+
                               </div>
                           </div>
                           <div class="my-2">
@@ -128,8 +155,6 @@ defmodule PuppiesWeb.FindPuppyLive.State do
                       </div>
                       <span class="inline-flex items-center px-2.5 py-0.5 rounded-md text-sm font-medium bg-primary-500 text-white"> <%= @pagination.count %> available! </span>
                   <% end %>
-
-
                   <%= if length(@matches) > 0 do %>
                     <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4 my-4">
                       <%= for listing <- @matches do %>

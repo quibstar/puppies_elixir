@@ -148,7 +148,8 @@ defmodule PuppiesWeb.Router do
     get("/faq", FaqController, :index)
     get("/sitemap.xml", SitemapController, :index)
 
-    live("/puppies-in/:state", FindPuppyLive.State, :state)
-    live("/puppies-in/:city/:state", FindPuppyLive.CityState, :city_state)
+    live("/puppies-in/:city/:state/:breed", FindPuppyLive)
+    live("/puppies-in/:city/:state", FindPuppyLive)
+    live("/puppies-in/:state", FindPuppyLive)
   end
 end

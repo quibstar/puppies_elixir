@@ -130,10 +130,14 @@ defmodule Puppies.Utilities do
   end
 
   def breed_names(breeds) do
-    Enum.reduce(breeds, [], fn x, acc ->
-      [x.name, acc]
-    end)
-    |> Enum.join(", ")
+    if length(breeds) == 1 do
+      List.first(breeds).name
+    else
+      Enum.reduce(breeds, [], fn x, acc ->
+        [x.name, acc]
+      end)
+      |> Enum.join(", ")
+    end
   end
 
   def state_to_human_readable(state) do

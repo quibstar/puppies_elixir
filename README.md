@@ -22,6 +22,8 @@ mix phx.gen.context ReviewLinks ReviewLink review_links email:string listing_id:
 - [x] Plans page
 - [x] Message read when viewed
 - [ ] Site maps generation
+- [ ] state/breed pages
+- [ ] city/state/breed pages
 - [ ] Popular breeds generation gen_server
 - [ ] create products on Stripe
 - [ ] Checkout
