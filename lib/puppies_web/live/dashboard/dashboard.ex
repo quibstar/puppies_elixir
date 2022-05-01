@@ -193,7 +193,29 @@ defmodule PuppiesWeb.UserDashboardLive do
           <section aria-labelledby="timeline-title" class="space-y-4">
             <%= PuppiesWeb.Subscriptions.subscriptions(%{active_subscriptions: @active_subscriptions, socket: @socket, subscription_count: @subscription_count}) %>
 
-            <%= PuppiesWeb.Verifications.verifications(%{ socket: @socket, user: @user}) %>
+            <!-- Reputation -->
+            <div class="border rounded p-4 bg-white space-y-2">
+                <span class='text-lg leading-6 font-medium text-gray-900'>Reputation Level: </span>
+                <%= cond do %>
+                    <% @user.reputation_level == 3 -> %>
+                        <div class="inline-block px-4 text-sm rounded-full bg-gold mb-1 text-white">Gold</div>
+                        <div class="text-sm">You have unlimited access.</div>
+
+                    <% @user.reputation_level == 2 -> %>
+                        <div class="inline-block  px-2 text-sm rounded-full bg-silver mb-1 text-white">Silver</div>
+
+                    <% @user.reputation_level == 1 -> %>
+                        <div class="leading-6 inline px-2 text-sm rounded-full bg-bronze mb-1 text-white">Bronze</div>
+
+                    <% @user.reputation_level == 0 -> %>
+                       <div class="text-sm text-gray-600">You need to verify your email establish Bronze reputation and be visible to the community.</div>
+
+                <% end %>
+                <div class="mt-2">
+                    <%= live_redirect "My Verifications", to: Routes.live_path(@socket, PuppiesWeb.VerificationsLive), class: "inline-block px-4 py-2 border border-transparent text-xs rounded shadow-sm text-white bg-primary-600 hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500" %>
+                    <div class="text-sm text-gray-600">Check and update your verifications.</div>
+                </div>
+            </div>
 
             <%= PuppiesWeb.ViewHistoryComponent.show(%{viewing_history: @viewing_history, view_pagination: @view_pagination, socket: @socket}) %>
 

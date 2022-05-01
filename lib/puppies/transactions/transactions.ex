@@ -36,7 +36,6 @@ defmodule Puppies.Transaction do
       :reference_number
     ])
     |> validate_required([
-      :invoice_id,
       :status,
       :charge_id,
       :customer_id,

@@ -43,7 +43,7 @@ defmodule Puppies.Verifications.ID do
     ver =
       Map.put(ver, :verification_session_id, stripe_event.data.object.id)
       |> Map.put(:status, stripe_event.data.object.status)
-      |> Map.put(:user_id, stripe_event.data.object.metadata.user_id)
+      |> Map.put(:user_id, stripe_event.data.object.metadata["user_id"])
 
     if is_nil(stripe_event.data.object.last_error) do
       # clear out any previous errors

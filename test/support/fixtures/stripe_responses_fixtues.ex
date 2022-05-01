@@ -471,4 +471,108 @@ defmodule Puppies.StripeResponsesFixtures do
       webhooks_delivered_at: 1_651_346_068
     }
   end
+
+  def charge() do
+    %{
+      object: %{
+        id: "ch_3KuVJqJLqL890V2T06KnDVuQ",
+        object: "charge",
+        amount: 199,
+        amount_captured: 199,
+        amount_refunded: 0,
+        application: nil,
+        application_fee: nil,
+        application_fee_amount: nil,
+        balance_transaction: "txn_3KuVJqJLqL890V2T095n1iBN",
+        billing_details: %{
+          address: %{
+            city: nil,
+            country: "US",
+            line1: nil,
+            line2: nil,
+            postal_code: "49401",
+            state: nil
+          },
+          email: nil,
+          name: nil,
+          phone: nil
+        },
+        calculated_statement_descriptor: "TRENDING PUPPIES",
+        captured: true,
+        created: 1_651_382_900,
+        currency: "usd",
+        customer: "cus_LbKRGfqn03uVwt",
+        description: nil,
+        destination: nil,
+        dispute: nil,
+        disputed: false,
+        failure_balance_transaction: nil,
+        failure_code: nil,
+        failure_message: nil,
+        fraud_details: %{},
+        invoice: nil,
+        livemode: false,
+        metadata: %{
+          product: "ID Verification",
+          user_id: "52"
+        },
+        on_behalf_of: nil,
+        order: nil,
+        outcome: %{
+          network_status: "approved_by_network",
+          reason: nil,
+          risk_level: "normal",
+          risk_score: 21,
+          seller_message: "Payment complete.",
+          type: "authorized"
+        },
+        paid: true,
+        payment_intent: "pi_3KuVJqJLqL890V2T0DoDh8q2",
+        payment_method: "pm_1KuVKRJLqL890V2TNbUNGxef",
+        payment_method_details: %{
+          card: %{
+            brand: "visa",
+            checks: %{
+              address_line1_check: nil,
+              address_postal_code_check: "pass",
+              cvc_check: "pass"
+            },
+            country: "US",
+            exp_month: 12,
+            exp_year: 2025,
+            fingerprint: "tYARwxZlMTC0lKVV",
+            funding: "credit",
+            installments: nil,
+            last4: "4242",
+            mandate: nil,
+            network: "visa",
+            three_d_secure: nil,
+            wallet: nil
+          },
+          type: "card"
+        },
+        receipt_email: nil,
+        receipt_number: nil,
+        receipt_url:
+          "https://pay.stripe.com/receipts/acct_1KszeNJLqL890V2T/ch_3KuVJqJLqL890V2T06KnDVuQ/rcpt_LbimoeXjlYfXKOySF4nk9H23bCWqCLV",
+        refunded: false,
+        refunds: %{
+          object: "list",
+          data: [],
+          has_more: false,
+          total_count: 0,
+          url: "/v1/charges/ch_3KuVJqJLqL890V2T06KnDVuQ/refunds"
+        },
+        review: nil,
+        shipping: nil,
+        source: nil,
+        source_transfer: nil,
+        statement_descriptor: nil,
+        statement_descriptor_suffix: nil,
+        status: "succeeded",
+        transfer_data: nil,
+        transfer_group: nil
+      }
+    }
+  end
 end

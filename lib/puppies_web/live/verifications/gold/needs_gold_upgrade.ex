@@ -1,4 +1,4 @@
-defmodule IDVerificationLive do
+defmodule NeedsGoldUpgrade do
   use Phoenix.LiveComponent
   alias Puppies.Stripe
 

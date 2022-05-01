@@ -120,6 +120,7 @@ defmodule PuppiesWeb.Router do
     # orders
     live("/order-history", OrderHistoryLive)
     live("/id-verification", IDVerificationLive)
+    live("/verifications", VerificationsLive)
   end
 
   scope "/", PuppiesWeb do

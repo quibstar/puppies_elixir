@@ -6,7 +6,7 @@ defmodule Puppies.IdVerification do
   import Ecto.Changeset
 
   schema "id_verifications" do
-    belongs_to(:user, ReputableRooms.Accounts.User)
+    belongs_to(:user, Puppies.Accounts.User)
     field(:status, :string)
     field(:verification_session_id, :string)
     field(:error_code, :string)

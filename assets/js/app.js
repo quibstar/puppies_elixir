@@ -179,3 +179,32 @@ let silverReputationValidation = () => {
     window.validatePhoneNumber = validatePhoneNumber;
   }
 };
+
+// ID
+Hooks.verifyIdentity = {
+  mounted() {
+    let publicKey = document.getElementById('pub-key');
+    var stripe = Stripe(publicKey.value);
+    this.el.addEventListener('click', function () {
+      let errorDiv = document.getElementById('error-container');
+      let errorText = document.getElementById('error-text');
+      let cs = document.getElementById('cs').value;
+      stripe
+        .verifyIdentity(cs)
+        .then(function (result) {
+          if (result.error) {
+            if (!result.error.code === 'session_cancelled') {
+              errorDiv.classList.remove('hidden');
+              errorText.textContent = result.error;
+            }
+          } else {
+            window.location.assign('/verifications?gv=true');
+          }
+        })
+        .catch(function (error) {
+          errorDiv.classList.remove('hidden');
+          errorText.textContent = 'There was an error, please try again';
+        });
+    });
+  },
+};

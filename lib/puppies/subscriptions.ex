@@ -56,4 +56,28 @@ defmodule Puppies.Subscriptions do
       )
     )
   end
+
+  def create_or_save_subscription(data_object) do
+    line_item = List.first(data_object.items.data)
+
+    sub = %{
+      customer_id: data_object.customer,
+      subscription_id: data_object.id,
+      subscription_status: data_object.status,
+      product_id: line_item.plan.product,
+      cancel_at_period_end: data_object.cancel_at_period_end,
+      amount: line_item.price.unit_amount,
+      end_date: data_object.current_period_end,
+      start_date: data_object.current_period_start,
+      plan_id: line_item.plan.id
+    }
+
+    if subscription_exists(sub.subscription_id) do
+      current_sub = get_subscription_by_sub_id(sub.subscription_id)
+
+      update_subscription(current_sub, sub)
+    else
+      create_subscription(sub)
+    end
+  end
 end

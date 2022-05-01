@@ -1,7 +1,7 @@
 defmodule PuppiesWeb.StripeWebhooksController do
   use PuppiesWeb, :controller
 
-  alias Puppies.{Stripe, Verifications.ID, Accounts}
+  alias Puppies.{Stripe, Verifications.ID, Accounts, Transactions}
 
   def webhooks(%Plug.Conn{assigns: %{stripe_event: stripe_event}} = conn, _params) do
     case handle_webhook(stripe_event) do
@@ -62,7 +62,8 @@ defmodule PuppiesWeb.StripeWebhooksController do
   defp handle_webhook(%{type: "identity.verification_session.verified"} = stripe_event) do
     # update verification record
     {:ok, res} = process_identity_webhook(stripe_event)
-    Accounts.update_reputation_level(res.user_id, %{reputation_level: 3})
+    user = Accounts.get_user!(res.user_id)
+    Accounts.update_reputation_level(user, %{reputation_level: 3})
   end
 
   # defp handle_webhook(%{type: "file.created"} = stripe_event) do
@@ -74,26 +75,4 @@ defmodule PuppiesWeb.StripeWebhooksController do
     |> ID.process_stripe_event()
     |> ID.create_or_update_verification()
   end
-
-  # defp handle_webhook(%{type: "charge.failed"} = stripe_event) do
-  #   IO.inspect("Charge Failed")
-  # end
-
-  # defp handle_webhook(%{type: "payment_intent.created"} = stripe_event) do
-  #   # handle invoice created webhook
-  #   IO.inspect("Payment Intent Created")
-  #   IO.inspect(stripe_event)
-  # end
-
-  # defp handle_webhook(%{type: "payment_intent.payment_failed"} = stripe_event) do
-  #   # handle invoice created webhook
-  #   IO.inspect("Payment Intent Failed")
-  #   IO.inspect(stripe_event)
-  # end
-
-  # defp handle_webhook(%{type: "payment_intent.succeeded"} = stripe_event) do
-  #   # handle invoice payment_succeeded webhook
-  #   IO.inspect("Payment Intent Succeeded")
-  #   IO.inspect(stripe_event)
-  # end
 end
