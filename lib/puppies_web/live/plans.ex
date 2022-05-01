@@ -1,4 +1,4 @@
-defmodule PuppiesWeb.PlansLive do
+defmodule PuppiesWeb.ProductsLive do
   @moduledoc """
   Plans live view index
   """
@@ -13,17 +13,17 @@ defmodule PuppiesWeb.PlansLive do
         <!-- Tiers -->
         <div class="mt-24 space-y-12 lg:space-y-0 lg:grid lg:grid-cols-3 lg:gap-x-8">
           <div class="relative p-8 bg-white border border-gray-200 rounded-2xl shadow-sm flex flex-col">
-              <%= PuppiesWeb.PlansComponent.bronze(@socket) %>
+              <%= PuppiesWeb.ProductComponent.free(@socket) %>
           </div>
 
           <div class="relative p-8 bg-white border border-gray-200 rounded-2xl shadow-sm flex flex-col">
-            <%= PuppiesWeb.PlansComponent.silver(@socket) %>
-            <%= live_redirect "Silver", to: Routes.live_path(@socket, PuppiesWeb.CheckoutLive, plan: "silver"), class: "bg-primary-500 text-white hover:bg-primary-600 mt-8 block w-full py-3 px-6 border border-transparent rounded-md text-center font-medium"%>
+            <%= PuppiesWeb.ProductComponent.standard(@socket) %>
+            <%= live_redirect "Silver", to: Routes.live_path(@socket, PuppiesWeb.CheckoutLive, "Standard"), class: "bg-primary-500 text-white hover:bg-primary-600 mt-8 block w-full py-3 px-6 border border-transparent rounded-md text-center font-medium"%>
           </div>
 
           <div class="relative p-8 bg-white border border-gray-200 rounded-2xl shadow-sm flex flex-col">
-            <%= PuppiesWeb.PlansComponent.gold(@socket) %>
-            <%= live_redirect "Gold", to: Routes.live_path(@socket, PuppiesWeb.CheckoutLive, plan: "gold"), class: "bg-primary-500 text-white hover:bg-primary-600 hover:text-white mt-8 block w-full py-3 px-6 border border-transparent rounded-md text-center font-medium"%>
+            <%= PuppiesWeb.ProductComponent.premium(@socket) %>
+            <%= live_redirect "Gold", to: Routes.live_path(@socket, PuppiesWeb.CheckoutLive,  "Premium"), class: "bg-primary-500 text-white hover:bg-primary-600 hover:text-white mt-8 block w-full py-3 px-6 border border-transparent rounded-md text-center font-medium"%>
           </div>
         </div>
       </div>

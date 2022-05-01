@@ -113,8 +113,13 @@ defmodule PuppiesWeb.Router do
     live("/notifications", NotificationsLive)
 
     # plans
-    live("/plans", PlansLive)
-    live("/checkout", CheckoutLive)
+    live("/plans", ProductsLive)
+    live("/checkout/:product", CheckoutLive)
+    live("/success", CheckoutSuccessLive)
+
+    # orders
+    live("/order-history", OrderHistoryLive)
+    live("/id-verification", IDVerificationLive)
   end
 
   scope "/", PuppiesWeb do
@@ -151,5 +156,10 @@ defmodule PuppiesWeb.Router do
     live("/puppies-in/:city/:state/:breed", FindPuppyLive)
     live("/puppies-in/:city/:state", FindPuppyLive)
     live("/puppies-in/:state", FindPuppyLive)
+  end
+
+  # webhooks
+  scope "/stripe/webhooks", PuppiesWeb do
+    post("/", StripeWebhooksController, :webhooks)
   end
 end

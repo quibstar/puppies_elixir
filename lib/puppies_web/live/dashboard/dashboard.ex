@@ -1,7 +1,7 @@
 defmodule PuppiesWeb.UserDashboardLive do
   use PuppiesWeb, :live_view
 
-  alias Puppies.{Accounts, Listings, Views, Photos, Threads}
+  alias Puppies.{Accounts, Listings, Views, Threads, Subscriptions}
 
   alias PuppiesWeb.{UI.Drawer, BusinessForm}
 
@@ -25,6 +25,8 @@ defmodule PuppiesWeb.UserDashboardLive do
     on_hold = Listings.get_listing_by_user_id_and_status(user.id, "on hold")
     sold = Listings.get_listing_by_user_id_and_status(user.id, "sold")
     messages = Threads.get_user_communication_with_business(user.id)
+    active_subscriptions = Subscriptions.get_user_active_subscriptions(user.customer_id)
+    subscription_count = Subscriptions.user_subscription_count(user.customer_id)
 
     {:ok,
      assign(socket,
@@ -38,7 +40,9 @@ defmodule PuppiesWeb.UserDashboardLive do
        on_hold: on_hold,
        sold: sold,
        thread_businesses: messages.businesses,
-       thread_listings: messages.listings
+       thread_listings: messages.listings,
+       active_subscriptions: active_subscriptions,
+       subscription_count: subscription_count
      )}
   end
 
@@ -116,29 +120,9 @@ defmodule PuppiesWeb.UserDashboardLive do
               <div class="bg-white shadow sm:rounded-lg">
                 <div class="px-4 py-5 sm:px-6">
                   <h2 id="applicant-information-title" class="text-xlg leading-6 font-medium text-gray-900">Hello <%= @user.first_name %> <%= @user.last_name %></h2>
-                  <div class="text-gray-500">
-                    <%= if @user.is_seller do %>
-                      <p class="mt-1 max-w-2xl">Hello <%= @user.first_name %> <%= @user.last_name %>, to get started listing you must first:</p>
-                      <ol class="my-2 list-decimal ml-4">
-                        <li class={if is_nil(@business), do: "",else: "line-through"}>Fill out
-                          <span x-on:click="show_drawer = !show_drawer" class="cursor-pointer underline">Business/Personal Details.</span>
-                        </li>
-                        <li>Choose your plan.</li>
-                        <li class={if @listings == [], do: "",else: "line-through"}>Create some listing!</li>
-                      </ol>
-                    <% else %>
-                      <%= unless @user.confirmed_at do %>
-                        <p class="text-red-500">To get started please confirm your email.</p>
-                      <% end %>
-
-                    <% end %>
-                    <p>Our community is built on reputation. Please consider the following:</p>
-                    <ol class="list-decimal ml-4">
-                      <li>Verify your phone (optional). Silver status.</li>
-                      <li>Verify your ID (optional). Gold status.</li>
-                    </ol>
-                    <p>Learn more about our <%= link "reputation system", to: Routes.faq_path(@socket, :index), class: "underline" %>.</p>
-                  </div>
+                  <%= if @listings == [] or @subscription_count == 0 or is_nil(@business) do %>
+                    <%= PuppiesWeb.ListingRequirements.html(%{listings: @listings, business: @business, user: @user, subscription_count: @subscription_count, socket: @socket}) %>
+                  <% end %>
                 </div>
               </div>
             </section>
@@ -207,8 +191,14 @@ defmodule PuppiesWeb.UserDashboardLive do
           </div>
 
           <section aria-labelledby="timeline-title" class="space-y-4">
+            <%= PuppiesWeb.Subscriptions.subscriptions(%{active_subscriptions: @active_subscriptions, socket: @socket, subscription_count: @subscription_count}) %>
+
+            <%= PuppiesWeb.Verifications.verifications(%{ socket: @socket, user: @user}) %>
+
             <%= PuppiesWeb.ViewHistoryComponent.show(%{viewing_history: @viewing_history, view_pagination: @view_pagination, socket: @socket}) %>
+
             <%= live_component PuppiesWeb.WatchListComponent, id: "watch_list", listings: @user.favorite_listings %>
+
              <%= if !@user.is_seller do %>
               <div class="bg-white px-4 py-5 shadow sm:rounded-lg sm:px-6">
                 <h2 id="timeline-title" class="text-xlg font-medium text-gray-900">Want to List?</h2>
@@ -224,6 +214,7 @@ defmodule PuppiesWeb.UserDashboardLive do
                 </ol>
               </div>
              <% end %>
+
           </section>
         </div>
       <% end %>

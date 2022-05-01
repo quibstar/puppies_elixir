@@ -20,13 +20,15 @@
 
 // Include phoenix_html to handle method=PUT/DELETE in forms and buttons.
 import moment from 'moment';
-
 import 'phoenix_html';
 // Establish Phoenix Socket and LiveView configuration.
 import { Socket } from 'phoenix';
 import { LiveSocket } from 'phoenix_live_view';
 import topbar from '../vendor/topbar';
 import Alpine from 'alpinejs';
+
+import './checkout';
+
 window.Alpine = Alpine;
 Alpine.start();
 
@@ -142,3 +144,38 @@ document.addEventListener('phx:update', () => {
     j++;
   }
 });
+
+// Phone
+Hooks.silver_modal = {
+  mounted() {
+    silverReputationValidation();
+  },
+};
+
+let silverReputationValidation = () => {
+  const phoneInputField = document.querySelector('#phone');
+  if (phoneInputField) {
+    phoneInputField.value = '';
+
+    const formattedPhone = document.querySelector('#phone_intl_format');
+    const submitInput = document.querySelector('#submit-phone-number');
+
+    const phoneInput = window.intlTelInput(phoneInputField, {
+      utilsScript: 'https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.8/js/utils.js',
+    });
+
+    function validatePhoneNumber() {
+      const phoneNumber = phoneInput.getNumber();
+      let valid = phoneInput.isValidNumber();
+      if (valid) {
+        formattedPhone.value = phoneNumber;
+        submitInput.classList.remove('hidden');
+      } else {
+        formattedPhone.value = '';
+        submitInput.classList.add('hidden');
+      }
+    }
+
+    window.validatePhoneNumber = validatePhoneNumber;
+  }
+};

@@ -4,12 +4,10 @@ defmodule PuppiesWeb.SilverComponent do
   """
   use PuppiesWeb, :live_component
 
-  alias ReputableRooms.{
+  alias Puppies.{
     Accounts,
-    Profiles,
     Verifications.Twilio,
-    Verifications.Phone,
-    Verification.Credits
+    Verifications.Phone
   }
 
   alias PuppiesWeb.Router.Helpers, as: Routes
@@ -19,7 +17,6 @@ defmodule PuppiesWeb.SilverComponent do
      assign(socket,
        submit_code: false,
        user: assigns.user,
-       profile_id: assigns.profile.id,
        show_modal: false
      )}
   end
@@ -43,21 +40,21 @@ defmodule PuppiesWeb.SilverComponent do
     end
   end
 
-  def handle_event("submit-code", %{"confirmaton_code" => confirmaton_code}, socket) do
+  def handle_event("submit-code", %{"confirmation_code" => confirmation_code}, socket) do
     res =
       Twilio.verify_phone_number(
         socket.assigns.user.phone_intl_format,
-        confirmaton_code
+        confirmation_code
       )
 
     case res do
       {:ok, response, sid} ->
-        update_account_and_profile(socket.assigns.user, sid, socket.assigns.profile_id)
+        update_account(socket.assigns.user, sid)
 
         {:noreply,
          socket
          |> put_flash(:info, response)
-         |> push_redirect(to: Routes.verifications_index_path(socket, :index))}
+         |> push_redirect(to: Routes.live_path(socket, PuppiesWeb.UserDashboardLive))}
 
       {:failure, response} ->
         {:noreply,
@@ -74,17 +71,15 @@ defmodule PuppiesWeb.SilverComponent do
     end
   end
 
-  defp update_account_and_profile(user, sid, profile_id) do
-    pro = Profiles.get!(profile_id)
-    Profiles.update_profile(pro, %{reputation_level: 2})
-    Credits.delete_credit(user.id, "phone")
+  defp update_account(user, sid) do
+    Accounts.update_reputation_level(user, %{reputation_level: 2})
     Phone.insert_verification(%{user_id: user.id, sid: sid})
   end
 
   def render(assigns) do
     ~H"""
     <div x-data="{ open: false }">
-      <button x-on:click="open = ! open" class="inline-flex items-center px-4 py-2 border border-transparent text-xs rounded shadow-sm text-white bg-primary-600 hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500">Silver upgrade ready!</button>
+      <button x-on:click="open = ! open" class="inline-flex items-center px-4 py-2 border border-transparent text-xs rounded shadow-sm text-white bg-primary-500 hover:bg-primary-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500">Silver upgrade ready!</button>
         <div x-show="open" phx-hook="silver_modal"  id="silver-modal" class="fixed z-10 inset-0 overflow-y-auto {if @show_modal, do: show-modal, else: hide-modal}" aria-labelledby="modal-title" role="dialog" aria-modal="true">
           <div class="flex items-end justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0 show-overlay">
 
@@ -153,7 +148,7 @@ defmodule PuppiesWeb.SilverComponent do
                         <form phx-submit="submit-code" phx-target={@myself}>
                           <div class="my-2">
                             <label class="block text-sm font-medium text-gray-700">Confirmation Code</label>
-                            <input id="confirmaton-code" type="text" name="confirmaton_code" class="shadow-sm focus:ring-primary-500 focus:border-primary-500 block w-full sm:text-sm border-gray-300 rounded-md"/>
+                            <input id="confirmation-code" type="text" name="confirmation_code" class="shadow-sm focus:ring-primary-500 focus:border-primary-500 block w-full sm:text-sm border-gray-300 rounded-md"/>
                             <input type="submit" id="submit-phone-number" value="Confirm"
                             class="mt-4 inline-flex justify-center w-full rounded-md border border-transparent shadow-sm px-4 py-2 bg-primary-600 text-base font-medium text-white hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500 sm:text-sm"
                             />

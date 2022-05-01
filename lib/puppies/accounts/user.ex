@@ -193,4 +193,23 @@ defmodule Puppies.Accounts.User do
     |> validate_required([:first_name], message: "Please supply a first name")
     |> validate_required([:last_name], message: "Please supply a last name")
   end
+
+  def user_update_reputation_level(user, attrs) do
+    user
+    |> cast(attrs, [:reputation_level])
+  end
+
+  def save_stripe_customer_id(user, attrs) do
+    user
+    |> cast(attrs, [:customer_id])
+  end
+
+  def save_phone_number(user, attrs) do
+    user
+    |> cast(attrs, [:phone_intl_format, :phone_number])
+    |> validate_required([:phone_intl_format],
+      message: "Missing international version, please try again"
+    )
+    |> validate_required([:phone_number], message: "Please supply a phone number")
+  end
 end

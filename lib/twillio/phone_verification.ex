@@ -4,15 +4,15 @@ defmodule Puppies.Verifications.Twilio do
   """
 
   defp account_sid do
-    Application.get_env(:reputable_rooms, :twilio_account_sid)
+    Application.get_env(:puppies, :twilio_account_sid)
   end
 
   defp auth_token do
-    Application.get_env(:reputable_rooms, :twilio_auth_token)
+    Application.get_env(:puppies, :twilio_auth_token)
   end
 
   defp service do
-    Application.get_env(:reputable_rooms, :twilio_service)
+    Application.get_env(:puppies, :twilio_service)
   end
 
   defp authorization do

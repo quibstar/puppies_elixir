@@ -1,5 +1,10 @@
 # Puppies remake for fun
 
+mix test.watch
+or
+mix test.watch test/file/to_test.exs
+mix test.watch --stale
+
 ### Review's
 
 - [ ] Lister marks listing as sold,
@@ -21,11 +26,12 @@ mix phx.gen.context ReviewLinks ReviewLink review_links email:string listing_id:
 - [x] Favorites
 - [x] Plans page
 - [x] Message read when viewed
-- [ ] Site maps generation
-- [ ] state/breed pages
-- [ ] city/state/breed pages
+- [x] Site maps generation
+- [x] state/breed pages
+- [x] city/state/breed pages
 - [ ] Popular breeds generation gen_server
-- [ ] create products on Stripe
+- [x] create products on Stripe
+- [x] Pull products in from Stripe
 - [ ] Checkout
 - [ ] verify phone
 - [ ] verify ID
@@ -34,3 +40,8 @@ mix phx.gen.context ReviewLinks ReviewLink review_links email:string listing_id:
 - [ ] Email set up
 - [ ] Filter for search
 - [ ] background notifications
+
+TODO: finish subscriptions
+http://localhost:4000/success?payment_intent=pi_3Ktl0uJLqL890V2T13dikKLg&payment_intent_client_secret=pi_3Ktl0uJLqL890V2T13dikKLg_secret_FtSK0uxZfT9q8h70N390AsCsR&redirect_status=succeeded
+
+https://stripe.com/docs/billing/subscriptions/build-subscriptions?card-or-payment-element=payment-element#display-payment-method

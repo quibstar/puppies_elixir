@@ -391,4 +391,23 @@ defmodule Puppies.Accounts do
     |> User.profile_changeset(attrs)
     |> Repo.update()
   end
+
+  def save_stripe_customer_id(user, attrs) do
+    user
+    |> User.save_stripe_customer_id(attrs)
+    |> Repo.update()
+  end
+
+  def update_reputation_level(user, attrs) do
+    user
+    |> User.user_update_reputation_level(attrs)
+    |> Repo.update()
+  end
+
+  # verifications
+  def save_phone_number(user, attrs) do
+    user
+    |> User.save_phone_number(attrs)
+    |> Repo.update()
+  end
 end

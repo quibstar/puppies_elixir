@@ -8,7 +8,7 @@ defmodule Puppies.FlagsFixtures do
   Generate a flag.
   """
   def flag_fixture(attrs \\ %{}) do
-    {:ok, flag} = Puppies.Flags.create_flag(attrs)
+    {:ok, flag} = Puppies.Flags.create(attrs)
     flag
   end
 end

@@ -148,6 +148,11 @@ defmodule Puppies.Utilities do
     end
   end
 
+  def integer_to_date(utc) do
+    {:ok, date} = DateTime.from_unix(utc)
+    date
+  end
+
   def date_format(date) do
     {:ok, d} = NaiveDateTime.from_iso8601(date <> " 00:00:00Z")
     [year, month, day] = String.split(date, "-")
