@@ -6,7 +6,7 @@ defmodule PuppiesWeb.BusinessCard do
 
   def render(assigns) do
     ~H"""
-      <div>
+      <div class="inline">
         <div class="text-center space-y-4 bg-white px-6 py-9 border rounded">
           <div>
             <%= PuppiesWeb.Avatar.show(%{business: @business, user: @business.user, square: 44, extra_classes: "text8_5xl"}) %>

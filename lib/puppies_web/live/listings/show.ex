@@ -113,7 +113,9 @@ defmodule PuppiesWeb.ListingShow do
               <%= if @review_stats.average > 0 do %>
                 <%= live_component  PuppiesWeb.ReviewStats, id: @business.id, review_stats: @review_stats %>
               <% end %>
-              <%= live_component  PuppiesWeb.ContactCTA, id: "contact_cta",  user: @user, business_or_listing: @business %>
+              <%= if  @business.user.reputation_level > @user.reputation_level do %>
+                <%= live_component  PuppiesWeb.ContactCTA, id: "contact_cta",  user: @user, business_or_listing: @business %>
+              <% end %>
             </div>
             <%= live_component  PuppiesWeb.ListingDetails, id: "listing_details", user_id: @user.id, listing: @listing, views: @views, is_favorite: @is_favorite %>
           </div>

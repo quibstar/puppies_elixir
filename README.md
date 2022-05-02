@@ -29,17 +29,22 @@ mix phx.gen.context ReviewLinks ReviewLink review_links email:string listing_id:
 - [x] Site maps generation
 - [x] state/breed pages
 - [x] city/state/breed pages
-- [ ] Popular breeds generation gen_server
 - [x] create products on Stripe
 - [x] Pull products in from Stripe
-- [ ] Checkout
-- [ ] verify phone
-- [ ] verify ID
+- [x] Checkout
+- [x] verify phone
+- [x] verify ID
+- [x] Message access based on reputation level
+- [ ] Popular breeds generation gen_server
 - [ ] delete user
-- [ ] Message access based on reputation level
 - [ ] Email set up
 - [ ] Filter for search
 - [ ] background notifications
+
+# Admin
+
+- [ ] Create Admin Site
+- [ ] Layout
 
 TODO: finish subscriptions
 http://localhost:4000/success?payment_intent=pi_3Ktl0uJLqL890V2T13dikKLg&payment_intent_client_secret=pi_3Ktl0uJLqL890V2T13dikKLg_secret_FtSK0uxZfT9q8h70N390AsCsR&redirect_status=succeeded

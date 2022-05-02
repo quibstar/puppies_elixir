@@ -30,15 +30,26 @@ defmodule PuppiesWeb.BreederDetails do
             <%= if !is_nil(@user) && @user.id != @listing.user_id do %>
               <div class="flex place-content-center">
 
-                <%= if is_nil(@conversation_started) do %>
-                  <.live_component module={ChatIcon} id="chat_icon" business={@business} user={@user} listing={@listing} return_to={ Routes.live_path(@socket, PuppiesWeb.ListingShow, @listing.id)}/>
-                <% else %>
-                  <%= live_redirect to: Routes.live_path(@socket, PuppiesWeb.MessagesLive, listing_id: @listing.id, thread: @conversation_started.uuid  ) do %>
-                      <svg class="w-6 h-6 mr-2" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4" />
-                      </svg>
-                  <% end %>
+                <%= if @user.reputation_level >= @business.user.reputation_level do %>
+
+                    <%= if is_nil(@conversation_started) do %>
+                      <.live_component module={ChatIcon} id="chat_icon" business={@business} user={@user} listing={@listing} return_to={ Routes.live_path(@socket, PuppiesWeb.ListingShow, @listing.id)}/>
+                    <% else %>
+                      <%= live_redirect to: Routes.live_path(@socket, PuppiesWeb.MessagesLive, listing_id: @listing.id, thread: @conversation_started.uuid  ) do %>
+                          <svg class="w-6 h-6 mr-2" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4" />
+                          </svg>
+                      <% end %>
+                    <% end %>
+
+                  <% else %>
+
+                  <svg class="w-6 h-6 mr-2 stroke-gray-400" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8h2a2 2 0 012 2v6a2 2 0 01-2 2h-2v4l-4-4H9a1.994 1.994 0 01-1.414-.586m0 0L11 14h4a2 2 0 002-2V6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2v4l.586-.586z" />
+                  </svg>
+
                 <% end %>
+
                 <.live_component module={FlagIcon} id="flag_icon" business={@business} user={@user} listing={@listing} return_to={ Routes.live_path(@socket, PuppiesWeb.ListingShow, @listing.id)}/>
               </div>
             <% else %>

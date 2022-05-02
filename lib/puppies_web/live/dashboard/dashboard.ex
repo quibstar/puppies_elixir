@@ -25,8 +25,20 @@ defmodule PuppiesWeb.UserDashboardLive do
     on_hold = Listings.get_listing_by_user_id_and_status(user.id, "on hold")
     sold = Listings.get_listing_by_user_id_and_status(user.id, "sold")
     messages = Threads.get_user_communication_with_business(user.id)
-    active_subscriptions = Subscriptions.get_user_active_subscriptions(user.customer_id)
-    subscription_count = Subscriptions.user_subscription_count(user.customer_id)
+
+    active_subscriptions =
+      if is_nil(user.customer_id) do
+        []
+      else
+        Subscriptions.get_user_active_subscriptions(user.customer_id)
+      end
+
+    subscription_count =
+      if is_nil(user.customer_id) do
+        0
+      else
+        Subscriptions.user_subscription_count(user.customer_id)
+      end
 
     {:ok,
      assign(socket,
@@ -194,7 +206,7 @@ defmodule PuppiesWeb.UserDashboardLive do
             <%= PuppiesWeb.Subscriptions.subscriptions(%{active_subscriptions: @active_subscriptions, socket: @socket, subscription_count: @subscription_count}) %>
 
             <!-- Reputation -->
-            <div class="border rounded p-4 bg-white space-y-2">
+            <div class="bg-white px-4 py-5 shadow sm:rounded-lg sm:px-6">
                 <span class='text-lg leading-6 font-medium text-gray-900'>Reputation Level: </span>
                 <%= cond do %>
                     <% @user.reputation_level == 3 -> %>

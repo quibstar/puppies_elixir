@@ -42,7 +42,7 @@ defmodule Puppies.Businesses do
       from(b in Business,
         where: b.user_id == ^id
       )
-      |> preload([:breeds, :location, :photo, :business_breeds])
+      |> preload([:breeds, :location, :photo, :business_breeds, :user])
 
     Repo.one(q)
   end
