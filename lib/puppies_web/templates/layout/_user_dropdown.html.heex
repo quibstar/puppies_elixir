@@ -15,9 +15,6 @@
       x-transition:leave-end="transform opacity-0 scale-95"
     >
     <div class="py-1" role="menu" aria-orientation="vertical" aria-labelledby="options-menu">
-        <%= if !is_nil(@conn.assigns.current_user.membership_end_date) do %>
-
-        <% end  %>
 
         <%= live_redirect to: Routes.live_path(assigns.conn, PuppiesWeb.UserProfile), class: "block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 hover:text-gray-900 focus:outline-none focus:bg-gray-100 focus:text-gray-900" do %>
           <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 inline-block" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -41,12 +38,14 @@
             Settings
         <% end  %>
 
-        <%= link to: Routes.live_path(@conn, PuppiesWeb.OrderHistoryLive), class: "block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 hover:text-gray-900 focus:outline-none focus:bg-gray-100 focus:text-gray-900" do %>
+        <%= unless is_nil(@conn.assigns.current_user.customer_id) do %>
+          <%= link to: Routes.live_path(@conn, PuppiesWeb.OrderHistoryLive), class: "block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 hover:text-gray-900 focus:outline-none focus:bg-gray-100 focus:text-gray-900" do %>
             <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 inline-block" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z" />
             </svg>
             Order History
           <% end %>
+        <% end %>
 
         <%= link to: Routes.user_session_path(@conn, :delete), method: :delete, class: "block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 hover:text-gray-900 focus:outline-none focus:bg-gray-100 focus:text-gray-900" do %>
           <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 inline-block" fill="none" viewBox="0 0 24 24" stroke="currentColor">

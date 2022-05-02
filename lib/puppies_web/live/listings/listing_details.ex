@@ -54,9 +54,9 @@ defmodule PuppiesWeb.ListingDetails do
 
   def is_favorite?(is_favorite) do
     if is_favorite do
-      "fill-red-500"
+      "fill-red-500 stroke-red-500"
     else
-      "fill-gray-400"
+      "fill-white stroke-primary-500"
     end
   end
 

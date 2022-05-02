@@ -1969,6 +1969,14 @@ h1, h2, h3, h4, h5 {
   fill: #e5e7eb;
 }
 
+.fill-white {
+  fill: #fff;
+}
+
+.fill-gray-100 {
+  fill: #f3f4f6;
+}
+
 .stroke-gray-400 {
   stroke: #9ca3af;
 }
@@ -1991,6 +1999,10 @@ h1, h2, h3, h4, h5 {
 
 .stroke-transparent {
   stroke: transparent;
+}
+
+.stroke-gray-800 {
+  stroke: #1f2937;
 }
 
 .object-cover {

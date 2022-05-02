@@ -146,7 +146,7 @@ defmodule PuppiesWeb.UserDashboardLive do
               </div>
             </section>
 
-            <%= if is_nil(@user.is_seller) do %>
+            <%= if @user.is_seller do %>
 
               <div class="bg-white shadow sm:rounded-lg" x-data="{ tab: 'available' }">
                 <div class="flex justify-between p-4 pb-0">
