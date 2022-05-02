@@ -16,6 +16,9 @@ defmodule PuppiesWeb.BuyerMessages do
       <div class="bg-white px-4 py-5 shadow sm:rounded-lg sm:px-6">
         <h2 id="timeline-title" class="text-xlg font-medium text-gray-900 mb-2">Messages</h2>
         <div class="divide-y divide-gray-200">
+          <%= if @thread_businesses == [] do %>
+            <div class="text-sm text-gray-800">No messages currently.</div>
+          <% end %>
           <%= for thread <- @thread_businesses do %>
             <div class="md:grid grid-cols-6 gap-2 py-4">
               <div class="flex col-span-2">

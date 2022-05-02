@@ -34,8 +34,8 @@ defmodule PuppiesWeb.VerificationsLive do
 
     id_credit = Credits.has_credit?(user.id, "ID Verification")
 
-    if Map.has_key?(params, "gv") do
-      Credits.delete_credit(user.id, "id")
+    if Map.has_key?(params, "gv") || user.reputation_level == 3 do
+      Credits.delete_credit(user.id, "ID Verification")
     end
 
     {:ok,

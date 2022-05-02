@@ -21,7 +21,6 @@ defmodule PuppiesWeb.Subscriptions do
 
         <% else %>
           <p class="mt-1 text-sm text-gray-500 text-sm">To start listing choose a <%= live_redirect "plan", to: PuppiesWeb.Router.Helpers.live_path(@socket,  PuppiesWeb.ProductsLive), class: "underline cursor-pointer" %>.</p>
-
         <% end %>
       </div>
     """

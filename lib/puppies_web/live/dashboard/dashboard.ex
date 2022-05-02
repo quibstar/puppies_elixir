@@ -1,7 +1,7 @@
 defmodule PuppiesWeb.UserDashboardLive do
   use PuppiesWeb, :live_view
 
-  alias Puppies.{Accounts, Listings, Views, Threads, Subscriptions}
+  alias Puppies.{Accounts, Listings, Views, Threads, Subscriptions, Verification.Credits}
 
   alias PuppiesWeb.{UI.Drawer, BusinessForm}
 
@@ -22,6 +22,7 @@ defmodule PuppiesWeb.UserDashboardLive do
     user = Accounts.get_user_business_and_listings(user.id)
     data = Listings.get_active_listings_by_user_id(user.id)
     viewing_history = Views.my_views(user.id)
+    available = Listings.get_listing_by_user_id_and_status(user.id, "available")
     on_hold = Listings.get_listing_by_user_id_and_status(user.id, "on hold")
     sold = Listings.get_listing_by_user_id_and_status(user.id, "sold")
     messages = Threads.get_user_communication_with_business(user.id)
@@ -40,6 +41,8 @@ defmodule PuppiesWeb.UserDashboardLive do
         Subscriptions.user_subscription_count(user.customer_id)
       end
 
+    id_credit = Credits.has_credit?(user.id, "ID Verification")
+
     {:ok,
      assign(socket,
        user: user,
@@ -49,12 +52,14 @@ defmodule PuppiesWeb.UserDashboardLive do
        viewing_history: viewing_history.views,
        view_pagination: Map.get(viewing_history, :pagination, %{count: 0}),
        pagination: Map.get(data, :pagination, %{count: 0}),
+       available: available,
        on_hold: on_hold,
        sold: sold,
        thread_businesses: messages.businesses,
        thread_listings: messages.listings,
        active_subscriptions: active_subscriptions,
-       subscription_count: subscription_count
+       subscription_count: subscription_count,
+       id_credit: id_credit
      )}
   end
 
@@ -128,18 +133,20 @@ defmodule PuppiesWeb.UserDashboardLive do
 
         <div class="mt-8 max-w-3xl mx-auto grid grid-cols-1 gap-6 sm:px-6 lg:max-w-7xl lg:grid-flow-col-dense lg:grid-cols-3">
           <div class="space-y-6 lg:col-start-1 lg:col-span-2">
-            <section aria-labelledby="applicant-information-title">
+
+            <section aria-labelledby="information-title">
               <div class="bg-white shadow sm:rounded-lg">
                 <div class="px-4 py-5 sm:px-6">
                   <h2 id="applicant-information-title" class="text-xlg leading-6 font-medium text-gray-900">Hello <%= @user.first_name %> <%= @user.last_name %></h2>
                   <%= if @listings == [] or @subscription_count == 0 or is_nil(@business) do %>
                     <%= PuppiesWeb.ListingRequirements.html(%{listings: @listings, business: @business, user: @user, subscription_count: @subscription_count, socket: @socket}) %>
                   <% end %>
+                  <%= PuppiesWeb.Capabilities.show(%{available: @available, user: @user, active_subscriptions: @active_subscriptions,}) %>
                 </div>
               </div>
             </section>
 
-            <%= unless is_nil(@user.business) do %>
+            <%= if is_nil(@user.is_seller) do %>
 
               <div class="bg-white shadow sm:rounded-lg" x-data="{ tab: 'available' }">
                 <div class="flex justify-between p-4 pb-0">
@@ -170,13 +177,13 @@ defmodule PuppiesWeb.UserDashboardLive do
                       <a :class="{ 'border-primary-500 text-primary-600': tab === 'on-hold' }"  x-on:click.prevent="tab = 'on-hold'"  href="#" class="border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 w-1/4 py-4 px-1 text-center border-b-2 font-medium text-sm">
                         On Hold/Sale Pending
                         <%= unless @on_hold == [] do %>
-                          (<%= length(@on_hold ) %>)
+                          (<%= length(@on_hold) %>)
                         <% end %>
                       </a>
                       <a :class="{ 'border-primary-500 text-primary-600': tab === 'sold' }"  x-on:click.prevent="tab = 'sold'"  href="#" class="border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 w-1/4 py-4 px-1 text-center border-b-2 font-medium text-sm" aria-current="page">
                         Sold
                         <%= unless @sold == [] do %>
-                          (<%= length(@sold ) %>)
+                          (<%= length(@sold) %>)
                         <% end %>
                       </a>
                     </nav>
@@ -203,8 +210,9 @@ defmodule PuppiesWeb.UserDashboardLive do
           </div>
 
           <section aria-labelledby="timeline-title" class="space-y-4">
-            <%= PuppiesWeb.Subscriptions.subscriptions(%{active_subscriptions: @active_subscriptions, socket: @socket, subscription_count: @subscription_count}) %>
-
+            <%= if @user.is_seller do %>
+              <%= PuppiesWeb.Subscriptions.subscriptions(%{active_subscriptions: @active_subscriptions, socket: @socket, subscription_count: @subscription_count}) %>
+            <% end %>
             <!-- Reputation -->
             <div class="bg-white px-4 py-5 shadow sm:rounded-lg sm:px-6">
                 <span class='text-lg leading-6 font-medium text-gray-900'>Reputation Level: </span>
@@ -223,9 +231,22 @@ defmodule PuppiesWeb.UserDashboardLive do
                        <div class="text-sm text-gray-600">You need to verify your email establish Bronze reputation and be visible to the community.</div>
 
                 <% end %>
-                <div class="mt-2">
+                <div class="space-y-2 my-2">
+                    <%= if @id_credit do %>
+                      <div class="rounded-md bg-blue-50 p-4">
+                        <div class="flex">
+                          <div class="ml-3 flex-1 md:flex md:justify-between">
+                            <p class="text-sm text-blue-700">You current Have a credit for ID Verification.</p>
+                            <p class="mt-3 text-sm md:mt-0 md:ml-6">
+                              <%= live_redirect to: Routes.live_path(@socket, PuppiesWeb.VerificationsLive), class: "whitespace-nowrap font-medium text-blue-700 hover:text-blue-600"  do %>
+                                Redeem <span aria-hidden="true">&rarr;</span>
+                              <% end %>
+                            </p>
+                          </div>
+                        </div>
+                      </div>
+                    <% end %>
                     <%= live_redirect "My Verifications", to: Routes.live_path(@socket, PuppiesWeb.VerificationsLive), class: "inline-block px-4 py-2 border border-transparent text-xs rounded shadow-sm text-white bg-primary-600 hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500" %>
-                    <div class="text-sm text-gray-600">Check and update your verifications.</div>
                 </div>
             </div>
 

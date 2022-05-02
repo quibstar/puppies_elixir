@@ -16,6 +16,7 @@ defmodule Puppies.Application do
       {Phoenix.PubSub, name: Puppies.PubSub},
       # Start the Endpoint (http/https)
       PuppiesWeb.Endpoint,
+      PuppiesWeb.Presence,
       # Start a worker by calling: Puppies.Worker.start_link(arg)
       # {Puppies.Worker, arg}
       {Oban, oban_config()}

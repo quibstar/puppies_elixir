@@ -23,7 +23,7 @@ defmodule PuppiesWeb.ListingRequirements do
 
           <% else %>
             <%= unless @user.confirmed_at do %>
-              <p class="text-red-500">To get started please confirm your email.</p>
+              <p class="text-red-500 text-sm mt-2">Please confirm your email.</p>
             <% end %>
           <% end %>
         </div>

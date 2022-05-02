@@ -35,8 +35,6 @@ defmodule PuppiesWeb.ListingsActive do
           </:drawer_body>
         </Drawer.drawer>
 
-
-
         <%= if @listings == [] do %>
           <p class="mt-1 max-w-2xl text-gray-500">You currently don't have any listings. Let's get started</p>
         <% else %>
