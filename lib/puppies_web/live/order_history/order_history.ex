@@ -22,6 +22,7 @@ defmodule PuppiesWeb.OrderHistoryLive do
 
     # updates orders if any were missed
     Task.async(fn ->
+      Stripe.get_subscriptions(user.customer_id)
       Stripe.get_invoices(user.customer_id)
       Stripe.get_charges(user.customer_id)
     end)

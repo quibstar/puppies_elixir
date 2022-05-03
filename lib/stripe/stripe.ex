@@ -58,6 +58,16 @@ defmodule Puppies.Stripe do
     Puppies.Subscriptions.create_or_save_subscription(data_object)
   end
 
+  def get_subscriptions(customer_id) do
+    {:ok, res} = Stripe.Subscription.list(%{customer: customer_id})
+
+    Enum.each(res.data, fn subscription ->
+      if subscription.status == "active" do
+        Puppies.Subscriptions.create_or_save_subscription(subscription)
+      end
+    end)
+  end
+
   def get_invoices(customer_id) do
     {:ok, res} = Stripe.Invoice.list(%{customer: customer_id})
 

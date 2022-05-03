@@ -43,6 +43,22 @@ defmodule PuppiesWeb.UserDashboardLive do
 
     id_credit = Credits.has_credit?(user.id, "ID Verification")
 
+    available_listing_to_post =
+      Enum.reduce(active_subscriptions, 0, fn sub, acc ->
+        al = length(available)
+
+        cond do
+          sub.product.name == "Premium" ->
+            50 - al + acc
+
+          sub.product.name == "Standard" ->
+            25 - al + acc
+
+          true ->
+            al
+        end
+      end)
+
     {:ok,
      assign(socket,
        user: user,
@@ -59,7 +75,8 @@ defmodule PuppiesWeb.UserDashboardLive do
        thread_listings: messages.listings,
        active_subscriptions: active_subscriptions,
        subscription_count: subscription_count,
-       id_credit: id_credit
+       id_credit: id_credit,
+       available_listing_to_post: available_listing_to_post
      )}
   end
 
@@ -149,10 +166,34 @@ defmodule PuppiesWeb.UserDashboardLive do
             <%= if @user.is_seller do %>
 
               <div class="bg-white shadow sm:rounded-lg" x-data="{ tab: 'available' }">
+
+                 <%= unless @available_listing_to_post > 0 do %>
+                  <div class="bg-yellow-50 border-l-4 border-yellow-400 p-4">
+                    <div class="flex">
+                      <div class="flex-shrink-0">
+                        <!-- Heroicon name: solid/exclamation -->
+                        <svg class="h-5 w-5 text-yellow-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+                          <path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clip-rule="evenodd" />
+                        </svg>
+                      </div>
+                      <div class="ml-3">
+                        <p class="text-sm text-yellow-700">
+                          You have reached the listing limit for your current subscription.
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                <% end %>
+
                 <div class="flex justify-between p-4 pb-0">
                   <h2 id="applicant-information-title" class="text-xlg leading-6 font-medium text-gray-900">Listings</h2>
-                  <%= live_patch "New Listing", to: Routes.live_path(@socket, PuppiesWeb.ListingsNew), class: "inline-block px-6 py-2 text-xs font-medium leading-6 text-center text-white uppercase transition bg-primary-500 rounded shadow hover:shadow-lg hover:bg-primary-600 focus:outline-none disabled:opacity-50" %>
+                  <%= if @available_listing_to_post > 0 do %>
+                    <%= live_patch "New Listing", to: Routes.live_path(@socket, PuppiesWeb.ListingsNew), class: "inline-block px-6 py-2 text-xs font-medium leading-6 text-center text-white uppercase transition bg-primary-500 rounded shadow hover:shadow-lg hover:bg-primary-600 focus:outline-none disabled:opacity-50" %>
+                  <% end %>
                 </div>
+
+
+
 
                 <div class="sm:hidden">
                   <label for="tabs" class="sr-only">Select a tab</label>
