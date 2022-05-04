@@ -132,7 +132,7 @@ defmodule PuppiesWeb.UserDashboardLive do
               <%= PuppiesWeb.Avatar.show(%{business: @business, user: @user, square: "16", extra_classes: "text-4xl pt-0.5"}) %>
             </div>
             <div>
-              <h1 class="text-2xl font-bold text-gray-900"><%= @user.first_name %> <%=@user.last_name%></h1>
+              <h1 class="text-2xl font-bold text-gray-900"><%= @user.first_name %> <%=@user.last_name%> (<%= @user.id %>)</h1>
               <%= if @user.is_seller && !is_nil(@business.slug) do %>
                 <p class="text-sm font-medium text-gray-500">Profile Page:
                   <%= live_redirect @business.name, to: Routes.live_path(@socket, PuppiesWeb.BusinessPageLive, @business.slug), class: "text-gray-900 underline cursor-pointer"%>
@@ -167,8 +167,15 @@ defmodule PuppiesWeb.UserDashboardLive do
 
               <div class="bg-white shadow sm:rounded-lg" x-data="{ tab: 'available' }">
 
-                 <%= unless @available_listing_to_post > 0 do %>
-                  <div class="bg-yellow-50 border-l-4 border-yellow-400 p-4">
+                <div class="flex justify-between p-4 pb-0">
+                  <h2 id="applicant-information-title" class="text-xlg leading-6 font-medium text-gray-900">Listings</h2>
+                  <%= if @available_listing_to_post > 0 do %>
+                    <%= live_patch "New Listing", to: Routes.live_path(@socket, PuppiesWeb.ListingsNew), class: "inline-block px-6 py-2 text-xs font-medium leading-6 text-center text-white uppercase transition bg-primary-500 rounded shadow hover:shadow-lg hover:bg-primary-600 focus:outline-none disabled:opacity-50" %>
+                  <% end %>
+                </div>
+
+                <%= unless @available_listing_to_post > 0 do %>
+                  <div class="bg-yellow-50 border-l-4 border-yellow-400 p-4 mt-2">
                     <div class="flex">
                       <div class="flex-shrink-0">
                         <!-- Heroicon name: solid/exclamation -->
@@ -184,16 +191,6 @@ defmodule PuppiesWeb.UserDashboardLive do
                     </div>
                   </div>
                 <% end %>
-
-                <div class="flex justify-between p-4 pb-0">
-                  <h2 id="applicant-information-title" class="text-xlg leading-6 font-medium text-gray-900">Listings</h2>
-                  <%= if @available_listing_to_post > 0 do %>
-                    <%= live_patch "New Listing", to: Routes.live_path(@socket, PuppiesWeb.ListingsNew), class: "inline-block px-6 py-2 text-xs font-medium leading-6 text-center text-white uppercase transition bg-primary-500 rounded shadow hover:shadow-lg hover:bg-primary-600 focus:outline-none disabled:opacity-50" %>
-                  <% end %>
-                </div>
-
-
-
 
                 <div class="sm:hidden">
                   <label for="tabs" class="sr-only">Select a tab</label>

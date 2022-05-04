@@ -250,8 +250,8 @@ defmodule PuppiesWeb.BusinessForm do
             <div>
 
               <%= if !is_nil(@business) && @business.photo && !@hide_current_photo do %>
-                <div class="my-4 mx-auto border-2 border-dashed rounded-full w-60 h-60 flex justify-center items-center overflow-hidden">
-                  <%= img_tag( @business.photo.url) %>
+                <div class="my-4 mx-auto border-2 border-dashed rounded-full w-60 h-60  flex justify-center items-center overflow-hidden">
+                  <%= img_tag( @business.photo.url, class: " w-60 h-60 object-cover") %>
                 </div>
                 <div class="flex flex-col justify-center ">
                   <button type="button" class="text-sm underline uppercase text-gray-500" phx-click="remove-business-image" phx-target={@myself} >Remove Image</button>

@@ -95,6 +95,10 @@ defmodule PuppiesWeb.MessagesLive do
 
       socket = assign(socket, :messages, current_thread.messages)
 
+      unless current_thread.messages == [] do
+        mark_messages_as_read(current_thread.messages)
+      end
+
       socket =
         assign(
           socket,
@@ -155,6 +159,13 @@ defmodule PuppiesWeb.MessagesLive do
 
         PuppiesWeb.Endpoint.broadcast_from(self(), uuid, "message", message)
 
+        PuppiesWeb.Endpoint.broadcast_from(
+          self(),
+          "messages:user:#{message.received_by}",
+          "update_messages_count",
+          %{user_id: message.received_by}
+        )
+
         socket =
           socket
           |> update(:messages, fn messages -> [message | messages] end)
@@ -195,6 +206,16 @@ defmodule PuppiesWeb.MessagesLive do
     end
   end
 
+  def unread_message_count(user, messages) do
+    Enum.reduce(messages, 0, fn message, acc ->
+      if !message.read && message.sent_by != user.id do
+        acc + 1
+      else
+        acc
+      end
+    end)
+  end
+
   def render(assigns) do
     ~H"""
       <div class='flex h-full'>
@@ -209,7 +230,7 @@ defmodule PuppiesWeb.MessagesLive do
                   </svg>
                   <h3 class="mt-2 text-sm font-medium text-gray-900">No messages</h3>
                   <p class="mt-1 text-sm text-gray-500">
-                    hmmmm...sorry.
+                    Person of little words, we can appreciate that.
                   </p>
               </div>
             </div>
@@ -223,6 +244,9 @@ defmodule PuppiesWeb.MessagesLive do
                       <div class="ml-3 flex-grow">
                         <p class="text-sm text-gray-900">
                           <%= @current_thread.listing.name %>
+                          <%= if unread_message_count(@user, @current_thread.messages) > 0 do %>
+                            <span class="inline-flex items-center px-1.5 py-0.0 rounded-full text-xs font-medium bg-red-500 text-white">  <%= unread_message_count(@user,@current_thread.messages) %> </span>
+                          <% end %>
                         </p>
                         <div data-time={@current_thread.listing.updated_at} class="text-xs text-gray-400 messages-date">
                         </div>
@@ -237,6 +261,9 @@ defmodule PuppiesWeb.MessagesLive do
                           <div class="ml-3 flex-grow">
                             <p class="text-sm text-gray-900">
                               <%= thread.listing.name %>
+                              <%= if length(thread.messages) > 0 do %>
+                                <span class="inline-flex items-center px-1.5 py-0.0 rounded-full text-xs font-medium bg-red-500 text-white">  <%= length(thread.messages) %> </span>
+                              <% end %>
                             </p>
                             <div data-time={thread.listing.inserted_at} class="text-xs text-gray-400 messages-date"></div>
                           </div>
@@ -264,6 +291,9 @@ defmodule PuppiesWeb.MessagesLive do
                           <div class="flex-grow">
                             <p class="text-sm text-gray-900">
                               <%= business_or_user_name(thread.receiver) %>
+                               <%= if unread_message_count(@user, thread.messages) > 0 do %>
+                                <span class="inline-flex items-center px-1.5 py-0.0 rounded-full text-xs font-medium bg-red-500 text-white">  <%= unread_message_count(@user, thread.messages) %> </span>
+                              <% end %>
                             </p>
                             <p class="text-xs  text-gray-500 truncate w-28">
                               <%= last_message(thread.messages) %>

@@ -6,6 +6,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
     <%= csrf_meta_tag() %>
     <%= live_title_tag assigns[:page_title] || "Reputable Puppies", suffix: " · Trending Puppies" %>
+
+    <%= if @current_user != nil do %>
+      <script>window.userId = "<%= @current_user.id %>"</script>
+    <% end %>
+
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.8/css/intlTelInput.css">
 
     <link phx-track-static rel="stylesheet" href={Routes.static_path(@conn, "/assets/app.css")}/>

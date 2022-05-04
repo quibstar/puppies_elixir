@@ -30,4 +30,14 @@ defmodule Puppies.Messages do
   def message_changes(attrs \\ %{}) do
     Message.changeset(%Message{}, attrs)
   end
+
+  def total_unread_messages(received_by) do
+    Repo.aggregate(
+      from(m in Message,
+        where: m.received_by == ^received_by and m.read == false
+      ),
+      :count,
+      :id
+    )
+  end
 end

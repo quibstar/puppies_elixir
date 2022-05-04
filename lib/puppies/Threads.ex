@@ -69,9 +69,15 @@ defmodule Puppies.Threads do
     from(t in Thread,
       where: t.user_id == ^user_id,
       distinct: t.listing_id,
-      preload: [listing: :photos]
+      preload: [[listing: :photos], messages: ^unread_messages()]
     )
     |> Repo.all()
+  end
+
+  def unread_messages() do
+    from(m in Message,
+      where: m.read == false
+    )
   end
 
   def get_first_listing_thread_and_messages(user_id) do
