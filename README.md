@@ -50,3 +50,6 @@ TODO: finish subscriptions
 http://localhost:4000/success?payment_intent=pi_3Ktl0uJLqL890V2T13dikKLg&payment_intent_client_secret=pi_3Ktl0uJLqL890V2T13dikKLg_secret_FtSK0uxZfT9q8h70N390AsCsR&redirect_status=succeeded
 
 https://stripe.com/docs/billing/subscriptions/build-subscriptions?card-or-payment-element=payment-element#display-payment-method
+
+stripe login --api-key rk_test_51KszeNJLqL890V2TZMXtWB3lEToc5Z2PYTIbqYq7RXkAN7muNsIeC9piJ12khnEC8nFSYlInzL2Hvdxuibcd3txx006PDHpqxs
+stripe listen --forward-to http://localhost:4000/stripe/webhooks

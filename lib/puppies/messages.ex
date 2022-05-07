@@ -31,6 +31,18 @@ defmodule Puppies.Messages do
     Message.changeset(%Message{}, attrs)
   end
 
+  def mark_messages_as_read_by_user_and_thread_uuid(user_id, thread_uuid) do
+    messages =
+      from(m in Message,
+        where: m.thread_uuid == ^thread_uuid and m.read == false and m.received_by == ^user_id
+      )
+      |> Repo.all()
+
+    Enum.each(messages, fn message ->
+      __MODULE__.update(message, %{read: true})
+    end)
+  end
+
   def total_unread_messages(received_by) do
     Repo.aggregate(
       from(m in Message,

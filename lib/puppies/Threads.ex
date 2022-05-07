@@ -19,6 +19,28 @@ defmodule Puppies.Threads do
     |> Repo.insert()
   end
 
+  def change_update_at_for_order_of_threads(thread) do
+    thread
+    |> Thread.changeset(%{})
+    |> Repo.update(force: true)
+  end
+
+  # Changeset for validating a message from a listing profile
+  def changes(params) do
+    data = %{}
+
+    types = %{
+      listing_id: :integer,
+      receiver_id: :integer,
+      sender_id: :integer,
+      message: :string
+    }
+
+    {data, types}
+    |> Ecto.Changeset.cast(params, Map.keys(types))
+    |> Ecto.Changeset.validate_required([:listing_id, :message, :receiver_id, :sender_id])
+  end
+
   def create_threads(%{
         "listing_id" => listing_id,
         "message" => message,
@@ -76,7 +98,8 @@ defmodule Puppies.Threads do
 
   def unread_messages() do
     from(m in Message,
-      where: m.read == false
+      where: m.read == false,
+      order_by: [asc: :inserted_at]
     )
   end
 
@@ -98,7 +121,21 @@ defmodule Puppies.Threads do
   def get_threads_by_user_and_listing(user_id, listing_id) do
     from(t in Thread,
       where: t.user_id == ^user_id and t.listing_id == ^listing_id,
-      order_by: :updated_at,
+      order_by: [desc: :updated_at],
+      preload: [
+        [listing: :photos],
+        messages: ^get_first_100_messages(),
+        receiver: [business: :photo],
+        sender: [business: :photo]
+      ]
+    )
+    |> Repo.all()
+  end
+
+  def buyer_threads(user_id) do
+    from(t in Thread,
+      where: t.user_id == ^user_id,
+      order_by: [desc: :updated_at],
       preload: [
         [listing: :photos],
         messages: ^get_first_100_messages(),
@@ -124,25 +161,9 @@ defmodule Puppies.Threads do
 
   def get_first_100_messages() do
     from(m in Message,
-      order_by: [desc: :id],
+      order_by: [asc: :inserted_at],
       limit: 100
     )
-  end
-
-  # Changeset for validating a message from a listing profile
-  def changes(params) do
-    data = %{}
-
-    types = %{
-      listing_id: :integer,
-      receiver_id: :integer,
-      sender_id: :integer,
-      message: :string
-    }
-
-    {data, types}
-    |> Ecto.Changeset.cast(params, Map.keys(types))
-    |> Ecto.Changeset.validate_required([:listing_id, :message, :receiver_id, :sender_id])
   end
 
   def conversation_started(user_id, receiver_id, listing_id) do
@@ -159,7 +180,7 @@ defmodule Puppies.Threads do
       from(t in Thread,
         where: t.user_id == ^user_id,
         distinct: :business_id,
-        preload: [business: :photo]
+        preload: [business: [:photo, :user]]
       )
       |> Repo.all()
 
@@ -178,5 +199,16 @@ defmodule Puppies.Threads do
       where: m.read == false,
       select: %{sent_by: m.sent_by}
     )
+  end
+
+  def real_time_count(user_id) do
+    from(t in Thread,
+      where: t.receiver_id == ^user_id,
+      join: m in Message,
+      where: m.thread_uuid == t.uuid and m.read == false and m.received_by == ^user_id,
+      group_by: t.listing_id,
+      select: %{id: t.listing_id, count: count(m)}
+    )
+    |> Repo.all()
   end
 end

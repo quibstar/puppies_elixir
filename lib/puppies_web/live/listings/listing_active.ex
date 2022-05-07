@@ -45,7 +45,6 @@ defmodule PuppiesWeb.ListingsActive do
                   <th scope="col" class="py-3.5 px-3 text-left text-sm font-semibold text-gray-900">Price</th>
                   <th scope="col" class="py-3.5 px-3 text-left text-sm font-semibold text-gray-900">Status</th>
                   <th scope="col" class="py-3.5 px-3 text-left text-sm font-semibold text-gray-900">Views</th>
-                  <th scope="col" class="py-3.5 px-3 text-left text-sm font-semibold text-gray-900">Messages</th>
                   <th scope="col" class="relative py-3.5 pl-3 pr-4 sm:pr-6 md:pr-0">
                     <span class="sr-only">Edit</span>
                   </th>
@@ -73,9 +72,6 @@ defmodule PuppiesWeb.ListingsActive do
                     <% else %>
                       <%= listing.views %>
                     <% end %>
-                  </td>
-                  <td class="whitespace-nowrap py-4 px-3 text-sm text-gray-500">
-                    0
                   </td>
                   <td class="relative whitespace-nowrap py-4 pl-3 pr-4 text-right text-sm sm:pr-6 md:pr-0">
                     <%= live_patch "Edit Listing", to: Routes.live_path(@socket, PuppiesWeb.ListingsEdit, listing.id), class: "text-primary-600 hover:text-primary-900" %>

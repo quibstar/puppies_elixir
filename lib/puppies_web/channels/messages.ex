@@ -4,6 +4,7 @@ defmodule PuppiesWeb.MessagesChannel do
   """
   use PuppiesWeb, :channel
   alias Puppies.Messages
+  alias Puppies.Threads
 
   def join("messages:user:" <> _user_id, _params, socket) do
     send(self(), :after_join)
@@ -26,8 +27,9 @@ defmodule PuppiesWeb.MessagesChannel do
   end
 
   def send_out(id, socket) do
-    count = Messages.total_unread_messages(id)
-    broadcast!(socket, "update_nav_messages_link", %{"message_count" => count, id: id})
+    listing_count = Threads.real_time_count(id)
+
+    broadcast!(socket, "update_nav_messages_link", %{"listing_count" => listing_count, id: id})
     {:noreply, socket}
   end
 end

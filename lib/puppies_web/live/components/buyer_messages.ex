@@ -25,11 +25,17 @@ defmodule PuppiesWeb.BuyerMessages do
                 <div>
                   <div class="text-gray-600">Contact:</div>
                   <div class="flex items-center space-x-2">
-                    <%= PuppiesWeb.Avatar.show(%{business: thread.business, user: thread.business.user, square: 16 , extra_classes: "text-2xl"}) %>
+                    <div class="text-center">
+                      <%= PuppiesWeb.Avatar.show(%{business: thread.business, user: thread.business.user, square: 16 , extra_classes: "text-2xl"}) %>
+                      <div class="relative -mt-4 z-10 mx-auto">
+                        <PuppiesWeb.ReputationLevel.badge reputation_level={thread.business.user.reputation_level} />
+                      </div>
+                    </div>
                     <div>
                       <div>
                         <%= thread.business.name %>
                       </div>
+
                       <%= live_redirect "Profile", to: Routes.live_path(@socket, PuppiesWeb.BusinessPageLive, Puppies.Utilities.string_to_slug(thread.business.name)), class: "underline cursor-pointer text-xs text-gray-500"%>
                     </div>
                   </div>
@@ -43,11 +49,10 @@ defmodule PuppiesWeb.BuyerMessages do
                       <%= live_redirect to: Routes.live_path(@socket, PuppiesWeb.MessagesLive, listing_id: listing_thread.listing.id, thread: listing_thread.uuid), class: "cursor-pointer" do %>
                         <div class="flex items-center space-x-2 m-2">
                           <%= PuppiesWeb.PuppyAvatar.show(%{listing: listing_thread.listing, square: 10, extra_classes: "text8_5xl"}) %>
+
                           <div>
                             <span class="underline"><%= listing_thread.listing.name %></span>
-                            <%= if un_read_messages(listing_thread.messages, @user.id) > 0 do %>
-                             <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs bg-red-500 text-white"> <%= un_read_messages(listing_thread.messages, @user.id) %></span>
-                            <% end %>
+                            <span id={"#{@user.id}-listing-#{listing_thread.listing.id}"} class={"hidden inline-flex items-center px-1.5 py-0.0 rounded-full text-xs font-medium bg-red-500 text-white"}></span>
                           </div>
                         </div>
                       <% end %>

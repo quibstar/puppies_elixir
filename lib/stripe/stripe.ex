@@ -89,11 +89,13 @@ defmodule Puppies.Stripe do
   end
 
   def payment_intent(product, user) do
+    customer_id = check_for_customer_id(user)
+
     {:ok, response} =
       Stripe.PaymentIntent.create(%{
         amount: product.unit_amount,
         currency: "usd",
-        customer: user.customer_id,
+        customer: customer_id,
         metadata: %{user_id: user.id, product: product.name}
       })
 
@@ -113,6 +115,11 @@ defmodule Puppies.Stripe do
     |> put_params(params)
     |> put_method(:post)
     |> make_request()
+  end
+
+  def get_payment_intent(pi) do
+    {:ok, response} = Stripe.PaymentIntent.retrieve(pi, %{})
+    response
   end
 
   # def admin_refund(transaction_id, admin) do

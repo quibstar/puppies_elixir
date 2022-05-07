@@ -20,12 +20,7 @@ defmodule PuppiesWeb.UserDashboardLive do
       end
 
     user = Accounts.get_user_business_and_listings(user.id)
-    data = Listings.get_active_listings_by_user_id(user.id)
     viewing_history = Views.my_views(user.id)
-    available = Listings.get_listing_by_user_id_and_status(user.id, "available")
-    on_hold = Listings.get_listing_by_user_id_and_status(user.id, "on hold")
-    sold = Listings.get_listing_by_user_id_and_status(user.id, "sold")
-    messages = Threads.get_user_communication_with_business(user.id)
 
     active_subscriptions =
       if is_nil(user.customer_id) do
@@ -43,41 +38,69 @@ defmodule PuppiesWeb.UserDashboardLive do
 
     id_credit = Credits.has_credit?(user.id, "ID Verification")
 
-    available_listing_to_post =
-      Enum.reduce(active_subscriptions, 0, fn sub, acc ->
-        al = length(available)
+    if user.is_seller do
+      # lister
+      data = Listings.get_active_listings_by_user_id(user.id)
+      available = Listings.get_listing_by_user_id_and_status(user.id, "available")
+      on_hold = Listings.get_listing_by_user_id_and_status(user.id, "on hold")
+      sold = Listings.get_listing_by_user_id_and_status(user.id, "sold")
 
-        cond do
-          sub.product.name == "Premium" ->
-            50 - al + acc
+      available_listing_to_post =
+        Enum.reduce(active_subscriptions, 0, fn sub, acc ->
+          al = length(available)
 
-          sub.product.name == "Standard" ->
-            25 - al + acc
+          cond do
+            sub.product.name == "Premium" ->
+              50 - al + acc
 
-          true ->
-            al
+            sub.product.name == "Standard" ->
+              25 - al + acc
+
+            true ->
+              al
+          end
+        end)
+
+      {:ok,
+       assign(socket,
+         user: user,
+         loading: false,
+         business: user.business,
+         listings: data.listings,
+         viewing_history: viewing_history.views,
+         view_pagination: Map.get(viewing_history, :pagination, %{count: 0}),
+         pagination: Map.get(data, :pagination, %{count: 0}),
+         available: available,
+         on_hold: on_hold,
+         sold: sold,
+         active_subscriptions: active_subscriptions,
+         subscription_count: subscription_count,
+         id_credit: id_credit,
+         available_listing_to_post: available_listing_to_post
+       )}
+    else
+      # buyer
+      messages =
+        unless user.is_seller do
+          Threads.get_user_communication_with_business(user.id)
+        else
+          %{businesses: [], listings: []}
         end
-      end)
 
-    {:ok,
-     assign(socket,
-       user: user,
-       loading: false,
-       business: user.business,
-       listings: data.listings,
-       viewing_history: viewing_history.views,
-       view_pagination: Map.get(viewing_history, :pagination, %{count: 0}),
-       pagination: Map.get(data, :pagination, %{count: 0}),
-       available: available,
-       on_hold: on_hold,
-       sold: sold,
-       thread_businesses: messages.businesses,
-       thread_listings: messages.listings,
-       active_subscriptions: active_subscriptions,
-       subscription_count: subscription_count,
-       id_credit: id_credit,
-       available_listing_to_post: available_listing_to_post
-     )}
+      {:ok,
+       assign(socket,
+         user: user,
+         loading: false,
+         business: user.business,
+         viewing_history: viewing_history.views,
+         view_pagination: Map.get(viewing_history, :pagination, %{count: 0}),
+         thread_businesses: messages.businesses,
+         thread_listings: messages.listings,
+         active_subscriptions: active_subscriptions,
+         subscription_count: subscription_count,
+         id_credit: id_credit
+       )}
+    end
   end
 
   def handle_params(params, _uri, socket) do
@@ -155,10 +178,12 @@ defmodule PuppiesWeb.UserDashboardLive do
               <div class="bg-white shadow sm:rounded-lg">
                 <div class="px-4 py-5 sm:px-6">
                   <h2 id="applicant-information-title" class="text-xlg leading-6 font-medium text-gray-900">Hello <%= @user.first_name %> <%= @user.last_name %></h2>
-                  <%= if @listings == [] or @subscription_count == 0 or is_nil(@business) do %>
-                    <%= PuppiesWeb.ListingRequirements.html(%{listings: @listings, business: @business, user: @user, subscription_count: @subscription_count, socket: @socket}) %>
+                  <%= if @user.is_seller do %>
+                    <%= if  @listings == [] or @subscription_count == 0 or is_nil(@business) do %>
+                      <%= PuppiesWeb.ListingRequirements.html(%{listings: @listings, business: @business, user: @user, subscription_count: @subscription_count, socket: @socket}) %>
+                    <% end %>
+                    <%= PuppiesWeb.Capabilities.show(%{available: @available, user: @user, active_subscriptions: @active_subscriptions,}) %>
                   <% end %>
-                  <%= PuppiesWeb.Capabilities.show(%{available: @available, user: @user, active_subscriptions: @active_subscriptions,}) %>
                 </div>
               </div>
             </section>
@@ -178,7 +203,6 @@ defmodule PuppiesWeb.UserDashboardLive do
                   <div class="bg-yellow-50 border-l-4 border-yellow-400 p-4 mt-2">
                     <div class="flex">
                       <div class="flex-shrink-0">
-                        <!-- Heroicon name: solid/exclamation -->
                         <svg class="h-5 w-5 text-yellow-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
                           <path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clip-rule="evenodd" />
                         </svg>
