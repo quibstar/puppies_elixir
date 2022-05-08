@@ -16,7 +16,7 @@ defmodule PuppiesWeb.Subscriptions do
         <%= if @subscription_count > 0 do %>
           <p class="mt-1 text-sm text-gray-500 text-sm">You currently have <%= @subscription_count %> active <%= subscription_wording(@subscription_count) %>.</p>
           <%= for subscription <- @active_subscriptions do %>
-            <p class="mt-1 text-sm text-gray-500 text-sm">Your <span class="text-gray-600 font-semibold"><%= subscription.product.name %></span> membership is active until <span class="messages-date" data-time={Puppies.Utilities.integer_to_date(subscription.end_date)}></span></p>
+            <p class="mt-1 text-sm text-gray-500 text-sm">Your <span class="text-gray-600 font-semibold"><%= subscription.product.name %></span> membership is active until <span class="messages-date" data-date={Puppies.Utilities.integer_to_date(subscription.end_date)}></span></p>
           <% end %>
 
         <% else %>

@@ -1007,6 +1007,10 @@ h1, h2, h3, h4, h5 {
   margin-left: -2rem;
 }
 
+.-mt-2 {
+  margin-top: -0.5rem;
+}
+
 .block {
   display: block;
 }

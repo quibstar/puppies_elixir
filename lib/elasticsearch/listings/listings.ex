@@ -48,6 +48,13 @@ defmodule Puppies.ES.Listings do
   end
 
   defp transform_to_flat_data(listing) do
+    business_photo_url =
+      unless is_nil(listing.user.business.photo) do
+        listing.user.business.photo.url
+      else
+        ""
+      end
+
     %{
       id: listing.id,
       email: listing.user.email,
@@ -84,7 +91,7 @@ defmodule Puppies.ES.Listings do
       breeds_name: Enum.reduce(listing.breeds, [], fn breed, acc -> [breed.name | acc] end),
       business_name: listing.user.business.name,
       business_slug: listing.user.business.slug,
-      business_photo: listing.user.business.photo.url,
+      business_photo: business_photo_url,
       business_breeds_slug:
         Enum.reduce(listing.user.business.breeds, [], fn breed, acc -> [breed.slug | acc] end),
       phone: listing.user.business.phone,
@@ -110,13 +117,13 @@ defmodule Puppies.ES.Listings do
     %{
       mappings: %{
         properties: %{
-          id: %{type: :keyword},
+          id: %{type: :integer},
           email: %{type: :keyword},
           first_name: %{type: :text},
           approved_to_sell: %{type: :boolean},
           last_name: %{type: :text},
           user_status: %{type: :text},
-          reputation_level: %{type: :text},
+          reputation_level: %{type: :integer},
           photos: %{type: :keyword},
           deliver_on_site: %{type: :boolean},
           deliver_pick_up: %{type: :boolean},
@@ -159,7 +166,7 @@ defmodule Puppies.ES.Listings do
           region: %{type: :keyword},
           location: %{type: :geo_point},
           updated_at: %{type: :date},
-          views: %{type: :keyword}
+          views: %{type: :integer}
         }
       }
     }

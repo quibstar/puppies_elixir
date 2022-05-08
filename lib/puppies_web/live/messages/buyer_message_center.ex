@@ -17,7 +17,7 @@ defmodule PuppiesWeb.BuyerMessageCenter do
                   </div>
                   <div class="flex-grow">
                     <p class="text-sm text-gray-900">
-                      <%= thread.listing.name %>
+                      <%= thread.listing.name %> <%= thread.listing.id %>
                     </p>
                     <%= unless thread.messages == [] do %>
                       <p class="text-xs  text-gray-500 truncate w-28">
@@ -26,7 +26,7 @@ defmodule PuppiesWeb.BuyerMessageCenter do
                     <% end %>
                   </div>
                   <%= unless thread.messages == [] do %>
-                    <div data-time={MessageUtilities.last_message_date(thread.messages)} class="text-xs text-gray-400 mt-1 messages-date"></div>
+                    <div data-date={thread.updated_at} class="text-xs text-gray-400 mt-1 messages-date"></div>
                   <% end %>
                 <% end %>
               </li>
@@ -44,7 +44,7 @@ defmodule PuppiesWeb.BuyerMessageCenter do
                       <div class="w-full border-t border-gray-300"></div>
                     </div>
                     <div class="relative flex justify-center">
-                      <span  data-time={message.inserted_at} class="messages-date px-2 bg-gray-50 text-sm text-gray-500"> </span>
+                      <span  data-date={message.inserted_at} class="messages-date px-2 bg-gray-50 text-sm text-gray-500"> </span>
                     </div>
                   </div>
 

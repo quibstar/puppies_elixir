@@ -267,13 +267,11 @@ defmodule PuppiesWeb.MessagesLive do
               </div>
             </div>
           <% else %>
-
             <%= if @user.is_seller do %>
               <.live_component module={PuppiesWeb.SellerMessageCenter} id="seller-message-center" user={@user} threads={@threads} listing_threads={@listing_threads} current_thread={@current_thread} changeset={@changeset} messages={@messages} />
             <% else %>
               <.live_component module={PuppiesWeb.BuyerMessageCenter} id="buyer-message-center" user={@user} listing_threads={@listing_threads} current_thread={@current_thread} changeset={@changeset} messages={@messages} />
             <% end %>
-
           <% end %>
         <% end %>
       </div>

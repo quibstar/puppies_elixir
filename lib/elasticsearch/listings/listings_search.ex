@@ -63,7 +63,7 @@ defmodule Puppies.ES.ListingsSearch do
     page = String.to_integer(Map.get(query, "page", "1"))
     size = String.to_integer(Map.get(query, "size", "60"))
 
-    {:ok, results} = listing_query(must, (page - 1) * size, size, sort(query))
+    {:ok, results} = listing_query(must, (page - 1) * size, size, query["order"])
     {:ok, res} = Jason.decode(results)
     %{matches: res["hits"]["hits"], count: res["hits"]["total"]["value"]}
   end
@@ -137,8 +137,8 @@ defmodule Puppies.ES.ListingsSearch do
     end
   end
 
-  def sort(query) do
-    case query["order"] do
+  def sort(order) do
+    case order do
       "price_low_to_high" ->
         %{price: "asc"}
 
@@ -147,13 +147,22 @@ defmodule Puppies.ES.ListingsSearch do
 
       "newest" ->
         %{updated_at: "desc"}
+
+      "reputation_level" ->
+        %{reputation_level: "desc"}
+
+      "least_views" ->
+        %{views: "asc"}
+
+      "most_views" ->
+        %{views: "desc"}
     end
   end
 
   def listing_query(must, page, size, sort) do
     body = %{
       sort: [
-        sort
+        sort(sort)
       ],
       from: page,
       size: size,
@@ -164,6 +173,7 @@ defmodule Puppies.ES.ListingsSearch do
       }
     }
 
+    IO.inspect(body)
     Api.post("/listings/_search", body)
   end
 
@@ -171,7 +181,7 @@ defmodule Puppies.ES.ListingsSearch do
   # State                          #
   ##################################
 
-  def query_state(state, page, size) do
+  def query_by_state(state, page, size, sort) do
     s =
       if String.length(state) > 2 do
         %{region_slug: state}
@@ -181,7 +191,7 @@ defmodule Puppies.ES.ListingsSearch do
 
     body = %{
       sort: [
-        %{updated_at: "desc"}
+        sort(sort)
       ],
       from: page,
       size: size,
@@ -197,10 +207,10 @@ defmodule Puppies.ES.ListingsSearch do
     Api.post("/listings/_search", body)
   end
 
-  def state(state, page, size) do
+  def state(state, page, size, sort) do
     page = String.to_integer(page)
     size = String.to_integer(size)
-    {:ok, results} = query_state(state, (page - 1) * size, size)
+    {:ok, results} = query_by_state(state, (page - 1) * size, size, sort)
     {:ok, res} = Jason.decode(results)
     %{matches: res["hits"]["hits"], count: res["hits"]["total"]["value"]}
   end
@@ -209,7 +219,7 @@ defmodule Puppies.ES.ListingsSearch do
   # city State                     #
   ##################################
 
-  def query_city_state(city, state, page, size) do
+  def query_city_state(city, state, page, size, sort) do
     s =
       if String.length(state) > 2 do
         %{region_slug: state}
@@ -219,7 +229,7 @@ defmodule Puppies.ES.ListingsSearch do
 
     body = %{
       sort: [
-        %{updated_at: "desc"}
+        sort(sort)
       ],
       from: page,
       size: size,
@@ -236,19 +246,19 @@ defmodule Puppies.ES.ListingsSearch do
     Api.post("/listings/_search", body)
   end
 
-  def city_state(city, state, page, size) do
+  def city_state(city, state, page, size, sort) do
     page = String.to_integer(page)
     size = String.to_integer(size)
-    {:ok, results} = query_city_state(city, state, (page - 1) * size, size)
+    {:ok, results} = query_city_state(city, state, (page - 1) * size, size, sort)
     {:ok, res} = Jason.decode(results)
     %{matches: res["hits"]["hits"], count: res["hits"]["total"]["value"]}
   end
 
   ##################################
-  # city State  breed              #
+  # city State breed              #
   ##################################
 
-  def query_city_state_breed(city, state, breed, page, size) do
+  def query_city_state_breed(city, state, breed, page, size, sort) do
     s =
       if String.length(state) > 2 do
         %{region_slug: state}
@@ -258,7 +268,7 @@ defmodule Puppies.ES.ListingsSearch do
 
     body = %{
       sort: [
-        %{updated_at: "desc"}
+        sort(sort)
       ],
       from: page,
       size: size,
@@ -276,10 +286,10 @@ defmodule Puppies.ES.ListingsSearch do
     Api.post("/listings/_search", body)
   end
 
-  def city_state_breed(city, state, breed, page, size) do
+  def city_state_breed(city, state, breed, page, size, sort) do
     page = String.to_integer(page)
     size = String.to_integer(size)
-    {:ok, results} = query_city_state_breed(city, state, breed, (page - 1) * size, size)
+    {:ok, results} = query_city_state_breed(city, state, breed, (page - 1) * size, size, sort)
     {:ok, res} = Jason.decode(results)
     %{matches: res["hits"]["hits"], count: res["hits"]["total"]["value"]}
   end

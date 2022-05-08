@@ -24,16 +24,13 @@ defmodule PuppiesWeb.FindPuppyLive do
     matches =
       case {state, city, breed} do
         {state, nil, nil} ->
-          IO.puts("state")
-          ListingsSearch.state(state, "1", @size)
+          ListingsSearch.state(state, "1", @size, "newest")
 
         {state, city, nil} ->
-          IO.puts("state, city")
-          ListingsSearch.city_state(city, state, "1", @size)
+          ListingsSearch.city_state(city, state, "1", @size, "newest")
 
         {state, city, breed} ->
-          IO.puts("state, city breed")
-          ListingsSearch.city_state_breed(city, state, breed, "1", @size)
+          ListingsSearch.city_state_breed(city, state, breed, "1", @size, "newest")
       end
 
     count = Map.get(matches, :count, 0)
@@ -94,7 +91,7 @@ defmodule PuppiesWeb.FindPuppyLive do
       sort = match["sort"]
       state = params["state"]
       # TODO: FIX BELOW!!!!!!!!!!!
-      matches = ListingsSearch.state(state, page, limit)
+      matches = ListingsSearch.state(state, page, limit, sort)
       count = Map.get(matches, :count, 0)
 
       updated_match =
@@ -130,7 +127,7 @@ defmodule PuppiesWeb.FindPuppyLive do
     breed = socket.assigns.breed
 
     cond do
-      {state, city, breed} ->
+      !is_nil(city) && !is_nil(state) && !is_nil(breed) ->
         Routes.live_path(
           socket,
           PuppiesWeb.FindPuppyLive,
@@ -140,11 +137,11 @@ defmodule PuppiesWeb.FindPuppyLive do
           match: match
         )
 
-      is_nil(city) && is_nil(breed) ->
-        Routes.live_path(socket, PuppiesWeb.FindPuppyLive, state, match: match)
-
-      {is_nil(breed)} ->
+      !is_nil(city) && !is_nil(state) && is_nil(breed) ->
         Routes.live_path(socket, PuppiesWeb.FindPuppyLive, city, state, match: match)
+
+      !is_nil(city) && is_nil(state) && !is_nil(breed) ->
+        Routes.live_path(socket, PuppiesWeb.FindPuppyLive, state, match: match)
     end
   end
 
@@ -158,13 +155,12 @@ defmodule PuppiesWeb.FindPuppyLive do
                           <div class='flex'>
                               <div class="text-xl md:text-3xl">
                               <%= cond do %>
-                                <% {@state, @city, @breed} -> %>
+                                <% !is_nil(@state) && !is_nil(@city) && !is_nil(@breed) -> %>
                                   <span class="capitalize"><%= Utilities.slug_to_string(@breed) %></span> puppies in <span class="capitalize"><%= Utilities.slug_to_string(@city) %>, <%= Utilities.state_to_human_readable(@state) %></span>.
-                                 <% is_nil(@city) && is_nil(@breed) -> %>
-                                  Puppies in <span class="capitalize"><%= Utilities.state_to_human_readable(@state) %></span>.
-                                 <% {is_nil(@breed)} -> %>
+                                <% !is_nil(@state) && !is_nil(@city) && is_nil(@breed) -> %>
                                   Puppies in <span class="capitalize"><%= Utilities.slug_to_string(@city) %>, <%= Utilities.state_to_human_readable(@state) %></span>.
-
+                                <% !is_nil(@state) && is_nil(@city) && is_nil(@breed) -> %>
+                                  Puppies in <span class="capitalize"><%= Utilities.state_to_human_readable(@state) %></span>.
                               <% end %>
 
                               </div>

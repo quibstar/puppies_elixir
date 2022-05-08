@@ -139,7 +139,7 @@ document.addEventListener('phx:update', () => {
   let j = 0;
   while (j < messageDates.length) {
     let ele = messageDates[j];
-    let time = messageDates[j].getAttribute('data-time');
+    let time = messageDates[j].getAttribute('data-date');
     let newTime = moment.utc(time).format('MM/DD/YYYY');
     ele.innerText = newTime;
     j++;

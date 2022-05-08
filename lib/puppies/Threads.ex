@@ -88,12 +88,23 @@ defmodule Puppies.Threads do
   end
 
   def get_user_threads(user_id) do
-    from(t in Thread,
-      where: t.user_id == ^user_id,
-      distinct: t.listing_id,
-      preload: [[listing: :photos], messages: ^unread_messages()]
-    )
-    |> Repo.all()
+    threads =
+      from(t in Thread,
+        where: t.user_id == ^user_id,
+        distinct: t.listing_id,
+        preload: [[listing: :photos], messages: ^unread_messages()]
+      )
+      |> Repo.all()
+
+    # threads =
+    #   Thread
+    #   |> where([t], t.user_id == ^user_id)
+    #   |> distinct([t], t.listing_id)
+    #   # |> order_by([t], desc: t.updated_at)
+    #   |> preload([t], [[listing: :photos], messages: ^unread_messages()])
+    #   |> Repo.all()
+
+    Enum.sort_by(threads, & &1.updated_at)
   end
 
   def unread_messages() do
@@ -106,7 +117,6 @@ defmodule Puppies.Threads do
   def get_first_listing_thread_and_messages(user_id) do
     from(t in Thread,
       where: t.user_id == ^user_id,
-      order_by: :updated_at,
       limit: 1,
       preload: [
         [listing: :photos],

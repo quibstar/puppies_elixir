@@ -322,7 +322,7 @@ defmodule PuppiesWeb.SearchLive do
 
               <div class="mr-2 ">
                   <%= label f, :order, class: "block"%>
-                  <%= select f, :order, [ {"Newest", :newest}, {"Price low to high", :price_low_to_high}, {"Price high to low", :price_high_to_low}, {"Reputation Level", :reputation_level}], selected: @params["order"], class: "w-full shadow-sm focus:ring-primary-500 focus:border-primary-500 sm:text-sm border-gray-300 rounded-md" %>
+                  <%= select f, :order, [ {"Newest", :newest}, {"Reputation Level", :reputation_level},  {"Price low to high", :price_low_to_high}, {"Price high to low", :price_high_to_low} ,{"Most Views", :most_views}, {"Least Views", :least_views} ], selected: @params["order"], class: "w-full shadow-sm focus:ring-primary-500 focus:border-primary-500 sm:text-sm border-gray-300 rounded-md" %>
               </div>
 
               <div class="mt-6 flex ">

@@ -71,7 +71,7 @@ defmodule PuppiesWeb.OrderHistoryLive do
                         <td class="capitalize">
                           <%= order.status %>
                         </td>
-                        <td class="sm:table-cell text-right"><span class="messages-date" data-time={Puppies.Utilities.integer_to_date order.created}></span></td>
+                        <td class="sm:table-cell text-right"><span class="messages-date" data-date={Puppies.Utilities.integer_to_date order.created}></span></td>
                     </tr>
                 <% end %>
             </tbody>

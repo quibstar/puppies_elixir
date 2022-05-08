@@ -15,11 +15,11 @@ defmodule PuppiesWeb.SellerMessageCenter do
                       <%= PuppiesWeb.PuppyAvatar.show(%{listing: thread.listing, square: 10, extra_classes: "text8_5xl"}) %>
                       <span id={"#{@user.id}-listing-#{thread.listing.id}"} class={"absolute top-6 left-6 hidden inline-flex items-center px-1.5 py-0.0 rounded-full text-xs font-medium bg-red-500 text-white"}>  <%= length(thread.messages) %> </span>
                     </div>
-                    <div class="ml-3 flex-grow">
+                    <div class="ml-3 flex justify-between flex-grow">
                       <p class="text-sm text-gray-900">
-                        <%= thread.listing.name %>
+                        <%= thread.listing.name %>  <%= thread.listing.id %>
                       </p>
-                      <div data-time={thread.listing.inserted_at} class="text-xs text-gray-400 messages-date"></div>
+                      <span data-date={thread.updated_at} class="text-xs text-gray-400 messages-date"></span>
                     </div>
                   <% end %>
                 </li>
@@ -54,7 +54,7 @@ defmodule PuppiesWeb.SellerMessageCenter do
                         <% end %>
                       </div>
                       <%= unless thread.messages == [] do %>
-                        <div data-time={MessageUtilities.last_message_date(thread.messages)} class="text-xs text-gray-400 mt-1 messages-date"></div>
+                        <div data-date={thread.updated_at} class="text-xs text-gray-400 mt-1 messages-date"></div>
                       <% end %>
                     <% end %>
                   </li>
@@ -74,7 +74,7 @@ defmodule PuppiesWeb.SellerMessageCenter do
                       <div class="w-full border-t border-gray-300"></div>
                     </div>
                     <div class="relative flex justify-center">
-                      <span  data-time={message.inserted_at} class="messages-date px-2 bg-gray-50 text-sm text-gray-500"> </span>
+                      <span  data-date={message.inserted_at} class="messages-date px-2 bg-gray-50 text-sm text-gray-500"> </span>
                     </div>
                   </div>
                 <% end %>

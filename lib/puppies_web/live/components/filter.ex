@@ -12,7 +12,7 @@ defmodule PuppiesWeb.FilterComponent do
                   <%= hidden_input :match, :id,  value: @user.id %>
               <% end %>
               <div class="mr-2">
-                  <%= select :match, :sort, [ {"Newest", :newest}, {"Reputation Level", :reputation_level},  {"Price low to high", :price_low_to_high}, {"Price high to low", :price_high_to_low} ], class: "mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-primary-500 focus:border-primary-500 sm:text-sm rounded-md", selected: @selected %>
+                  <%= select :match, :sort, [ {"Newest", :newest}, {"Reputation Level", :reputation_level},  {"Price low to high", :price_low_to_high}, {"Price high to low", :price_high_to_low} ,{"Most Views", :most_views}, {"Least Views", :least_views} ], class: "mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-primary-500 focus:border-primary-500 sm:text-sm rounded-md", selected: @selected %>
               </div>
           </div>
       </form>
