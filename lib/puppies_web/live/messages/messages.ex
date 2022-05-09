@@ -176,7 +176,7 @@ defmodule PuppiesWeb.MessagesLive do
       {:ok, message} ->
         changeset = Messages.message_changes(%{})
         uuid = socket.assigns.current_thread.uuid
-        Threads.change_update_at_for_order_of_threads(socket.assigns.current_thread)
+        Threads.updated_threads(message.thread_uuid, %{last_message: message.message})
 
         PuppiesWeb.Endpoint.broadcast_from(
           self(),

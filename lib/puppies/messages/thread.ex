@@ -24,13 +24,15 @@ defmodule Puppies.Thread do
       foreign_key: :id
     )
 
+    field(:last_message, :string)
+
     timestamps()
   end
 
   @doc false
   def changeset(thread, attrs) do
     thread
-    |> cast(attrs, [:uuid, :listing_id, :user_id, :receiver_id, :business_id])
+    |> cast(attrs, [:uuid, :listing_id, :user_id, :receiver_id, :business_id, :last_message])
     |> validate_required([:uuid, :listing_id, :user_id, :receiver_id, :business_id])
   end
 end

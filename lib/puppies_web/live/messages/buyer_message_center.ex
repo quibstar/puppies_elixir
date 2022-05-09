@@ -19,22 +19,21 @@ defmodule PuppiesWeb.BuyerMessageCenter do
                     <p class="text-sm text-gray-900">
                       <%= thread.listing.name %> <%= thread.listing.id %>
                     </p>
-                    <%= unless thread.messages == [] do %>
-                      <p class="text-xs  text-gray-500 truncate w-28">
-                        <%= MessageUtilities.last_message(thread.messages) %>
-                      </p>
-                    <% end %>
+                    <p class="text-xs  text-gray-500 truncate w-28">
+                      <%= thread.last_message %>
+                    </p>
                   </div>
-                  <%= unless thread.messages == [] do %>
+                  <div>
                     <div data-date={thread.updated_at} class="text-xs text-gray-400 mt-1 messages-date"></div>
-                  <% end %>
+                    <div data-time={thread.updated_at} class="text-xs text-gray-400 mt-1 messages-time"><%=thread.updated_at%></div>
+                  </div>
                 <% end %>
               </li>
             <% end %>
           </ul>
         </div>
         <div class="w-full">
-          <ul class="h-[calc(100vh-295px)] overflow-scroll flex flex-col" id="chat-messages" phx-hook="chatMessages" phx-update="prepend">
+          <ul class="h-[calc(100vh-295px)] overflow-scroll flex flex-col" id="chat-messages" phx-hook="chatMessages" phx-update="append">
             <%= if  @messages != [] do %>
               <%= for {message, index} <- Enum.with_index(@messages) do  %>
 
@@ -47,7 +46,6 @@ defmodule PuppiesWeb.BuyerMessageCenter do
                       <span  data-date={message.inserted_at} class="messages-date px-2 bg-gray-50 text-sm text-gray-500"> </span>
                     </div>
                   </div>
-
                 <% end %>
                 <%= if message.sent_by != @user.id do %>
                   <li class="flex items-end my-2" id={"#{message.id}"}>

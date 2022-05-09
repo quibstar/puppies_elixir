@@ -125,7 +125,7 @@ const nextAction = () => {
 
 // messages dates
 document.addEventListener('phx:update', () => {
-  const timeElements = document.querySelectorAll('.message-time');
+  const timeElements = document.querySelectorAll('.messages-time');
   let i = 0;
   while (i < timeElements.length) {
     let ele = timeElements[i];

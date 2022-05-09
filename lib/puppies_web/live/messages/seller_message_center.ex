@@ -47,15 +47,11 @@ defmodule PuppiesWeb.SellerMessageCenter do
                         <p class="text-sm text-gray-900">
                           <%= MessageUtilities.business_or_user_name(thread.receiver) %>
                         </p>
-                        <%= unless thread.messages == [] do %>
-                          <p class="text-xs  text-gray-500 truncate w-28">
-                            <%= MessageUtilities.last_message(thread.messages) %>
-                          </p>
-                        <% end %>
+                        <p class="text-xs  text-gray-500 truncate w-28">
+                          <%= thread.last_message%>
+                        </p>
                       </div>
-                      <%= unless thread.messages == [] do %>
-                        <div data-date={thread.updated_at} class="text-xs text-gray-400 mt-1 messages-date"></div>
-                      <% end %>
+                      <div data-date={thread.updated_at} class="text-xs text-gray-400 mt-1 messages-date"></div>
                     <% end %>
                   </li>
                 <% end %>
@@ -102,8 +98,6 @@ defmodule PuppiesWeb.SellerMessageCenter do
                     </div>
                   </li>
                 <% end %>
-
-
               <% end %>
             <% end %>
           </ul>

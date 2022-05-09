@@ -9,30 +9,12 @@ defmodule PuppiesWeb.MessageUtilities do
     end)
   end
 
-  def add_class(sent_by, user_id) do
-    if sent_by == user_id do
-      "flex-row-reverse"
-    else
-      ""
-    end
-  end
-
   def current_thread_class(current_thread_id, thread_id) do
     if current_thread_id == thread_id do
       "border-primary-500"
     else
       ""
     end
-  end
-
-  def last_message(messages) do
-    message = List.first(messages)
-    message.message
-  end
-
-  def last_message_date(messages) do
-    message = List.first(messages)
-    message.updated_at
   end
 
   def is_read(read) do

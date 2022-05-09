@@ -9,20 +9,24 @@ defmodule Puppies.Threads do
 
   alias Puppies.{Thread, Messages, Message}
 
-  def get_thread_by_uuid(uuid) do
-    Repo.get_by(Thread, uuid: uuid)
-  end
-
   def create_thread(attrs \\ %{}) do
     %Thread{}
     |> Thread.changeset(attrs)
     |> Repo.insert()
   end
 
-  def change_update_at_for_order_of_threads(thread) do
-    thread
-    |> Thread.changeset(%{})
-    |> Repo.update(force: true)
+  def updated_threads(uuid, attrs) do
+    threads =
+      from(t in Thread,
+        where: t.uuid == ^uuid
+      )
+      |> Repo.all()
+
+    Enum.each(threads, fn thread ->
+      thread
+      |> Thread.changeset(attrs)
+      |> Repo.update()
+    end)
   end
 
   # Changeset for validating a message from a listing profile
@@ -110,13 +114,14 @@ defmodule Puppies.Threads do
   def unread_messages() do
     from(m in Message,
       where: m.read == false,
-      order_by: [asc: :inserted_at]
+      order_by: [desc: :inserted_at]
     )
   end
 
   def get_first_listing_thread_and_messages(user_id) do
     from(t in Thread,
       where: t.user_id == ^user_id,
+      order_by: [desc: :updated_at],
       limit: 1,
       preload: [
         [listing: :photos],
@@ -145,7 +150,7 @@ defmodule Puppies.Threads do
   def buyer_threads(user_id) do
     from(t in Thread,
       where: t.user_id == ^user_id,
-      order_by: [desc: :updated_at],
+      order_by: [desc: t.updated_at],
       preload: [
         [listing: :photos],
         messages: ^get_first_100_messages(),
