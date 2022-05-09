@@ -109,6 +109,13 @@ defmodule PuppiesWeb.Router do
     # messages
     live("/messages", MessagesLive)
 
+    # messages for sellers
+    live("/messages/:listing_id", MessagesLive)
+    live("/messages/:listing_id/:thread", MessagesLive)
+
+    # messages for buyers
+    live("/messages/:thread_id", MessagesLive)
+
     # notifications
     live("/notifications", NotificationsLive)
 

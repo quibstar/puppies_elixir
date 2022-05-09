@@ -99,6 +99,17 @@ defmodule PuppiesWeb.SellerMessageCenter do
                   </li>
                 <% end %>
               <% end %>
+            <% else %>
+            <li class="h-full">
+              <div class="h-full flex justify-center items-center mx-auto">
+                <div class="text-center">
+                    <svg class="mx-auto h-12 w-12 text-gray-400" xmlns="http://www.w3.org/2000/svg"  fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path stroke-linecap="round" stroke-linejoin="round" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                    </svg>
+                    <h3 class="mt-2 text-sm font-medium text-gray-500">Choose a listing to respond to.</h3>
+                </div>
+              </div>
+            </li>
             <% end %>
           </ul>
           <.live_component module={PuppiesWeb.MessageForm} id="message-form" user={@user} current_thread={@current_thread} changeset={@changeset} />

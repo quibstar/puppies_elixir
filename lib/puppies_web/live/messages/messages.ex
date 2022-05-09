@@ -39,7 +39,7 @@ defmodule PuppiesWeb.MessagesLive do
       current_thread = Threads.get_first_listing_thread_and_messages(user.id)
 
       changeset = Messages.message_changes(%{})
-      socket = assign(socket, :messages, current_thread.messages)
+
       subscribe(current_thread.uuid)
 
       update_self(socket.assigns)
@@ -52,23 +52,41 @@ defmodule PuppiesWeb.MessagesLive do
             Threads.get_threads_by_user_and_listing(user.id, params["listing_id"])
           end
         else
-          if is_nil(params["uuid"]) do
-            Threads.buyer_threads(user.id)
-          else
-            Threads.get_threads_by_user_and_listing(user.id, params["listing_id"])
-          end
+          Threads.buyer_threads(user.id)
         end
 
-      {:ok,
-       assign(socket,
-         loading: false,
-         user: user,
-         threads: threads,
-         listing_threads: listing_threads,
-         current_thread: current_thread,
-         changeset: changeset,
-         temporary_assigns: [messages: []]
-       )}
+      if user.is_seller do
+        socket =
+          if(is_nil(params["listing_id"] && is_nil(params["thread"]))) do
+            assign(socket, :messages, [])
+          else
+            assign(socket, :messages, current_thread.messages)
+          end
+
+        {:ok,
+         assign(socket,
+           loading: false,
+           user: user,
+           threads: threads,
+           listing_threads: listing_threads,
+           current_thread: current_thread,
+           changeset: changeset,
+           temporary_assigns: [messages: []]
+         )}
+      else
+        socket = assign(socket, :messages, current_thread.messages)
+
+        {:ok,
+         assign(socket,
+           loading: false,
+           user: user,
+           threads: threads,
+           listing_threads: listing_threads,
+           current_thread: current_thread,
+           changeset: changeset,
+           temporary_assigns: [messages: []]
+         )}
+      end
     end
   end
 
