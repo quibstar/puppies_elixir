@@ -212,7 +212,7 @@ defmodule PuppiesWeb.MessagesLive do
 
         socket =
           socket
-          |> update(:messages, fn messages -> [message | messages] end)
+          |> update(:messages, fn messages -> messages ++ [message] end)
 
         {:noreply,
          assign(socket,
@@ -243,7 +243,7 @@ defmodule PuppiesWeb.MessagesLive do
         Messages.mark_messages_as_read_by_user_and_thread_uuid(user_id, state.thread)
 
         socket
-        |> update(:messages, fn messages -> [state.message | messages] end)
+        |> update(:messages, fn messages -> messages ++ [state.message] end)
       else
         socket
       end

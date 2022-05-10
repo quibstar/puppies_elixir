@@ -218,11 +218,10 @@ defmodule PuppiesWeb.UserDashboardLive do
 
                 <div class="sm:hidden">
                   <label for="tabs" class="sr-only">Select a tab</label>
-                  <!-- Use an "onChange" listener to redirect the user to the selected tab URL. -->
-                  <select id="tabs" name="tabs" class="block w-full focus:ring-primary-500 focus:border-primary-500 border-gray-300 rounded-md">
-                    <option>Available</option>
-                    <option>On Hold</option>
-                    <option>Sold</option>
+                  <select id="tabs" name="tabs" x-model="tab" class="focus:ring-primary-500 focus:border-primary-500 border-gray-300 rounded-md m-4">
+                    <option value="available">Available</option>
+                    <option value="on-hold">On Hold</option>
+                    <option value="sold">Sold</option>
                   </select>
                 </div>
                 <div class="hidden sm:block">
@@ -308,7 +307,7 @@ defmodule PuppiesWeb.UserDashboardLive do
                         </div>
                       </div>
                     <% end %>
-                    <%= live_redirect "My Verifications", to: Routes.live_path(@socket, PuppiesWeb.VerificationsLive), class: "inline-block px-4 py-2 border border-transparent text-xs rounded shadow-sm text-white bg-primary-600 hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500" %>
+                    <%= live_redirect "My Verifications", to: Routes.live_path(@socket, PuppiesWeb.VerificationsLive), class: "inline-block px-4 py-2 border border-transparent text-xs rounded shadow-sm text-white bg-primary-500 hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500" %>
                 </div>
             </div>
 

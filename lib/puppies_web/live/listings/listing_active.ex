@@ -41,11 +41,11 @@ defmodule PuppiesWeb.ListingsActive do
             <table class="min-w-full divide-y divide-gray-300">
               <thead>
                 <tr>
-                  <th scope="col" class="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-gray-900 sm:pl-6 md:pl-0">Name</th>
-                  <th scope="col" class="py-3.5 px-3 text-left text-sm font-semibold text-gray-900">Price</th>
-                  <th scope="col" class="py-3.5 px-3 text-left text-sm font-semibold text-gray-900">Status</th>
-                  <th scope="col" class="py-3.5 px-3 text-left text-sm font-semibold text-gray-900">Views</th>
-                  <th scope="col" class="relative py-3.5 pl-3 pr-4 sm:pr-6 md:pr-0">
+                  <th scope="col" class="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-gray-900 sm:pl-6">Name</th>
+                  <th scope="col" class="hidden px-3 py-3.5 text-left text-sm font-semibold text-gray-900 lg:table-cell">Price</th>
+                  <th scope="col" class="hidden px-3 py-3.5 text-left text-sm font-semibold text-gray-900 lg:table-cell">Status</th>
+                  <th scope="col" class="hidden px-3 py-3.5 text-left text-sm font-semibold text-gray-900 lg:table-cell">Views</th>
+                  <th scope="col" class="relative py-3.5 pl-3 pr-4 sm:pr-6">
                     <span class="sr-only">Edit</span>
                   </th>
                 </tr>
@@ -59,12 +59,26 @@ defmodule PuppiesWeb.ListingsActive do
                       <%= img_tag Utilities.first_image(listing.photos), class: "inline-block h-10 w-10 rounded-full ring-2 ring-primary-500 ring-offset-1" %>
                     <% end %>
                     <%= live_patch listing.name, to: Routes.live_path(@socket, PuppiesWeb.ListingShow, listing.id), class: "ml-2 text-primary-600 hover:text-primary-900" %>
+                     <dl class="font-normal lg:hidden">
+                      <dd class="mt-2 truncate text-gray-700"><span>Price: </span>$<%= listing.price %>.00</dd>
+                      <dt class=""><span>Status: </span><%= live_patch listing.status, to: Routes.live_path(@socket, PuppiesWeb.ListingsStatusUpdateForm, listing.id), class: "underline text-green-600 hover:text-green-900" %></dt>
+                      <dd class="mt-1 truncate text-gray-500">
+                        <span>Views: </span>
+                        <%= if listing.views > 0 do %>
+                        <span x-on:click.debounce="show_drawer = !show_drawer" class="cursor-pointer underline" phx-click="show-stats" phx-value-id={listing.id} phx-target={@myself} >
+                          <%= listing.views %>
+                        </span>
+                      <% else %>
+                        <%= listing.views %>
+                      <% end %>
+                      </dd>
+                    </dl>
                   </td>
-                  <td class="whitespace-nowrap py-4 px-3 text-sm text-gray-500">$<%= listing.price %>.00</td>
-                  <td class="whitespace-nowrap py-4 px-3 text-sm capitalize">
+                  <td class="hidden px-3 py-4 text-sm text-gray-500 lg:table-cell">$<%= listing.price %>.00</td>
+                  <td class="hidden px-3 py-4 text-sm text-gray-500 lg:table-cell">
                     <%= live_patch listing.status, to: Routes.live_path(@socket, PuppiesWeb.ListingsStatusUpdateForm, listing.id), class: "underline ml-2 text-green-600 hover:text-green-900" %>
                   </td>
-                  <td class="whitespace-nowrap py-4 px-3 text-sm text-gray-500">
+                  <td class="hidden px-3 py-4 text-sm text-gray-500 lg:table-cell">
                     <%= if listing.views > 0 do %>
                       <span x-on:click.debounce="show_drawer = !show_drawer" class="cursor-pointer underline" phx-click="show-stats" phx-value-id={listing.id} phx-target={@myself} >
                         <%= listing.views %>

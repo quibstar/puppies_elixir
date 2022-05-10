@@ -24,6 +24,10 @@ body {
   @apply text-gray-800;
 }
 
+footer + iframe {
+  height: 0;
+}
+
 /* Alerts and form errors used by phx.new */
 .alert {
   padding: 15px;
@@ -189,4 +193,12 @@ input[type='range']::-webkit-slider-thumb {
 .text8_5xl {
   font-size: 7rem;
   line-height: 1.5;
+}
+
+.show-list #chat-list {
+  left: 0;
+}
+
+#chat-list {
+  transition: left 0.5s;
 }

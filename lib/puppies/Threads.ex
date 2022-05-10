@@ -221,8 +221,8 @@ defmodule Puppies.Threads do
       where: t.receiver_id == ^user_id,
       join: m in Message,
       where: m.thread_uuid == t.uuid and m.read == false and m.received_by == ^user_id,
-      group_by: t.listing_id,
-      select: %{id: t.listing_id, count: count(m)}
+      group_by: t.uuid,
+      select: %{id: t.uuid, count: count(m)}
     )
     |> Repo.all()
   end

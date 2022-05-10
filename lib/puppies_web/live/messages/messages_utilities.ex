@@ -49,4 +49,24 @@ defmodule PuppiesWeb.MessageUtilities do
         ]
     end
   end
+
+  # This function looks ahead to see if the next
+  # message is from the same user. If it is the same
+  # profile we don't show the message image
+  def get_next_item(list, idx, current_sender) do
+    idx = idx + 1
+    res = Enum.fetch(list, idx)
+
+    case res do
+      :error ->
+        true
+
+      {:ok, message} ->
+        if message.sent_by == current_sender do
+          false
+        else
+          true
+        end
+    end
+  end
 end

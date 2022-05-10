@@ -5,12 +5,12 @@ defmodule PuppiesWeb.BuyerMessageCenter do
 
   def render(assigns) do
     ~H"""
-      <div class="flex">
-        <div class="flex-none w-[300px]  border-r-[1px] bg-white">
+      <div class="flex relative" id="chat-container">
+        <div id='chat-list' class="flex-none md:w-[300px] border-r-[1px] bg-white absolute top-0 bottom-0 z-10 -left-full md:left-auto md:relative">
           <ul class="h-[calc(100vh-144px)] overflow-scroll">
             <%= for thread <- @listing_threads do %>
               <li>
-                <%= live_redirect to: Routes.live_path(@socket, PuppiesWeb.MessagesLive, thread: thread.uuid), class: "p-2 flex rounded-lg hover:shadow-md border hover:border-primary-500 m-2 space-x-4 #{MessageUtilities.current_thread_class(@current_thread.id, thread.id)}" do %>
+                <%= live_patch to: Routes.live_path(@socket, PuppiesWeb.MessagesLive, thread: thread.uuid), class: "p-2 flex rounded-lg hover:shadow-md border hover:border-primary-500 m-2 space-x-4 #{MessageUtilities.current_thread_class(@current_thread.id, thread.id)}" do %>
                   <div class="flex-none relative">
                     <%= PuppiesWeb.PuppyAvatar.show(%{listing: thread.listing, square: 10, extra_classes: "text8_5xl"}) %>
                     <span id={"#{@user.id}-listing-#{thread.listing.id}"} class="absolute top-6 left-6 hidden inline-flex items-center px-1.5 py-0.0 rounded-full text-xs font-medium bg-red-500 text-white">  <%= MessageUtilities.unread_message_count(@user, thread.messages) %> </span>
@@ -33,44 +33,27 @@ defmodule PuppiesWeb.BuyerMessageCenter do
           </ul>
         </div>
         <div class="w-full">
-          <ul class="h-[calc(100vh-295px)] overflow-scroll flex flex-col" id="chat-messages" phx-hook="chatMessages" phx-update="append">
-            <%= if  @messages != [] do %>
-              <%= for {message, index} <- Enum.with_index(@messages) do  %>
+            <div class="p-2 bg-white shadow z-1 flex">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 md:hidden" fill="none" viewBox="0 0 24 24" stroke="currentColor" id="message-drawer-opener">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+                </svg>
 
-                <%= if MessageUtilities.check_date(@messages, index, message.inserted_at) do %>
-                  <div id={"m-#{message.id}"} class="relative" phx-update="ignore">
-                    <div class="absolute inset-0 flex items-center" aria-hidden="true">
-                      <div class="w-full border-t border-gray-300"></div>
-                    </div>
-                    <div class="relative flex justify-center">
-                      <span  data-date={message.inserted_at} class="messages-date px-2 bg-gray-50 text-sm text-gray-500"> </span>
-                    </div>
-                  </div>
-                <% end %>
-                <%= if message.sent_by != @user.id do %>
-                  <li class="flex items-end my-2" id={"#{message.id}"}>
-                    <%= PuppiesWeb.Avatar.show(%{business: @current_thread.receiver.business, user: @current_thread.receiver, square: 10, extra_classes: "text-2xl mx-4"}) %>
-                    <div class="p-2 mb-4 shadow rounded-br-lg rounded-tr-lg rounded-tl-lg text-sm bg-white">
-                      <%= message.message %>
-                    </div>
-                  </li>
-                <% else %>
-                  <li class="flex items-end flex-row-reverse my-2" id={"#{message.id}"}>
-                      <%= PuppiesWeb.Avatar.show(%{business: @current_thread.sender.business, user: @current_thread.sender, square: 10, extra_classes: "text-2xl mx-4"}) %>
-                    <div>
-                      <div class="p-2 mb-4 shadow rounded-bl-lg rounded-tr-lg rounded-tl-lg text-sm bg-white">
-                        <%= message.message %>
-                        <!-- <div class="flex text-xs">
-                          <div class="grow"></div>
-                          <svg xmlns="http://www.w3.org/2000/svg" class={"inline-block h-4 w-4 #{is_read(message.read)}"} fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                            <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
-                          </svg>
-                        </div> -->
-                      </div>
-                    </div>
-                  </li>
-                <% end %>
-              <% end %>
+                <div class="text-sm mt-0.5 text-center flex-grow text-gray-500 ">
+                  Conversation with: <%= @current_thread.receiver.first_name %> <%= @current_thread.receiver.last_name %>
+                </div>
+
+                <svg @click="{ modal: (modal = !modal), showFlag: showFlag = !showFlag}" xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 mr-2 cursor-pointer text-gray-500 " fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 21v-4m0 0V5a2 2 0 012-2h6.5l1 1H21l-3 6 3 6h-8.5l-1-1H5a2 2 0 00-2 2zm9-13.5V9" />
+                </svg>
+
+                <svg  @click="{ modal: (modal = !modal), showBlock: showBlock = !showBlock}" xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 cursor-pointer text-gray-500 " fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18.364 18.364A9 9 0 005.636 5.636m12.728 12.728A9 9 0 015.636 5.636m12.728 12.728L5.636 5.636" />
+                </svg>
+            </div>
+
+          <ul class="pb-4 h-[calc(100vh-295px)] overflow-scroll flex flex-col" id="chat-messages" phx-hook="chatMessages" phx-update="replace">
+            <%= if  @messages != [] do %>
+              <%= PuppiesWeb.MessagesList.render_list(%{user: @user, messages: @messages,  current_thread: @current_thread}) %>
             <% end %>
           </ul>
           <.live_component module={PuppiesWeb.MessageForm} id="message-form" user={@user} current_thread={@current_thread} changeset={@changeset} />

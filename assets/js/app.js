@@ -209,3 +209,20 @@ Hooks.verifyIdentity = {
     });
   },
 };
+
+window.addEventListener('phx:page-loading-stop', () => {
+  const messagesDrawer = document.getElementById('message-drawer-opener');
+  const chatContainer = document.getElementById('chat-container');
+  const messagesDrawerCloser = document.getElementById('message-closer');
+  if (messagesDrawer) {
+    messagesDrawer.addEventListener('click', () => {
+      chatContainer.classList.add('show-list');
+    });
+  }
+
+  if (messagesDrawerCloser) {
+    messagesDrawerCloser.addEventListener('click', () => {
+      chatContainer.classList.remove('show-list');
+    });
+  }
+});
