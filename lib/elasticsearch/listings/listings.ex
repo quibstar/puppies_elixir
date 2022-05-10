@@ -7,8 +7,7 @@ defmodule Puppies.ES.Listings do
   def re_index_listing(id) do
     listing = Listings.listing_for_elastic_search_reindexing(id)
     res = transform_to_flat_data(listing)
-    res = Api.post("/listings/_doc/#{listing.id}", res)
-    IO.inspect(res)
+    Api.post("/listings/_doc/#{listing.id}", res)
   end
 
   def create_mappings_and_index() do

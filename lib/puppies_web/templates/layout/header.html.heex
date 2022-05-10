@@ -17,7 +17,7 @@
             </svg>
           </button>
         </div>
-        <nav class="hidden md:flex space-x-10">
+        <nav class="hidden md:flex space-x-10 items-center justify-end md:flex-1 lg:w-0">
 		      <%= live_redirect "Search",  to: Routes.live_path(assigns.conn, PuppiesWeb.SearchLive), class: "text-base text-gray-500 hover:text-gray-900" %>
           <%= live_redirect "Breeds",  to: Routes.live_path(assigns.conn, PuppiesWeb.BreedsIndexLive), class: "text-base text-gray-500 hover:text-gray-900" %>
           <%= live_redirect "Matcher",  to: Routes.live_path(assigns.conn, PuppiesWeb.BreedsMatchMakerLive), class: "text-base text-gray-500 hover:text-gray-900" %>
@@ -46,11 +46,10 @@
             <% end %>
 
             <%= render "_user_dropdown.html", assigns %>
+
           <% else %>
-            <div class="hidden md:flex items-center justify-end md:flex-1 lg:w-0">
-              <%= link "Log in", to: Routes.user_session_path(@conn, :new), class: "whitespace-nowrap text-base text-gray-500 hover:text-gray-900" %>
-              <%= link "Register", to: Routes.user_registration_path(@conn, :new), class: "ml-8 whitespace-nowrap inline-flex items-center justify-center bg-gradient-to-r from-primary-600 to-secondary-600 bg-origin-border px-4 py-2 border border-transparent rounded-md shadow-sm text-base text-white hover:from-primary-700 hover:to-secondary-700" %>
-            </div>
+            <%= link "Log in", to: Routes.user_session_path(@conn, :new), class: "whitespace-nowrap text-base text-gray-500 hover:text-gray-900" %>
+            <%= link "Register", to: Routes.user_registration_path(@conn, :new), class: "ml-8 whitespace-nowrap inline-flex items-center justify-center bg-gradient-to-r from-primary-600 to-secondary-600 bg-origin-border px-4 py-2 border border-transparent rounded-md shadow-sm text-base text-white hover:from-primary-700 hover:to-secondary-700" %>
           <% end %>
         </nav>
       </div>
