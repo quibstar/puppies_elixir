@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8"/>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <%= csrf_meta_tag() %>
+    <%= live_title_tag assigns[:page_title] || "Puppies Admin"%>
+    <link phx-track-static rel="stylesheet" href={Routes.static_path(@conn, "/assets/app.css")}/>
+    <script defer phx-track-static type="text/javascript" src={Routes.static_path(@conn, "/assets/app.js")}></script>
+  </head>
+
+  <body x-data="{ show_mobile: false }">
+    <div>
+      <%= render "_admin_side_nav.html", assigns %>
+      <%= render "_admin_side_nav_desktop.html", assigns %>
+
+      <div class="md:pl-64 flex flex-col">
+        <%= render "_admin_header.html", assigns %>
+        <main class="flex-1">
+          <%= @inner_content %>
+        </main>
+      </div>
+    </div>
+  </body>
+</html>

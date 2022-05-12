@@ -35,11 +35,12 @@ mix phx.gen.context ReviewLinks ReviewLink review_links email:string listing_id:
 - [x] verify phone
 - [x] verify ID
 - [x] Message access based on reputation level
+- [x] Filter for search
 - [ ] background notifications
 - [ ] Popular breeds generation gen_server
 - [ ] delete user
 - [ ] Email set up
-- [ ] Filter for search
+- [ ] Fraud detection
 
 # Admin
 

@@ -17,6 +17,8 @@ defmodule Puppies.Application do
       # Start the Endpoint (http/https)
       PuppiesWeb.Endpoint,
       PuppiesWeb.Presence,
+      Puppies.SearchCache,
+      Puppies.ImageRemoval,
       # Start a worker by calling: Puppies.Worker.start_link(arg)
       # {Puppies.Worker, arg}
       {Oban, oban_config()}

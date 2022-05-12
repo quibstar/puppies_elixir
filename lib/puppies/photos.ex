@@ -152,4 +152,27 @@ defmodule Puppies.Photos do
     )
     |> Repo.one()
   end
+
+  def remove_photos_marked_for_deletion() do
+    photos =
+      from(s in Photo,
+        where: s.mark_for_deletion == true,
+        limit: 1000
+      )
+      |> Repo.all()
+
+    photos_data =
+      Enum.reduce(photos, %{ids: [], names: []}, fn photo, acc ->
+        ids = [photo.id | acc.ids]
+        names = [photo.name | acc.names]
+
+        Map.put(acc, :ids, ids)
+        |> Map.put(:names, names)
+      end)
+
+    S3.delete_all_objects("images", photos_data.names)
+    |> ExAws.request()
+
+    from(p in Photo, where: p.id in ^photos_data.ids) |> Repo.delete_all()
+  end
 end

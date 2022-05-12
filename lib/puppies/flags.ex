@@ -32,7 +32,7 @@ defmodule Puppies.Flags do
   def check_for_flag(%{"reporter_id" => reporter_id, "reason" => reason}) do
     Repo.exists?(
       from(f in Flag,
-        where: f.reason == ^reason and f.reporter_id == ^reporter_id and f.is_open == true
+        where: f.reason == ^reason and f.reporter_id == ^reporter_id and f.resolved == false
       )
     )
   end

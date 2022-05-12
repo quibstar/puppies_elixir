@@ -2,6 +2,8 @@ defmodule PuppiesWeb.Router do
   use PuppiesWeb, :router
 
   import PuppiesWeb.UserAuth
+  import PuppiesWeb.AdminAuth
+  alias PuppiesWeb.CheckUserStatus
 
   pipeline :browser do
     plug(:accepts, ["html"])
@@ -17,17 +19,13 @@ defmodule PuppiesWeb.Router do
     plug(:put_root_layout, {PuppiesWeb.LayoutView, :session})
   end
 
+  pipeline :check_user_status do
+    plug(CheckUserStatus)
+  end
+
   pipeline :api do
     plug(:accepts, ["json"])
   end
-
-  # scope "/", PuppiesWeb do
-  #   pipe_through(:browser)
-
-  #   get("/", PageController, :index)
-  #   live("/search", SearchLive)
-  #   live("/business/:slug", BusinessPageLive)
-  # end
 
   # Other scopes may use custom stacks.
   # scope "/api", PuppiesWeb do
@@ -78,7 +76,7 @@ defmodule PuppiesWeb.Router do
   end
 
   scope "/", PuppiesWeb do
-    pipe_through([:browser, :require_authenticated_user])
+    pipe_through([:browser, :require_authenticated_user, :check_user_status])
 
     # dashboard
     live("/users/dashboard", UserDashboardLive)
@@ -108,13 +106,6 @@ defmodule PuppiesWeb.Router do
 
     # messages
     live("/messages", MessagesLive)
-
-    # messages for sellers
-    live("/messages/:listing_id", MessagesLive)
-    live("/messages/:listing_id/:thread", MessagesLive)
-
-    # messages for buyers
-    live("/messages/:thread_id", MessagesLive)
 
     # notifications
     live("/notifications", NotificationsLive)
@@ -169,5 +160,46 @@ defmodule PuppiesWeb.Router do
   # webhooks
   scope "/stripe/webhooks", PuppiesWeb do
     post("/", StripeWebhooksController, :webhooks)
+  end
+
+  ## Admin routes
+
+  pipeline :admin_browser do
+    plug(:accepts, ["html"])
+    plug(:fetch_session)
+    plug(:fetch_live_flash)
+    plug(:put_root_layout, {PuppiesWeb.LayoutView, :admin_root})
+    plug(:protect_from_forgery)
+    plug(:put_secure_browser_headers)
+    plug(:fetch_current_admin)
+  end
+
+  scope "/admin/", PuppiesWeb do
+    pipe_through([:browser, :session_layout, :redirect_if_admin_is_authenticated])
+
+    get("/register", AdminRegistrationController, :new)
+    post("/register", AdminRegistrationController, :create)
+    get("/log_in", AdminSessionController, :new)
+    post("/log_in", AdminSessionController, :create)
+    get("/reset_password", AdminResetPasswordController, :new)
+    post("/reset_password", AdminResetPasswordController, :create)
+    get("/reset_password/:token", AdminResetPasswordController, :edit)
+    put("/reset_password/:token", AdminResetPasswordController, :update)
+  end
+
+  scope "/admin/", PuppiesWeb do
+    pipe_through([:browser, :admin_browser, :require_authenticated_admin])
+
+    get("/settings", AdminSettingsController, :edit)
+    put("/settings", AdminSettingsController, :update)
+    get("/settings/confirm_email/:token", AdminSettingsController, :confirm_email)
+    live("/dashboard", Admin.Dashboard)
+    live("/blacklists", Admin.BlackLists)
+  end
+
+  scope "/admins/", PuppiesWeb do
+    pipe_through([:browser])
+
+    delete("/log_out", AdminSessionController, :delete)
   end
 end

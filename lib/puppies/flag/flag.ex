@@ -4,11 +4,12 @@ defmodule Puppies.Flag do
 
   schema "flags" do
     field(:reason, :string)
-    field(:is_open, :boolean, default: true)
+    field(:resolved, :boolean, default: false)
     field(:system_reported, :boolean, default: false)
     field(:offender_id, :id)
     field(:reporter_id, :id)
     field(:type, :string)
+    field(:custom_reason, :string)
 
     timestamps()
   end
@@ -18,12 +19,14 @@ defmodule Puppies.Flag do
     flag
     |> cast(attrs, [
       :reason,
-      :is_open,
+      :resolved,
       :system_reported,
       :offender_id,
       :reporter_id,
-      :type
+      :type,
+      :custom_reason
     ])
     |> validate_required([:reason, :offender_id, :reporter_id])
+    |> validate_length(:custom_reason, max: 180)
   end
 end
