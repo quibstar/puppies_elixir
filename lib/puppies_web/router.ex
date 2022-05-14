@@ -195,6 +195,8 @@ defmodule PuppiesWeb.Router do
     get("/settings/confirm_email/:token", AdminSettingsController, :confirm_email)
     live("/dashboard", Admin.Dashboard)
     live("/blacklists", Admin.BlackLists)
+    live("/photo-review", Admin.PhotoReview)
+    live("/user/:id", Admin.User)
   end
 
   scope "/admins/", PuppiesWeb do

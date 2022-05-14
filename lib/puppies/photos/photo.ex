@@ -10,6 +10,9 @@ defmodule Puppies.Photos.Photo do
     belongs_to(:listing, Puppies.Listings.Listing)
     belongs_to(:user, Puppies.Accounts.User)
     field(:delete, :boolean, virtual: true, default: false)
+    field(:approved, :boolean, default: false)
+    field(:mark_for_deletion, :boolean, default: false)
+    field(:resized, :boolean, default: false, null: false)
 
     timestamps()
   end
@@ -21,7 +24,16 @@ defmodule Puppies.Photos.Photo do
   @doc false
   def changeset(photo, attrs) do
     photo
-    |> cast(attrs, [:business_id, :user_id, :listing_id, :url, :name])
+    |> cast(attrs, [
+      :business_id,
+      :user_id,
+      :listing_id,
+      :url,
+      :name,
+      :mark_for_deletion,
+      :approved,
+      :resized
+    ])
     |> validate_required([:url, :name])
   end
 end

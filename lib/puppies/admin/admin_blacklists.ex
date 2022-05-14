@@ -8,34 +8,17 @@ defmodule Puppies.Blacklists do
 
   alias Puppies.Blacklists.EmailBlacklist
 
-  @doc """
-  Returns the list of email_blacklists.
-
-  ## Examples
-
-      iex> list_email_blacklists()
-      [%EmailBlacklist{}, ...]
-
-  """
-  def list_email_blacklists do
-    Repo.all(EmailBlacklist)
+  def get_blacklisted_items(schema) do
+    Repo.all(schema)
   end
 
-  @doc """
-  Gets a single email_blacklist.
-
-  Raises `Ecto.NoResultsError` if the Email blacklist does not exist.
-
-  ## Examples
-
-      iex> get_email_blacklist!(123)
-      %EmailBlacklist{}
-
-      iex> get_email_blacklist!(456)
-      ** (Ecto.NoResultsError)
-
-  """
-  def get_email_blacklist!(id), do: Repo.get!(EmailBlacklist, id)
+  def check_for_existence_of(schema, field, other_field) do
+    Repo.exists?(
+      from(s in schema,
+        where: field(s, ^field) == ^other_field
+      )
+    )
+  end
 
   @doc """
   Creates a email_blacklist.
@@ -53,24 +36,6 @@ defmodule Puppies.Blacklists do
     %EmailBlacklist{}
     |> EmailBlacklist.changeset(attrs)
     |> Repo.insert()
-  end
-
-  @doc """
-  Updates a email_blacklist.
-
-  ## Examples
-
-      iex> update_email_blacklist(email_blacklist, %{field: new_value})
-      {:ok, %EmailBlacklist{}}
-
-      iex> update_email_blacklist(email_blacklist, %{field: bad_value})
-      {:error, %Ecto.Changeset{}}
-
-  """
-  def update_email_blacklist(%EmailBlacklist{} = email_blacklist, attrs) do
-    email_blacklist
-    |> EmailBlacklist.changeset(attrs)
-    |> Repo.update()
   end
 
   @doc """
@@ -105,35 +70,6 @@ defmodule Puppies.Blacklists do
   alias Puppies.Blacklists.IPAddressBlacklist
 
   @doc """
-  Returns the list of ip_address_blacklists.
-
-  ## Examples
-
-      iex> list_ip_address_blacklists()
-      [%IPAddressBlacklist{}, ...]
-
-  """
-  def list_ip_address_blacklists do
-    Repo.all(IPAddressBlacklist)
-  end
-
-  @doc """
-  Gets a single ip_address_blacklist.
-
-  Raises `Ecto.NoResultsError` if the Ip address blacklist does not exist.
-
-  ## Examples
-
-      iex> get_ip_address_blacklist!(123)
-      %IPAddressBlacklist{}
-
-      iex> get_ip_address_blacklist!(456)
-      ** (Ecto.NoResultsError)
-
-  """
-  def get_ip_address_blacklist!(id), do: Repo.get!(IPAddressBlacklist, id)
-
-  @doc """
   Creates a ip_address_blacklist.
 
   ## Examples
@@ -149,24 +85,6 @@ defmodule Puppies.Blacklists do
     %IPAddressBlacklist{}
     |> IPAddressBlacklist.changeset(attrs)
     |> Repo.insert()
-  end
-
-  @doc """
-  Updates a ip_address_blacklist.
-
-  ## Examples
-
-      iex> update_ip_address_blacklist(ip_address_blacklist, %{field: new_value})
-      {:ok, %IPAddressBlacklist{}}
-
-      iex> update_ip_address_blacklist(ip_address_blacklist, %{field: bad_value})
-      {:error, %Ecto.Changeset{}}
-
-  """
-  def update_ip_address_blacklist(%IPAddressBlacklist{} = ip_address_blacklist, attrs) do
-    ip_address_blacklist
-    |> IPAddressBlacklist.changeset(attrs)
-    |> Repo.update()
   end
 
   @doc """
@@ -201,35 +119,6 @@ defmodule Puppies.Blacklists do
   alias Puppies.Blacklists.ContentBlacklist
 
   @doc """
-  Returns the list of content_blacklists.
-
-  ## Examples
-
-      iex> list_content_blacklists()
-      [%ContentBlacklist{}, ...]
-
-  """
-  def list_content_blacklists do
-    Repo.all(ContentBlacklist)
-  end
-
-  @doc """
-  Gets a single content_blacklist.
-
-  Raises `Ecto.NoResultsError` if the Content blacklist does not exist.
-
-  ## Examples
-
-      iex> get_content_blacklist!(123)
-      %ContentBlacklist{}
-
-      iex> get_content_blacklist!(456)
-      ** (Ecto.NoResultsError)
-
-  """
-  def get_content_blacklist!(id), do: Repo.get!(ContentBlacklist, id)
-
-  @doc """
   Creates a content_blacklist.
 
   ## Examples
@@ -245,24 +134,6 @@ defmodule Puppies.Blacklists do
     %ContentBlacklist{}
     |> ContentBlacklist.changeset(attrs)
     |> Repo.insert()
-  end
-
-  @doc """
-  Updates a content_blacklist.
-
-  ## Examples
-
-      iex> update_content_blacklist(content_blacklist, %{field: new_value})
-      {:ok, %ContentBlacklist{}}
-
-      iex> update_content_blacklist(content_blacklist, %{field: bad_value})
-      {:error, %Ecto.Changeset{}}
-
-  """
-  def update_content_blacklist(%ContentBlacklist{} = content_blacklist, attrs) do
-    content_blacklist
-    |> ContentBlacklist.changeset(attrs)
-    |> Repo.update()
   end
 
   @doc """
@@ -294,44 +165,7 @@ defmodule Puppies.Blacklists do
     ContentBlacklist.changeset(content_blacklist, attrs)
   end
 
-  def check_for_content(%{"content" => content}) do
-    Repo.exists?(
-      from(c in ContentBlacklist,
-        where: c.content == ^content
-      )
-    )
-  end
-
   alias Puppies.Blacklists.PhoneBlacklist
-
-  @doc """
-  Returns the list of phone_blacklists.
-
-  ## Examples
-
-      iex> list_phone_blacklists()
-      [%PhoneBlacklist{}, ...]
-
-  """
-  def list_phone_blacklists do
-    Repo.all(PhoneBlacklist)
-  end
-
-  @doc """
-  Gets a single phone_blacklist.
-
-  Raises `Ecto.NoResultsError` if the Phone blacklist does not exist.
-
-  ## Examples
-
-      iex> get_phone_blacklist!(123)
-      %PhoneBlacklist{}
-
-      iex> get_phone_blacklist!(456)
-      ** (Ecto.NoResultsError)
-
-  """
-  def get_phone_blacklist!(id), do: Repo.get!(PhoneBlacklist, id)
 
   @doc """
   Creates a phone_blacklist.
@@ -349,24 +183,6 @@ defmodule Puppies.Blacklists do
     %PhoneBlacklist{}
     |> PhoneBlacklist.changeset(attrs)
     |> Repo.insert()
-  end
-
-  @doc """
-  Updates a phone_blacklist.
-
-  ## Examples
-
-      iex> update_phone_blacklist(phone_blacklist, %{field: new_value})
-      {:ok, %PhoneBlacklist{}}
-
-      iex> update_phone_blacklist(phone_blacklist, %{field: bad_value})
-      {:error, %Ecto.Changeset{}}
-
-  """
-  def update_phone_blacklist(%PhoneBlacklist{} = phone_blacklist, attrs) do
-    phone_blacklist
-    |> PhoneBlacklist.changeset(attrs)
-    |> Repo.update()
   end
 
   @doc """

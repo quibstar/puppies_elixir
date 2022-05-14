@@ -13,10 +13,7 @@ defmodule NeedsSilverUpgrade do
                 <p class="mt-4 text-gray-500">
                   Verify your phone number to level up to Silver.
                 </p>
-
-
                   <div class="mt-4">
-
                     <div class="rounded-md bg-green-50 p-4">
                       <div class="flex">
                         <div class="flex-shrink-0">
@@ -31,12 +28,9 @@ defmodule NeedsSilverUpgrade do
                       </div>
                     </div>
                   </div>
-
-
                 <div class="mt-4">
                   <%= live_component PuppiesWeb.SilverComponent, id: "silver_upgrade", user: @user %>
                 </div>
-
             </div>
         </div>
       </div>

@@ -84,9 +84,15 @@ defmodule PuppiesWeb.ListingDetails do
               <div>
                 <div class="text-lg leading-6 font-medium text-gray-900 flex space-x-2">
                   <h3>Hi, I'm <span class="text-primary-600"><%=@listing.name %></span></h3>
-                  <svg class={"w-6 h-6 mr-2 cursor-pointer #{is_favorite?(@is_favorite)}"} phx-click="favorite" phx-target={@myself} xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" >
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
-                  </svg>
+                  <%= unless is_nil(@user_id) do %>
+                    <svg class={"w-6 h-6 mr-2 cursor-pointer #{is_favorite?(@is_favorite)}"} phx-click="favorite" phx-target={@myself} xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" >
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
+                    </svg>
+                  <% else %>
+                    <svg class={"w-6 h-6 mr-2 stroke-gray-300 fill-white"} xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" >
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
+                    </svg>
+                  <% end %>
                 </div>
 
                 <p class="mt-1 max-w-2xl text-sm text-gray-500">

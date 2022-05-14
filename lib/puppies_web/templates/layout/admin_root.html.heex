@@ -8,9 +8,11 @@
     <%= live_title_tag assigns[:page_title] || "Puppies Admin"%>
     <link phx-track-static rel="stylesheet" href={Routes.static_path(@conn, "/assets/app.css")}/>
     <script defer phx-track-static type="text/javascript" src={Routes.static_path(@conn, "/assets/app.js")}></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.8/js/intlTelInput.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.8/css/intlTelInput.css">
   </head>
 
-  <body x-data="{ show_mobile: false }">
+  <body class="bg-slate-50" x-data="{ show_mobile: false }">
     <div>
       <%= render "_admin_side_nav.html", assigns %>
       <%= render "_admin_side_nav_desktop.html", assigns %>

@@ -8,10 +8,6 @@ defmodule PuppiesWeb.UI.Modal do
         Modal Title here
       </:modal_title>
 
-      <:button_title>
-          Button Title here
-      </:button_title>
-
       <:modal_body>
         Body stuff here
       </:modal_body>

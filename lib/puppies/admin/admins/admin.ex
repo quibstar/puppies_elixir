@@ -4,6 +4,8 @@ defmodule Puppies.Admins.Admin do
 
   schema "admins" do
     field(:email, :string)
+    field(:first_name, :string)
+    field(:last_name, :string)
     field(:password, :string, virtual: true, redact: true)
     field(:hashed_password, :string, redact: true)
     field(:confirmed_at, :naive_datetime)
@@ -30,7 +32,7 @@ defmodule Puppies.Admins.Admin do
   """
   def registration_changeset(admin, attrs, opts \\ []) do
     admin
-    |> cast(attrs, [:email, :password])
+    |> cast(attrs, [:email, :password, :first_name, :last_name])
     |> validate_email()
     |> validate_password(opts)
   end

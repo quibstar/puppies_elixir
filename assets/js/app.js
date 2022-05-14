@@ -181,6 +181,18 @@ let silverReputationValidation = () => {
   }
 };
 
+Hooks.PhoneNumber = {
+  mounted() {
+    this.el.addEventListener('input', (e) => {
+      console.log(e);
+      let match = this.el.value.replace(/\D/g, '').match(/^(\d{3})(\d{3})(\d{4})$/);
+      if (match) {
+        this.el.value = `${match[1]}${match[2]}${match[3]}`;
+      }
+    });
+  },
+};
+
 // ID
 Hooks.verifyIdentity = {
   mounted() {

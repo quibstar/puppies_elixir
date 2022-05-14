@@ -218,5 +218,7 @@ defmodule Puppies.Utilities do
     end)
   end
 
-  #
+  def format_short_date_time(date) do
+    Calendar.strftime(date, "%m/%d/%y %I:%M:%S %p")
+  end
 end

@@ -55,18 +55,31 @@ defmodule PuppiesWeb.ListingShow do
 
     views = Views.list_views(listing_id)
 
-    conversation_started = Threads.conversation_started(user.id, listing.user_id, listing.id)
+    conversation_started =
+      if !is_nil(user) do
+        Threads.conversation_started(user.id, listing.user_id, listing.id)
+      else
+        []
+      end
+
+    favorites =
+      if !is_nil(user) do
+        Favorites.is_favorite(user.id, listing.id)
+      else
+        false
+      end
 
     {:ok,
      assign(socket,
        loading: false,
+       user_id: user_id,
        user: user,
        listing: listing,
        current_photo: List.first(photos),
        photos: photos,
        business: business,
        page_title: "#{business.name} #{listing.name} - ",
-       is_favorite: Favorites.is_favorite(user.id, listing.id),
+       is_favorite: favorites,
        views: views,
        review_stats: review_stats,
        conversation_started: conversation_started
@@ -113,11 +126,11 @@ defmodule PuppiesWeb.ListingShow do
               <%= if @review_stats.average > 0 do %>
                 <%= live_component  PuppiesWeb.ReviewStats, id: @business.id, review_stats: @review_stats %>
               <% end %>
-              <%= if  @business.user.reputation_level > @user.reputation_level do %>
+              <%= if !is_nil(@user) && @business.user.reputation_level > @user.reputation_level do %>
                 <%= live_component  PuppiesWeb.ContactCTA, id: "contact_cta",  user: @user, business_or_listing: @business %>
               <% end %>
             </div>
-            <%= live_component  PuppiesWeb.ListingDetails, id: "listing_details", user_id: @user.id, listing: @listing, views: @views, is_favorite: @is_favorite %>
+            <%= live_component  PuppiesWeb.ListingDetails, id: "listing_details", user_id: @user, listing: @listing, views: @views, is_favorite: @is_favorite %>
           </div>
         <% end %>
       </div>

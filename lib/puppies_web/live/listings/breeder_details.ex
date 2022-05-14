@@ -10,7 +10,7 @@ defmodule PuppiesWeb.BreederDetails do
           <div>
             <%= PuppiesWeb.Avatar.show(%{business: @business, user: @business.user, square: 44, extra_classes: "text8_5xl"}) %>
             <div class="relative -mt-4 z-10">
-              <PuppiesWeb.ReputationLevel.badge reputation_level={@user.reputation_level} />
+              <PuppiesWeb.ReputationLevel.badge reputation_level={@business.user.reputation_level} />
             </div>
           </div>
           <div>

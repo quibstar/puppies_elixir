@@ -60,7 +60,8 @@ config :puppies, PuppiesWeb.Endpoint,
       ~r"priv/static/.*(js|css|png|jpeg|jpg|gif|svg)$",
       ~r"priv/gettext/.*(po)$",
       ~r"lib/puppies_web/(live|views)/.*(ex)$",
-      ~r"lib/puppies_web/templates/.*(eex)$"
+      ~r"lib/puppies_web/templates/.*(eex)$",
+      ~r"lib/puppies_web/admin/.*(ex)$"
     ]
   ]
 

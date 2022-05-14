@@ -38,6 +38,7 @@ defmodule Puppies.Accounts.User do
     has_one(:user_location, Puppies.UserLocation, on_delete: :delete_all)
     has_one(:photo, Puppies.Photos.Photo)
     has_many(:threads, Puppies.Thread)
+    has_many(:flags, Puppies.Flag, on_delete: :delete_all, foreign_key: :offender_id)
 
     timestamps()
   end

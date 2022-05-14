@@ -35,9 +35,7 @@ defmodule PuppiesWeb.Admin.BlackLists do
 
   def render(assigns) do
     ~H"""
-      <%= if @loading do %>
-      <% else %>
-        <%= @current_tab %>
+      <%= unless @loading do %>
         <div class="py-6" x-data={"{ tab: '#{@current_tab}' }"}>
           <div class="max-w-7xl mx-auto px-4 sm:px-6 md:px-8">
             <h1 class="text-2xl font-semibold text-gray-900">Blacklists</h1>
@@ -57,10 +55,10 @@ defmodule PuppiesWeb.Admin.BlackLists do
               <div class="hidden sm:block">
                 <div class="border-b border-gray-200">
                   <nav class="-mb-px flex space-x-8" aria-label="Tabs">
-                    <a href="#content" :class="{ 'border-primary-500 text-primary-600': tab === 'content' }"   x-on:click="tab = 'content'" class="border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm"> Content </a>
-                    <a href="#email" :class="{ 'border-primary-500 text-primary-600': tab === 'email' }"  x-on:click="tab = 'email'" class="border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm"> Email </a>
-                    <a href="#phone" :class="{ 'border-primary-500 text-primary-600': tab === 'phone' }"  x-on:click="tab = 'phone'" class="border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm" aria-current="page"> Phone </a>
-                    <a href="#ip-address" :class="{ 'border-primary-500 text-primary-600': tab === 'ip-address' }"   x-on:click="tab = 'ip-address'" class="border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm"> IP Address </a>
+                    <a href="#content" :class="{ 'active-tab': tab === 'content' }"   x-on:click="tab = 'content'" class="border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm"> Content </a>
+                    <a href="#email" :class="{ 'active-tab': tab === 'email' }"  x-on:click="tab = 'email'" class="border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm"> Email </a>
+                    <a href="#phone" :class="{ 'active-tab': tab === 'phone' }"  x-on:click="tab = 'phone'" class="border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm" aria-current="page"> Phone </a>
+                    <a href="#ip-address" :class="{ 'active-tab': tab === 'ip-address' }"   x-on:click="tab = 'ip-address'" class="border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm"> IP Address </a>
                   </nav>
                 </div>
               </div>
@@ -69,14 +67,13 @@ defmodule PuppiesWeb.Admin.BlackLists do
                   <.live_component module={PuppiesWeb.Admin.BlackListContent} id="blacklist_content" admin={@admin} />
                 </div>
                 <div  x-show="tab === 'email'">
-                    Email
+                    <.live_component module={PuppiesWeb.Admin.BlackListEmail} id="blacklist_email" admin={@admin} />
                 </div>
                 <div  x-show="tab === 'phone'">
-                    Phone
+                    <.live_component module={PuppiesWeb.Admin.BlackListPhone} id="blacklist_phone" admin={@admin} />
                 </div>
-
                 <div  x-show="tab === 'ip-address'">
-                    IP Address
+                    <.live_component module={PuppiesWeb.Admin.BlackListIpAddress} id="blacklist_ip_address" admin={@admin} />
                 </div>
               </div>
             </div>
