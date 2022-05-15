@@ -15,6 +15,12 @@ defmodule Puppies.Transaction do
     field(:refund_id, :string)
     field(:admin_id, :integer)
     field(:reference_number, :string)
+
+    has_one(:admin, Puppies.Admins.Admin,
+      references: :admin_id,
+      foreign_key: :id
+    )
+
     timestamps()
   end
 

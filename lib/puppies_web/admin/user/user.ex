@@ -3,7 +3,7 @@ defmodule PuppiesWeb.Admin.User do
   User Profile
   """
   use PuppiesWeb, :live_view
-  alias Puppies.{Admins, Accounts, Admin.Notes}
+  alias Puppies.{Admins, Accounts, Admin.Notes, Admin.Threads}
 
   def mount(params, session, socket) do
     case connected?(socket) do
@@ -22,13 +22,22 @@ defmodule PuppiesWeb.Admin.User do
         Admins.get_admin_by_session_token(user_token)
       end
 
+    # UserThreads.get_thread_list(user.id)
+    threads =
+      if user.is_seller do
+        Threads.seller_threads(user.id)
+      else
+        Threads.buyer_threads(user.id)
+      end
+
     {:ok,
      assign(
        socket,
        loading: false,
        user: user,
        notes: notes,
-       admin: admin
+       admin: admin,
+       threads: threads
      )}
   end
 
@@ -38,7 +47,7 @@ defmodule PuppiesWeb.Admin.User do
         <%= if @loading do %>
           <%= live_component PuppiesWeb.LoadingComponent, id: "admin-loading" %>
         <% else %>
-          <div class="max-w-7xl mx-auto px-4 sm:px-6 md:px-8 py-4">
+          <div class="mx-auto px-4 sm:px-6 md:px-8 py-4">
             <div class="md:grid grid-flow-col grid-cols-2 gap-2">
               <!-- This example requires Tailwind CSS v2.0+ -->
               <div class="bg-white overflow-hidden shadow rounded-lg divide-y px-4">
@@ -86,56 +95,38 @@ defmodule PuppiesWeb.Admin.User do
                 <% end %>
               </div>
               <div>
-                <div x-data="{ tab: 'notes' }" class="bg-white px-2 shadow mt-2">
-                  <div class="border-b border-gray-200">
-                        <nav class="-mb-px flex space-x-2" aria-label="Tabs">
-                          <button class="border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm" :class="{ 'active-tab': tab === 'notes' }" @click="tab = 'notes'">
-                              Notes
-                          </button>
-
-                          <button class="border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm" :class="{ 'active-tab': tab === 'transactions' }" @click="tab = 'transactions'">
-                              Transactions
-                          </button>
-
-                          <button class="border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm" :class="{ 'active-tab': tab === 'ip' }" @click="tab = 'ip'">
-                              IP Address
-                          </button>
-                      </nav>
-                      <div x-show="tab === 'notes'">
-                        <.live_component module={Puppies.Admin.NotesComponent} id="notes_component" notes={@notes} note={nil} user={@user} admin={@admin} />
-                      </div>
-                      <div x-show="tab === 'transactions'">
-                        transactions
-                      </div>
-                      <div x-show="tab === 'ip'">
-                        Ip info
-                      </div>
-                  </div>
-                </div>
-                <div x-data="{ tab: 'activity' }" class="bg-white px-2 shadow mt-2">
+                <div x-data="{ tab: 'communications' }" class="bg-white shadow rounded-lg p-4">
                   <div class="border-b border-gray-200">
                     <nav class="-mb-px flex space-x-2" aria-label="Tabs">
-                      <button class="border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm" :class="{ 'active-tab': tab === 'activity' }" @click="tab = 'activity'">
-                          Activity
+                      <button class="border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 whitespace-nowrap py-2 px-1 border-b-2 font-medium text-sm" :class="{ 'active-tab': tab === 'notes' }" @click="tab = 'notes'">
+                          Notes
                       </button>
 
-                      <button class="border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm" :class="{ 'active-tab': tab === 'conversations' }" @click="tab = 'conversations'">
-                          Conversations
+                      <button class="border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 whitespace-nowrap py-2 px-1 border-b-2 font-medium text-sm" :class="{ 'active-tab': tab === 'transactions' }" @click="tab = 'transactions'">
+                          Transactions
                       </button>
 
-                      <button class="border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm" :class="{ 'active-tab': tab === 'sys-messages' }" @click="tab = 'sys-messages'">
-                          System Messages
+                      <button class="border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 whitespace-nowrap py-2 px-1 border-b-2 font-medium text-sm" :class="{ 'active-tab': tab === 'ip' }" @click="tab = 'ip'">
+                          IP Address
+                      </button>
+                      <button class="border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 whitespace-nowrap py-2 px-1 border-b-2 font-medium text-sm" :class="{ 'active-tab': tab === 'communications' }" @click="tab = 'communications'">
+                          Communications
                       </button>
                     </nav>
-                    <div x-show="tab === 'activity'">
-                      Activity
-                    </div>
-                    <div x-show="tab === 'conversations'">
-                      conversations
-                    </div>
-                    <div x-show="tab === 'sys-messages'">
-                      sys messages
-                    </div>
+                  </div>
+
+                  <div x-show="tab === 'notes'">
+                    <.live_component module={Puppies.Admin.NotesComponent} id="notes_component" notes={@notes} note={nil} user={@user} admin={@admin} />
+                  </div>
+                  <div x-show="tab === 'transactions'">
+                    <.live_component module={PuppiesWeb.Admin.Transactions} id="transactions_component" user_id={@user.id}  customer_id={@user.customer_id}  admin={@admin} />
+                  </div>
+                  <div x-show="tab === 'ip'">
+                    Ip info
+                  </div>
+
+                  <div x-show="tab === 'communications'">
+                    <.live_component module={PuppiesWeb.Admin.Communications} id="communications", threads={@threads} user={@user}/>
                   </div>
                 </div>
               </div>

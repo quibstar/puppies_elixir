@@ -53,11 +53,8 @@ Hooks.chatMessages = {
     this.el.scrollTop = this.el.scrollHeight;
   },
   updated() {
+    console.log(this.el);
     this.el.scrollTop = this.el.scrollHeight;
-    // let input = document.getElementById('messages_message');
-    // if (input) {
-    //   input.focus();
-    // }
   },
 };
 
