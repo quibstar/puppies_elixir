@@ -39,7 +39,7 @@ defmodule Puppies.BreedAttribute do
     field(:weight, :string)
     field(:life_span, :string)
     field(:url, :string)
-    belongs_to(:breed, Puppies.Dogs.Breed)
+    belongs_to(:breed, Puppies.Breed)
 
     timestamps()
   end

@@ -50,10 +50,11 @@ let liveSocket = new LiveSocket('/live', Socket, {
 
 Hooks.chatMessages = {
   mounted() {
+    console.log('mount', this.el, this.el.scrollHeight);
     this.el.scrollTop = this.el.scrollHeight;
   },
   updated() {
-    console.log(this.el);
+    console.log(this.el, this.el);
     this.el.scrollTop = this.el.scrollHeight;
   },
 };

@@ -3,8 +3,8 @@ defmodule Puppies.BusinessBreed do
   import Ecto.Changeset
 
   schema "business_breeds" do
-    belongs_to :business, Puppies.Businesses.Business
-    belongs_to :breed, Puppies.Dogs.Breed
+    belongs_to(:business, Puppies.Businesses.Business)
+    belongs_to(:breed, Puppies.Breed)
 
     timestamps()
   end

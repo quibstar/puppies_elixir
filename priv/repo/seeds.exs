@@ -3,7 +3,7 @@ defmodule PuppiesSeeds do
 
   alias Puppies.{
     Repo,
-    Dogs,
+    Breeds,
     ListingStatus,
     Accounts,
     Accounts.User,
@@ -19,7 +19,7 @@ defmodule PuppiesSeeds do
   |> File.read!()
   |> Jason.decode!()
   |> Enum.map(fn breed ->
-    res = Dogs.create_breed(%{name: breed, slug: Utilities.string_to_slug(breed)})
+    res = Breeds.create_breed(%{name: breed, slug: Utilities.string_to_slug(breed)})
   end)
 
   Enum.each(["available", "on hold", "sold"], fn opt ->

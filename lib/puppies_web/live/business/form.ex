@@ -1,10 +1,10 @@
 defmodule PuppiesWeb.BusinessForm do
   use PuppiesWeb, :live_component
 
-  alias Puppies.{Businesses, Businesses.Business, Dogs, Location, Photos}
+  alias Puppies.{Businesses, Businesses.Business, Breeds, Location, Photos}
 
   def update(assigns, socket) do
-    breeds = Dogs.list_breeds()
+    breeds = Breeds.list_breeds()
 
     bus = Businesses.get_business_by_user_id(assigns.user.id)
 
@@ -138,7 +138,7 @@ defmodule PuppiesWeb.BusinessForm do
   end
 
   def handle_event("choose-breed", %{"id" => id}, socket) do
-    dog = Dogs.get_breed!(id)
+    dog = Breeds.get_breed!(id)
     selected_breeds = socket.assigns.selected_breeds ++ [dog]
 
     socket =

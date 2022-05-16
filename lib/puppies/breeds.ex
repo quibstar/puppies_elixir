@@ -5,7 +5,7 @@ defmodule Puppies.Breeds do
   import Ecto.Query, warn: false
   alias Puppies.Repo
 
-  alias Puppies.{Pagination, Utilities, Dogs.Breed}
+  alias Puppies.{Pagination, Utilities, Breed}
 
   def breeds_and_attributes() do
     from(b in Breed,
@@ -81,4 +81,16 @@ defmodule Puppies.Breeds do
     limit = Utilities.convert_string_to_integer(limit)
     from([l, b] in q, limit: ^limit, offset: ^offset)
   end
+
+  def create_breed(attrs \\ %{}) do
+    %Breed{}
+    |> Breed.changeset(attrs)
+    |> Repo.insert()
+  end
+
+  def list_breeds do
+    Repo.all(Breed)
+  end
+
+  def get_breed!(id), do: Repo.get!(Breed, id)
 end

@@ -6,13 +6,11 @@ defmodule PuppiesWeb.Admin.MessagesComponent do
 
   def render(assigns) do
     ~H"""
-      <div>
+      <ul  class="h-[calc(100vh-144px)] overflow-scroll bg-gray-50 p-2 rounded-lg border"  id="chat-messages" phx-hook="chatMessages">
         <%= unless is_nil(@user) do %>
-          <ul  class="h-[calc(100vh-144px)] overflow-scroll bg-gray-50 p-2 rounded-lg border"  id="chat-messages" phx-hook="chatMessages">
-            <%= PuppiesWeb.MessagesList.render_list(%{user: @user, messages: @messages,  current_thread: @thread}) %>
-          </ul>
+        <%= PuppiesWeb.MessagesList.render_list(%{user: @user, messages: @messages,  current_thread: @thread}) %>
         <% end %>
-      </div>
+      </ul>
     """
   end
 end

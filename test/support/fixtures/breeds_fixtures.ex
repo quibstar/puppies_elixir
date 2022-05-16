@@ -1,4 +1,4 @@
-defmodule Puppies.DogsFixtures do
+defmodule Puppies.BreedFixtures do
   @moduledoc """
   This module defines test helpers for creating
   entities via the `Puppies.Dogs` context.
@@ -14,7 +14,7 @@ defmodule Puppies.DogsFixtures do
         category: "some category",
         name: "some name"
       })
-      |> Puppies.Dogs.create_breed()
+      |> Puppies.Breeds.create_breed()
 
     breed
   end

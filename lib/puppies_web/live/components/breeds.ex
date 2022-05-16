@@ -4,10 +4,10 @@ defmodule PuppiesWeb.BreedsAutoSelectComponent do
   """
   use PuppiesWeb, :live_component
 
-  alias Puppies.{Dogs}
+  alias Puppies.{Breeds}
 
   def update(assigns, socket) do
-    breeds = Dogs.list_breeds()
+    breeds = Breeds.list_breeds()
 
     breeds_options =
       Enum.reduce(breeds, [], fn breed, acc ->

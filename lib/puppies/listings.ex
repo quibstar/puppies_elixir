@@ -146,6 +146,8 @@ defmodule Puppies.Listings do
 
   """
   def create_listing(attrs \\ %{}) do
+    IO.inspect(attrs)
+
     %Listing{}
     |> Listing.changeset(attrs)
     |> Repo.insert()

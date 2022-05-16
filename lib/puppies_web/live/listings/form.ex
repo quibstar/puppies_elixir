@@ -1,7 +1,7 @@
 defmodule PuppiesWeb.ListingsForm do
   use PuppiesWeb, :live_component
 
-  alias Puppies.{Listings, Listings.Listing, Dogs, Photos, ES}
+  alias Puppies.{Listings, Listings.Listing, Breeds, Photos, ES}
 
   def update(assigns, socket) do
     results =
@@ -104,7 +104,7 @@ defmodule PuppiesWeb.ListingsForm do
   end
 
   def handle_event("choose-breed", %{"id" => id}, socket) do
-    dog = Dogs.get_breed!(id)
+    dog = Breeds.get_breed!(id)
     selected_breeds = socket.assigns.selected_breeds ++ [dog]
 
     socket =

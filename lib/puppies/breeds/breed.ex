@@ -1,4 +1,4 @@
-defmodule Puppies.Dogs.Breed do
+defmodule Puppies.Breed do
   use Ecto.Schema
   import Ecto.Changeset
 

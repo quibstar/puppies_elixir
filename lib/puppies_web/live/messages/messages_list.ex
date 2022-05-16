@@ -6,14 +6,16 @@ defmodule PuppiesWeb.MessagesList do
     ~H"""
       <%= for {message, index} <- Enum.with_index(@messages) do  %>
         <%= if MessageUtilities.check_date(@messages, index, message.inserted_at) do %>
-          <div id={"m-#{message.id}"} class="relative" phx-update="ignore">
-            <div class="absolute inset-0 flex items-center" aria-hidden="true">
-              <div class="w-full border-t border-gray-300"></div>
+          <li>
+            <div id={"m-#{message.id}"} class="relative" phx-update="ignore">
+              <div class="absolute inset-0 flex items-center" aria-hidden="true">
+                <div class="w-full border-t border-gray-300"></div>
+              </div>
+              <div class="relative flex justify-center">
+                <span  data-date={message.inserted_at} class="messages-date px-2 bg-gray-50 text-xs text-gray-500"> </span>
+              </div>
             </div>
-            <div class="relative flex justify-center">
-              <span  data-date={message.inserted_at} class="messages-date px-2 bg-gray-50 text-sm text-gray-500"> </span>
-            </div>
-          </div>
+          </li>
         <% end %>
         <%= if message.sent_by != @user.id do %>
           <li class="flex items-end" id={"#{message.id}"}>

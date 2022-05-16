@@ -1,6 +1,6 @@
 defmodule PuppiesWeb.SearchLive do
   use PuppiesWeb, :live_view
-  alias Puppies.{Accounts, Dogs, Utilities, Searches, Search}
+  alias Puppies.{Accounts, Breeds, Utilities, Searches, Search}
 
   @size "60"
 
@@ -26,7 +26,7 @@ defmodule PuppiesWeb.SearchLive do
         acc ++ ["#{state.name}": state.abbreviation]
       end)
 
-    breeds = Dogs.list_breeds()
+    breeds = Breeds.list_breeds()
 
     breeds_options =
       Enum.reduce(breeds, [], fn breed, acc ->

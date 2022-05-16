@@ -29,7 +29,7 @@ defmodule PuppiesWeb.Admin.ThreadComponent do
     ~H"""
     <div class="mt-4" x-data="{ show_drawer: false}">
 
-      <Drawer.drawer key="show_drawer">
+      <Drawer.drawer key="show_drawer" max_width={"max-w-4xl"}>
         <:drawer_title>
           Conversation
         </:drawer_title>

@@ -57,7 +57,7 @@ defmodule Puppies.Listings.Listing do
     field(:purebred, :boolean, default: true)
     belongs_to(:user, Puppies.Accounts.User)
     has_many(:listing_breeds, Puppies.ListingBreed, on_replace: :delete)
-    many_to_many(:breeds, Puppies.Dogs.Breed, join_through: Puppies.ListingBreed)
+    many_to_many(:breeds, Puppies.Breed, join_through: Puppies.ListingBreed)
     has_many(:photos, Puppies.Photos.Photo)
     timestamps()
   end

@@ -27,7 +27,7 @@ defmodule PuppiesWeb.UI.Drawer do
                   x-transition:leave="transform transition ease-in-out duration-500 sm:duration-700"
                   x-transition:leave-start="translate-x-0"
                   x-transition:leave-end="translate-x-full"
-                  class="relative w-screen max-w-md">
+                  class={"relative w-screen #{if Map.has_key?(assigns, :max_width), do: @max_width, else: "max-w-md"}"}>
 
                   <div
                   x-show="show_drawer"

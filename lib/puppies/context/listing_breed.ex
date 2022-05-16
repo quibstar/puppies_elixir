@@ -3,8 +3,8 @@ defmodule Puppies.ListingBreed do
   import Ecto.Changeset
 
   schema "listing_breeds" do
-    belongs_to :listing, Puppies.Listings.Listing
-    belongs_to :breed, Puppies.Dogs.Breed
+    belongs_to(:listing, Puppies.Listings.Listing)
+    belongs_to(:breed, Puppies.Breed)
 
     timestamps()
   end
