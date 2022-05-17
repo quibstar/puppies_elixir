@@ -62,6 +62,7 @@ defmodule PuppiesWeb.ListingsForm do
       end)
 
     params = Map.put(params, "listing_breeds", listing_breeds)
+    IO.inspect(params)
 
     listing =
       if id == "" do
@@ -190,8 +191,8 @@ defmodule PuppiesWeb.ListingsForm do
     end)
   end
 
-  def current_photos_and_uploaded_photos(current, uploaded) do
-    length(current) + length(uploaded)
+  def current_photos_and_uploaded_photos(current_photos, uploads) do
+    length(current_photos) + length(uploads.images.entries) > 6
   end
 
   def render(assigns) do
@@ -315,35 +316,35 @@ defmodule PuppiesWeb.ListingsForm do
 
                 <Divider.divider title="Photos" />
 
-                <%= unless length(@current_photos) + length(@uploads.images.entries) >= 6 do %>
-                  <div class="text-primary-600 text-base overflow-hidden">
-                    Drag and drop up to 6 photos.
-                  </div>
 
-                  <%= for err <- upload_errors(@uploads.images) do %>
-                    <AlertError.error>
-                      <%= error_to_string(err) %>
-                    </AlertError.error>
-                  <% end %>
+                <div class="text-primary-600 text-base overflow-hidden">
+                  Drag and drop up to 6 photos.
+                </div>
 
-                  <div class="my-4 flex justify-center px-6 pt-5 pb-6 border-2 border-gray-300 border-dashed rounded-md" phx-drop-target={@uploads.images.ref}>
-                    <div class="space-y-1 text-center">
-                      <svg class="mx-auto h-12 w-12 text-gray-400" stroke="currentColor" fill="none" viewBox="0 0 48 48" aria-hidden="true">
-                        <path d="M28 8H12a4 4 0 00-4 4v20m32-12v8m0 0v8a4 4 0 01-4 4H12a4 4 0 01-4-4v-4m32-4l-3.172-3.172a4 4 0 00-5.656 0L28 28M8 32l9.172-9.172a4 4 0 015.656 0L28 28m0 0l4 4m4-24h8m-4-4v8m-12 4h.02" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
-                      </svg>
-                      <div class="flex text-sm text-gray-600">
-                        <label  class="relative overflow-hidden underline bold cursor-pointer">
-                          <span>Upload a file</span>
-                            <div  class="h-0 overflow-hidden absolute">
-                              <%= live_file_input @uploads.images %>
-                            </div>
-                        </label>
-                        <p class="pl-1">or drag and drop</p>
-                      </div>
-                      <p class="text-xs text-gray-500">PNG, JPG, GIF up to 10MB</p>
-                    </div>
-                  </div>
+                <%= for err <- upload_errors(@uploads.images) do %>
+                  <AlertError.error>
+                    <%= error_to_string(err) %>
+                  </AlertError.error>
                 <% end %>
+
+                <div class="my-4 flex justify-center px-6 pt-5 pb-6 border-2 border-gray-300 border-dashed rounded-md" phx-drop-target={@uploads.images.ref}>
+                  <div class="space-y-1 text-center">
+                    <svg class="mx-auto h-12 w-12 text-gray-400" stroke="currentColor" fill="none" viewBox="0 0 48 48" aria-hidden="true">
+                      <path d="M28 8H12a4 4 0 00-4 4v20m32-12v8m0 0v8a4 4 0 01-4 4H12a4 4 0 01-4-4v-4m32-4l-3.172-3.172a4 4 0 00-5.656 0L28 28M8 32l9.172-9.172a4 4 0 015.656 0L28 28m0 0l4 4m4-24h8m-4-4v8m-12 4h.02" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+                    </svg>
+                    <div class="flex text-sm text-gray-600">
+                      <label  class="relative overflow-hidden underline bold cursor-pointer">
+                        <span>Upload a file</span>
+                          <div  class="h-0 overflow-hidden absolute">
+                            <%= live_file_input @uploads.images %>
+                          </div>
+                      </label>
+                      <p class="pl-1">or drag and drop</p>
+                    </div>
+                    <p class="text-xs text-gray-500">PNG, JPG, GIF up to 10MB</p>
+                  </div>
+                </div>
+
 
                 <div class="mt-4">
                   <div class="grid grid-cols-2 md:grid-cols-6 gap-4">
@@ -377,8 +378,8 @@ defmodule PuppiesWeb.ListingsForm do
               </div>
 
               <div class=" mt-4">
-                <div class="flex flex-col" x-on:click.debounce="show_drawer = !show_drawer">
-                  <%= submit "Submit", phx_disable_with: "Saving...",  disabled: !@changeset.valid?,  class: "inline-block px-6 py-2 text-xs font-medium leading-6 text-center text-white uppercase transition bg-primary-500 rounded shadow hover:shadow-lg hover:bg-primary-600 focus:outline-none disabled:opacity-50" %>
+                <div class="flex flex-col">
+                  <%= submit "Submit", phx_disable_with: "Saving...",  disabled: !@changeset.valid? || current_photos_and_uploaded_photos(@current_photos, @uploads),  class: "inline-block px-6 py-2 text-xs font-medium leading-6 text-center text-white uppercase transition bg-primary-500 rounded shadow hover:shadow-lg hover:bg-primary-600 focus:outline-none disabled:opacity-50" %>
                 </div>
               </div>
             </.form>

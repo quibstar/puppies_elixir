@@ -1,4 +1,4 @@
-defmodule Puppies.ActivitiesTest do
+defmodule Puppies.ActivitiesListingTest do
   use Puppies.DataCase
 
   import Puppies.{ListingsFixtures, BreedFixtures, AccountsFixtures}
@@ -35,8 +35,8 @@ defmodule Puppies.ActivitiesTest do
         listing_breeds: [%{breed_id: dogs.shih_tzu.id}, %{breed_id: dogs.bulldog.id}]
       })
 
-      after_listing = Listings.get_listing!(listing.id)
-      changes = Activities.listing_changes(listing, after_listing)
+      updated_listing = Listings.get_listing!(listing.id)
+      changes = Activities.listing_changes(listing, updated_listing)
 
       assert(
         changes == [
@@ -58,21 +58,21 @@ defmodule Puppies.ActivitiesTest do
         name: "test"
       })
 
-      after_listing = Listings.get_listing!(listing.id)
-      changes = Activities.listing_changes(listing, after_listing)
+      updated_listing = Listings.get_listing!(listing.id)
+      changes = Activities.listing_changes(listing, updated_listing)
       assert(changes == [%{field: :name, new_value: "test", old_value: "spike"}])
     end
 
-    test "no changes to photo", %{user: user, listing: listing, dogs: dogs} do
-      listing = Listings.get_listing!(listing.id)
+    # test "no changes to photo", %{user: user, listing: listing, dogs: dogs} do
+    #   listing = Listings.get_listing!(listing.id)
 
-      Listings.update_listing(listing, %{
-        name: "test"
-      })
+    #   Listings.update_listing(listing, %{
+    #     name: "test"
+    #   })
 
-      after_listing = Listings.get_listing!(listing.id)
-      changes = Activities.listing_changes(listing, after_listing)
-      assert(changes == [%{field: :name, new_value: "test", old_value: "spike"}])
-    end
+    #   updated_listing = Listings.get_listing!(listing.id)
+    #   changes = Activities.listing_changes(listing, updated_listing)
+    #   assert(changes == [%{field: :name, new_value: "test", old_value: "spike"}])
+    # end
   end
 end

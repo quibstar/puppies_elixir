@@ -369,12 +369,6 @@ defmodule Puppies.Accounts do
     User.approved_changeset(user, %{approved_to_sell: true}) |> Repo.update()
   end
 
-  ## testing and seeding
-  def seed_confirm_user(user) do
-    User.confirm_changeset(user)
-    |> Repo.update!()
-  end
-
   # User settings
   def user_photo_and_location(id) do
     Repo.get!(User, id) |> Repo.preload([:user_location, :photo])
@@ -409,5 +403,11 @@ defmodule Puppies.Accounts do
     user
     |> User.save_phone_number(attrs)
     |> Repo.update()
+  end
+
+  ## testing and seeding
+  def seed_confirm_user(user) do
+    User.confirm_changeset(user)
+    |> Repo.update!()
   end
 end
