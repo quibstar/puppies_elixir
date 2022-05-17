@@ -71,7 +71,6 @@ messagesChannel.on('update_nav_messages_link', (event) => {
   // let path = window.location.pathname;
   // if (!path.includes('messages') && event.id == window.userId) {
   const listings = event.listing_count;
-  console.log('listings', listings);
   const count = listings.reduce((acc, obj) => {
     return acc + obj.count;
   }, 0);
@@ -79,11 +78,17 @@ messagesChannel.on('update_nav_messages_link', (event) => {
   setTimeout(() => {
     listings.forEach((listing) => {
       const id = `${event.id}-listing-${listing.id}`;
-      console.log(id);
       const htmlEle = document.getElementById(id);
       if (htmlEle) {
         htmlEle.classList.remove('hidden');
         htmlEle.innerHTML = listing.count;
+      }
+      // for listings
+      const listingID = `${event.id}-listing-${listing.listing_id}`;
+      const listingEle = document.getElementById(listingID);
+      if (listingEle) {
+        listingEle.classList.remove('hidden');
+        listingEle.innerHTML = listing.count;
       }
     });
   }, 750);
@@ -93,7 +98,6 @@ messagesChannel.on('update_nav_messages_link', (event) => {
 });
 
 messagesChannel.on('update_messages_count', (event) => {
-  console.log('update_messages_count');
   messagesChannel.push('push_check_count', { received_by: event.user_id });
 });
 
