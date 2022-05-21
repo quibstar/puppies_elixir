@@ -44,7 +44,7 @@ defmodule PuppiesWeb.ListingDetails do
       "available" ->
         "I'm currently available"
 
-      "on hold" ->
+      "hold" ->
         "I'm currently on hold"
 
       "sold" ->

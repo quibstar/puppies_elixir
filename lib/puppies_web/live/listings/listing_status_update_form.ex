@@ -90,7 +90,7 @@ defmodule PuppiesWeb.ListingsStatusUpdateForm do
                     <%= hidden_input f, :id %>
                     <div class="mt-4">
                       <%= label f, :status, class: "block text-sm font-medium text-gray-700" %>
-                      <%= select f, :status, ["available", "on hold", "sold"], class: "capitalize pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md" %>
+                      <%= select f, :status, ["available", "hold", "sold"], class: "capitalize pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md" %>
                     </div>
 
                     <%= if Map.has_key?(@changeset.changes, :status ) && @changeset.changes.status == "sold" do %>
@@ -111,7 +111,7 @@ defmodule PuppiesWeb.ListingsStatusUpdateForm do
                       <div class="w-full border-t border-gray-300"></div>
                     </div>
                     <div class="relative flex justify-center">
-                      <span class="px-2 bg-white text-sm text-gray-500"> Status's Defined </span>
+                      <span class="px-2 bg-white text-sm text-gray-500"> Status Defined </span>
                     </div>
                   </div>
 
@@ -122,7 +122,7 @@ defmodule PuppiesWeb.ListingsStatusUpdateForm do
                     </div>
                     <div>
                       <h3 class="font-semibold">On Hold/Sale Pending</h3>
-                      <p>Listing that are on hold will only be available on the your dashboard. Listing on hold will stay on hold until you changes the listing status.</p>
+                      <p>Listing that are on hold will only be available on your dashboard. Listing on hold will stay on hold until you changes the listing status.</p>
                     </div>
                     <div>
                       <h3 class="font-semibold">Sold</h3>

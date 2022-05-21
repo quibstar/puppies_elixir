@@ -3,7 +3,6 @@ defmodule PuppiesWeb.MessagesChannel do
   Messages channel
   """
   use PuppiesWeb, :channel
-  alias Puppies.Messages
   alias Puppies.Threads
 
   def join("messages:user:" <> _user_id, _params, socket) do
@@ -11,7 +10,6 @@ defmodule PuppiesWeb.MessagesChannel do
     {:ok, socket}
   end
 
-  @spec handle_info(:after_join, Phoenix.Socket.t()) :: {:noreply, Phoenix.Socket.t()}
   def handle_info(:after_join, socket) do
     id = String.to_integer(socket.assigns.user_id)
     send_out(id, socket)

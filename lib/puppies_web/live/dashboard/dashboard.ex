@@ -42,7 +42,7 @@ defmodule PuppiesWeb.UserDashboardLive do
       # lister
       data = Listings.get_active_listings_by_user_id(user.id)
       available = Listings.get_listing_by_user_id_and_status(user.id, "available")
-      on_hold = Listings.get_listing_by_user_id_and_status(user.id, "on hold")
+      on_hold = Listings.get_listing_by_user_id_and_status(user.id, "hold")
       sold = Listings.get_listing_by_user_id_and_status(user.id, "sold")
 
       available_listing_to_post =

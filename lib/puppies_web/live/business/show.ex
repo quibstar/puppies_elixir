@@ -101,7 +101,7 @@ defmodule PuppiesWeb.BusinessPageLive do
               <%= unless @business.reviews == [] do %>
                 <div class="font-bold text-xl text-gray-900 sm:text-2xl">Reviews</div>
                 <%= for review <- @business.reviews do %>
-                  <%= live_component  PuppiesWeb.Review, id: review.id, review: review %>
+                  <%= live_component  PuppiesWeb.Review, id: review.id, review: review, business: nil %>
                 <% end %>
               <% end %>
             </div>

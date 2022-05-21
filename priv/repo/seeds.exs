@@ -22,7 +22,7 @@ defmodule PuppiesSeeds do
     res = Breeds.create_breed(%{name: breed, slug: Utilities.string_to_slug(breed)})
   end)
 
-  Enum.each(["available", "on hold", "sold"], fn opt ->
+  Enum.each(["available", "hold", "sold"], fn opt ->
     %ListingStatus{}
     |> ListingStatus.changeset(%{status: opt})
     |> Repo.insert()

@@ -21,6 +21,10 @@ defmodule PuppiesWeb.Admin.Communications do
             <button class="border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 whitespace-nowrap py-2 px-1 border-b-2 font-medium text-sm" :class="{ 'active-tab': tab === 'sys-email' }" @click="tab = 'sys-email'">
               System Emails
             </button>
+
+            <button class="border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 whitespace-nowrap py-2 px-1 border-b-2 font-medium text-sm" :class="{ 'active-tab': tab === 'reviews' }" @click="tab = 'reviews'">
+              Reviews
+            </button>
           </nav>
         </div>
         <div x-show="tab === 'conversations'">
@@ -32,6 +36,17 @@ defmodule PuppiesWeb.Admin.Communications do
 
         <div x-show="tab === 'sys-email'">
           sys emails
+        </div>
+
+        <div x-show="tab === 'reviews'">
+          <div class="my-4 text-xs text-gray-500">
+            Reviews written by this user.
+          </div>
+          <div class="space-y-2">
+            <%= for review <- @reviews do %>
+              <%= live_component  PuppiesWeb.Review, id: review.id, review: review, business: review.business %>
+            <% end %>
+          </div>
         </div>
       </div>
     </div>

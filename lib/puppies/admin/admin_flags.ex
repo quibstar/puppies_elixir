@@ -68,4 +68,13 @@ defmodule Puppies.Admin.Flags do
 
     Repo.all(f)
   end
+
+  @spec flags_by_user_id(any) :: Ecto.Query.t()
+  def flags_by_user_id(user_id) do
+    from(f in Flag,
+      where: f.offender_id == ^user_id,
+      preload: [:reporter, :admin]
+    )
+    |> Repo.all()
+  end
 end

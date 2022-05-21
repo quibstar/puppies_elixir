@@ -417,13 +417,11 @@ defmodule PuppiesWeb.BusinessForm do
                 <%= hidden_input l, :lng %>
               <% end %>
 
-
               <div class="mt-4 flex-grow">
                 <%= label f, :description, class: "block text-sm font-medium text-gray-700" %>
                 <%= textarea f, :description, class: "shadow-sm focus:ring-primary-500 focus:border-primary-500 block w-full sm:text-sm border-gray-300 rounded-md" %>
                 <%= error_tag f, :description %>
               </div>
-
 
             </div>
             <div class="py-5">

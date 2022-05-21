@@ -36,6 +36,8 @@ mix phx.gen.context ReviewLinks ReviewLink review_links email:string listing_id:
 - [x] verify ID
 - [x] Message access based on reputation level
 - [x] Filter for search
+- [ ] Record Activities
+- [ ] Record IP data
 - [ ] background notifications
 - [ ] Popular breeds generation gen_server
 - [ ] delete user
@@ -44,8 +46,16 @@ mix phx.gen.context ReviewLinks ReviewLink review_links email:string listing_id:
 
 # Admin
 
-- [ ] Create Admin Site
-- [ ] Layout
+- [x] Create Admin Site
+- [x] Layout
+- [x] Notes
+- [x] Transactions
+- [x] Flags
+- [x] Reviews
+- [ ] Listing
+- [ ] Activities
+- [ ] IP Address
+- [ ] Elasticsearch
 
 TODO: finish subscriptions
 http://localhost:4000/success?payment_intent=pi_3Ktl0uJLqL890V2T13dikKLg&payment_intent_client_secret=pi_3Ktl0uJLqL890V2T13dikKLg_secret_FtSK0uxZfT9q8h70N390AsCsR&redirect_status=succeeded

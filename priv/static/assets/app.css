@@ -1467,6 +1467,10 @@ h1, h2, h3, h4, h5 {
   grid-template-columns: repeat(4, minmax(0, 1fr));
 }
 
+.grid-cols-5 {
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+}
+
 .flex-row-reverse {
   flex-direction: row-reverse;
 }
@@ -2424,6 +2428,10 @@ h1, h2, h3, h4, h5 {
 
 .pb-20 {
   padding-bottom: 5rem;
+}
+
+.pb-2 {
+  padding-bottom: 0.5rem;
 }
 
 .text-left {
@@ -3744,6 +3752,11 @@ input[type='range']::-webkit-slider-thumb {
     border-top-width: 1px;
   }
 
+  .sm\:border-gray-200 {
+    --tw-border-opacity: 1;
+    border-color: rgb(229 231 235 / var(--tw-border-opacity));
+  }
+
   .sm\:p-6 {
     padding: 1.5rem;
   }
@@ -3807,6 +3820,10 @@ input[type='range']::-webkit-slider-thumb {
 
   .sm\:pb-4 {
     padding-bottom: 1rem;
+  }
+
+  .sm\:pt-5 {
+    padding-top: 1.25rem;
   }
 
   .sm\:text-left {
