@@ -16,7 +16,7 @@ defmodule PuppiesWeb.Admin.ListingComponent do
             </div>
 
             <div class="col-span-1">
-              <%= listing.dob %>
+              <%= Calendar.strftime(listing.dob , "%m/%d/%y") %>
             </div>
 
             <div class="col-span-1">
