@@ -4,6 +4,14 @@ defmodule Puppies.ES.Listings do
   """
   alias Puppies.{ES.Api, ES.Indexing, Listings}
 
+  def re_index_listings_by_user_id(user_id) do
+    ids = Listings.get_listings_ids_for_user(user_id)
+
+    Enum.each(ids, fn id ->
+      re_index_listing(id)
+    end)
+  end
+
   def re_index_listing(id) do
     listing = Listings.listing_for_elastic_search_reindexing(id)
     res = transform_to_flat_data(listing)
@@ -62,6 +70,7 @@ defmodule Puppies.ES.Listings do
       user_status: listing.user.status,
       reputation_level: listing.user.reputation_level,
       approved_to_sell: listing.user.approved_to_sell,
+      locked: listing.user.locked,
       deliver_on_site: listing.deliver_on_site,
       deliver_pick_up: listing.deliver_pick_up,
       delivery_shipped: listing.delivery_shipped,
@@ -120,6 +129,7 @@ defmodule Puppies.ES.Listings do
           email: %{type: :keyword},
           first_name: %{type: :text},
           approved_to_sell: %{type: :boolean},
+          locked: %{type: :boolean},
           last_name: %{type: :text},
           user_status: %{type: :text},
           reputation_level: %{type: :integer},

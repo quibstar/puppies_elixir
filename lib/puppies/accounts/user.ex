@@ -31,6 +31,7 @@ defmodule Puppies.Accounts.User do
     field(:is_seller, :boolean, default: false)
     field(:approved_to_sell, :boolean, default: false)
     field(:reputation_level, :integer, default: 0)
+    field(:locked, :boolean, default: false)
     has_one(:business, Puppies.Businesses.Business)
     has_many(:listings, Puppies.Listings.Listing)
     has_many(:favorites, Puppies.Favorite, on_replace: :delete)
@@ -212,5 +213,20 @@ defmodule Puppies.Accounts.User do
       message: "Missing international version, please try again"
     )
     |> validate_required([:phone_number], message: "Please supply a phone number")
+  end
+
+  def admin_update_status(user, attrs) do
+    user
+    |> cast(attrs, [:status])
+  end
+
+  def admin_update_selling_status(user, attrs) do
+    user
+    |> cast(attrs, [:approved_to_sell])
+  end
+
+  def admin_update_locked_status(user, attrs) do
+    user
+    |> cast(attrs, [:locked])
   end
 end

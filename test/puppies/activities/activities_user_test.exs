@@ -1,12 +1,13 @@
 defmodule Puppies.ActivitiesUserTest do
   use Puppies.DataCase
 
-  import Puppies.{AccountsFixtures}
+  import Puppies.{AccountsFixtures, PhotosFixtures}
   alias Puppies.{Accounts, Activities}
 
   describe "Activities" do
     test "records reputation level" do
       user = user_fixture()
+      photo = photo_fixture(%{user_id: user.id})
       {:ok, updated_user} = Accounts.update_reputation_level(user, %{reputation_level: 2})
       res = Activities.user_changes(user, updated_user)
       assert(res == [%{field: :reputation_level, new_value: 2, old_value: 0}])

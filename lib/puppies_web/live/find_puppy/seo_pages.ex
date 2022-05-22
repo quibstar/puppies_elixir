@@ -199,7 +199,7 @@ defmodule PuppiesWeb.FindPuppyLive do
                           </svg>
                           <h3 class="mt-2 text-sm font-medium text-gray-900">So Sorry!</h3>
                           <p class="mt-1 text-sm text-gray-500">
-                              No rooms available in <span class="capitalize"> <%= Utilities.state_to_human_readable(@state) %></span>. Maybe try <%= live_redirect "searching", to: Routes.live_path(@socket, PuppiesWeb.SearchLive), class: "underline py-3 md:p-0 block text-base text-gray-500 hover:text-gray-900 nav-link" %>
+                              No puppies available in <span class="capitalize"> <%= Utilities.state_to_human_readable(@state) %></span>. Maybe try <%= live_redirect "searching", to: Routes.live_path(@socket, PuppiesWeb.SearchLive), class: "underline py-3 md:p-0 block text-base text-gray-500 hover:text-gray-900 nav-link" %>
                           </p>
                       </div>
                   </div>

@@ -202,4 +202,12 @@ defmodule Puppies.Listings do
     listing = __MODULE__.get_listing_alt!(listing_id)
     __MODULE__.update_listing(listing, %{views: views})
   end
+
+  def get_listings_ids_for_user(user_id) do
+    from(l in Listing,
+      where: l.user_id == ^user_id,
+      select: l.id
+    )
+    |> Repo.all()
+  end
 end

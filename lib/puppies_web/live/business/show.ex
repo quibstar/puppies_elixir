@@ -58,7 +58,7 @@ defmodule PuppiesWeb.BusinessPageLive do
 
   def render(assigns) do
     ~H"""
-      <div class="h-full max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
+      <div class="h-full max-w-7xl px-4 py-6 sm:px-6 lg:px-8 mx-auto">
         <%= if @loading do %>
           <%= live_component PuppiesWeb.LoadingComponent, id: "listing-loading" %>
         <% else %>

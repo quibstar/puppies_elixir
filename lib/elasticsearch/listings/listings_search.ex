@@ -168,12 +168,11 @@ defmodule Puppies.ES.ListingsSearch do
       size: size,
       query: %{
         bool: %{
-          must: must
+          must: must_concat(must)
         }
       }
     }
 
-    IO.inspect(body)
     Api.post("/listings/_search", body)
   end
 
@@ -197,12 +196,15 @@ defmodule Puppies.ES.ListingsSearch do
       size: size,
       query: %{
         bool: %{
-          must: [
-            %{term: s}
-          ]
+          must:
+            must_concat([
+              %{term: s}
+            ])
         }
       }
     }
+
+    IO.inspect(body)
 
     Api.post("/listings/_search", body)
   end
@@ -235,10 +237,11 @@ defmodule Puppies.ES.ListingsSearch do
       size: size,
       query: %{
         bool: %{
-          must: [
-            %{term: s},
-            %{term: %{place_slug: city}}
-          ]
+          must:
+            must_concat([
+              %{term: s},
+              %{term: %{place_slug: city}}
+            ])
         }
       }
     }
@@ -274,11 +277,12 @@ defmodule Puppies.ES.ListingsSearch do
       size: size,
       query: %{
         bool: %{
-          must: [
-            %{term: s},
-            %{term: %{place_slug: city}},
-            %{term: %{breeds_slug: breed}}
-          ]
+          must:
+            must_concat([
+              %{term: s},
+              %{term: %{place_slug: city}},
+              %{term: %{breeds_slug: breed}}
+            ])
         }
       }
     }
@@ -307,5 +311,18 @@ defmodule Puppies.ES.ListingsSearch do
     }
 
     Api.post("/listings/_search", body)
+  end
+
+  defp must_concat(must) do
+    res =
+      must ++
+        [
+          %{term: %{locked: false}},
+          %{term: %{approved_to_sell: true}},
+          %{term: %{status: "available"}},
+          %{term: %{user_status: "active"}}
+        ]
+
+    res
   end
 end

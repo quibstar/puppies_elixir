@@ -322,6 +322,7 @@ defmodule Puppies.Accounts do
   def get_user_by_reset_password_token(token) do
     with {:ok, query} <- UserToken.verify_email_token_query(token, "reset_password"),
          %User{} = user <- Repo.one(query) do
+      admin_update_user_locked_status(user, %{locked: false})
       user
     else
       _ -> nil
@@ -403,6 +404,28 @@ defmodule Puppies.Accounts do
     user
     |> User.save_phone_number(attrs)
     |> Repo.update()
+  end
+
+  def admin_update_status(user, attrs) do
+    user
+    |> User.admin_update_status(attrs)
+    |> Repo.update()
+  end
+
+  def admin_update_user_selling_status(user, attrs) do
+    user
+    |> User.admin_update_selling_status(attrs)
+    |> Repo.update()
+  end
+
+  def admin_update_user_locked_status(user, attrs) do
+    user
+    |> User.admin_update_locked_status(attrs)
+    |> Repo.update()
+  end
+
+  def admin_logout_user(user) do
+    Puppies.Accounts.UserToken.user_and_contexts_query(user, :all) |> Repo.delete_all()
   end
 
   ## testing and seeding

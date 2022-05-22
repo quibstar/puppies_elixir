@@ -1,8 +1,7 @@
 defmodule PuppiesWeb.UserRegistrationController do
   use PuppiesWeb, :controller
 
-  alias Puppies.Accounts
-  alias Puppies.Accounts.User
+  alias Puppies.{Accounts, Accounts.User, Utilities, IPStack}
   alias PuppiesWeb.UserAuth
 
   def new(conn, _params) do
@@ -11,6 +10,8 @@ defmodule PuppiesWeb.UserRegistrationController do
   end
 
   def create(conn, %{"user" => user_params}) do
+    ip = Utilities.x_forward_or_remote_ip(conn)
+
     case Accounts.register_user(user_params) do
       {:ok, user} ->
         {:ok, _} =
@@ -18,6 +19,11 @@ defmodule PuppiesWeb.UserRegistrationController do
             user,
             &Routes.user_confirmation_url(conn, :edit, &1)
           )
+
+        # Task.start(fn ->
+        # Activities.sign_up(user)
+        IPStack.process_ip(ip, user.id)
+        # end)
 
         conn
         |> put_flash(:info, "User created successfully.")

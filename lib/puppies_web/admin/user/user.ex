@@ -24,6 +24,7 @@ defmodule PuppiesWeb.Admin.User do
 
   def connected_mount(%{"id" => id}, session, socket) do
     user = Accounts.get_user_business_and_listings(id)
+    changeset = Accounts.change_user_profile(user)
     listings = Listings.get_user_listings(user.id)
     business = Business.get_user_business(user.id)
     notes = Notes.user_notes(user.id)
@@ -55,11 +56,12 @@ defmodule PuppiesWeb.Admin.User do
        reviews: reviews,
        flags: flags,
        listings: listings,
-       business: business
+       business: business,
+       changeset: changeset
      )}
   end
 
-  defp email_confirmed(confirmed_at) do
+  defp status_confirmed(confirmed_at) do
     if is_nil(confirmed_at) do
       "Not Confirmed"
     else
@@ -90,6 +92,88 @@ defmodule PuppiesWeb.Admin.User do
      )}
   end
 
+  def handle_event("update_user_status", %{"user" => params}, socket) do
+    user = Accounts.admin_update_status(socket.assigns.user, params)
+
+    case user do
+      {:ok, user} ->
+        changeset = Accounts.change_user_profile(user)
+        reindex_user_listings(user.id)
+
+        {
+          :noreply,
+          socket
+          |> put_flash(:info, "Status updated to #{user.status}")
+          |> assign(:changeset, changeset)
+          |> push_redirect(to: Routes.live_path(socket, PuppiesWeb.Admin.User, user.id))
+        }
+
+      {:error, %Ecto.Changeset{} = changeset} ->
+        {:noreply, assign(socket, changeset: changeset)}
+    end
+  end
+
+  def handle_event("update_locked_status", %{"user" => params}, socket) do
+    user = Accounts.admin_update_user_locked_status(socket.assigns.user, params)
+
+    case user do
+      {:ok, user} ->
+        changeset = Accounts.change_user_profile(user)
+
+        if user.locked do
+          Accounts.admin_logout_user(user)
+        end
+
+        reindex_user_listings(user.id)
+
+        {
+          :noreply,
+          socket
+          |> put_flash(:info, "Account is locked: #{user.locked}")
+          |> assign(:changeset, changeset)
+          |> push_redirect(to: Routes.live_path(socket, PuppiesWeb.Admin.User, user.id))
+        }
+
+      {:error, %Ecto.Changeset{} = changeset} ->
+        {:noreply, assign(socket, changeset: changeset)}
+    end
+  end
+
+  def handle_event("update_user_selling_status", %{"user" => params}, socket) do
+    user = Accounts.admin_update_user_selling_status(socket.assigns.user, params)
+
+    case user do
+      {:ok, user} ->
+        changeset = Accounts.change_user_profile(user)
+
+        status =
+          if user.approved_to_sell do
+            "approved"
+          else
+            "un-approved"
+          end
+
+        reindex_user_listings(user.id)
+
+        {
+          :noreply,
+          socket
+          |> put_flash(:info, "Selling status updated to: #{status}")
+          |> assign(:changeset, changeset)
+          |> push_redirect(to: Routes.live_path(socket, PuppiesWeb.Admin.User, user.id))
+        }
+
+      {:error, %Ecto.Changeset{} = changeset} ->
+        {:noreply, assign(socket, changeset: changeset)}
+    end
+  end
+
+  defp reindex_user_listings(user_id) do
+    Task.start(fn ->
+      Puppies.ES.Listings.re_index_listings_by_user_id(user_id)
+    end)
+  end
+
   def render(assigns) do
     ~H"""
       <div>
@@ -112,37 +196,90 @@ defmodule PuppiesWeb.Admin.User do
                         <p class="text-sm font-medium text-gray-900"><%= @user.first_name %> <%= @user.last_name %></p>
                         <p class="text-sm text-gray-500">ID: <%= @user.id %></p>
                         <p class="text-sm text-gray-500">Email: <%= @user.email %></p>
-                        <p class="text-sm text-gray-500">Email confirmed: <%= email_confirmed(@user.confirmed_at) %></p>
+                        <p class="text-sm text-gray-500">Email confirmed: <%= status_confirmed(@user.confirmed_at) %></p>
                         <p class="text-sm text-gray-500">Phone: <%= @user.phone_number %></p>
-                        <p class="text-sm text-gray-500">Is seller: <%= @user.is_seller %></p>
-                        <div>
-                          <p class="text-sm text-gray-500">Status: <%= @user.status %></p>
-                        </div>
-                        <p class="text-sm text-gray-500">Approved to sell: <%= @user.approved_to_sell %></p>
-                        <p class="text-sm text-gray-500">Account locked: False</p>
                       </div>
                     </div>
                   </div>
-                  <%= if @user.is_seller do %>
-                    <div class="px-4 py-5">
-                      <div class="text-lg font-semibold mb-2">Business</div>
-                      <div class="flex">
-                        <div class="flex-none">
-                          <%= PuppiesWeb.Avatar.show(%{business: @business, user: @user, square: 10, extra_classes: "text-2xl"}) %>
+                  <div class="px-4 py-5">
+                    <.form let={f} for={@changeset}  phx_change="update_user_status">
+                      <div class="my-2">
+                        <div class="text-lg font-semibold mb-2">Status</div>
+                        <div class="space-y-4 sm:flex sm:items-center sm:space-y-0 sm:space-x-10">
+                          <div class="flex items-center">
+                            <%= radio_button(f, :status, :active, class: "focus:ring-primary-500 h-4 w-4 text-primary-600 border-gray-300") %>
+                            <label for="active" class="ml-3 block text-sm font-medium text-gray-700"> Active </label>
+                          </div>
+
+                          <div class="flex items-center">
+                            <%= radio_button(f, :status, :suspended, class: "focus:ring-primary-500 h-4 w-4 text-primary-600 border-gray-300") %>
+                            <label for="sms" class="ml-3 block text-sm font-medium text-gray-700"> Suspended </label>
+                          </div>
                         </div>
-                        <div class="ml-3 space-y-1">
-                          <p class="text-sm font-medium text-gray-900"><%= @business.name %></p>
-                          <p class="text-sm text-gray-500">Email website: <%= @business.website%></p>
-                          <p class="text-sm text-gray-500">State license: <%= @business.state_license%></p>
-                          <p class="text-sm text-gray-500">Fed license: <%= @business.federal_license%></p>
-                          <p class="text-sm text-gray-500">Phone: <%= @business.phone%></p>
-                          <p class="text-sm text-gray-500">Description: <%= @business.description %></p>
-                          <p class="text-sm text-gray-500">Created on: <%= Calendar.strftime(@business.inserted_at , "%m/%d/%y %I:%M:%S %p")%></p>
+                        <div class="text-xs text-gray-500">
+                          Suspended user are unable to access their dashboard and their listing will not be included in <strong>any</strong> searches until an admin makes a user active.
+                        </div>
+
+                      </div>
+                    </.form>
+                    <.form let={f} for={@changeset}  phx_change="update_locked_status">
+                      <div>
+                        <div class="text-lg font-semibold">Locked</div>
+                        <div class="space-y-4 sm:flex sm:items-center sm:space-y-0 sm:space-x-10">
+                          <div class="flex items-center">
+                            <%= radio_button(f, :locked, :false, class: "focus:ring-primary-500 h-4 w-4 text-primary-600 border-gray-300") %>
+                            <label for="sms" class="ml-3 block text-sm font-medium text-gray-700"> Unlocked </label>
+                          </div>
+
+                          <div class="flex items-center">
+                            <%= radio_button(f, :locked, :true, class: "focus:ring-primary-500 h-4 w-4 text-primary-600 border-gray-300") %>
+                            <label for="sms" class="ml-3 block text-sm font-medium text-gray-700"> Locked </label>
+                          </div>
+                        </div>
+                        <div class="text-xs text-gray-500">
+                          Locked accounts will automatically log the user out. They will have to reset their password to regain access.
                         </div>
                       </div>
-                    </div>
-                  <% end %>
+                    </.form>
+                  </div>
                 </div>
+                <%= if @user.is_seller do %>
+                 <div class="bg-white overflow-hidden shadow rounded-lg divide-y px-2 my-2">
+                  <div class="px-4 py-5">
+                    <div class="text-lg font-semibold mb-2">Business</div>
+                    <div class="flex">
+                      <div class="flex-none">
+                        <%= PuppiesWeb.Avatar.show(%{business: @business, user: @user, square: 10, extra_classes: "text-2xl"}) %>
+                      </div>
+                      <div class="ml-3 space-y-1">
+                        <p class="text-sm font-medium text-gray-900"><%= @business.name %></p>
+                        <p class="text-sm text-gray-500">Email website: <%= @business.website%></p>
+                        <p class="text-sm text-gray-500">State license: <%= @business.state_license%></p>
+                        <p class="text-sm text-gray-500">Fed license: <%= @business.federal_license%></p>
+                        <p class="text-sm text-gray-500">Phone: <%= @business.phone%></p>
+                        <p class="text-sm text-gray-500">Description: <%= @business.description %></p>
+                        <p class="text-sm text-gray-500">Created on: <%= Calendar.strftime(@business.inserted_at , "%m/%d/%y %I:%M:%S %p")%></p>
+                      </div>
+                    </div>
+                  </div>
+                    <.form let={f} for={@changeset}  phx_change="update_user_selling_status", class="px-4 py-5">
+                      <div class="text-lg font-semibold mb-2">Approved to sell</div>
+                      <div class="space-y-4 sm:flex sm:items-center sm:space-y-0 sm:space-x-10">
+                        <div class="flex items-center">
+                          <%= radio_button(f, :approved_to_sell, :true, class: "focus:ring-primary-500 h-4 w-4 text-primary-600 border-gray-300") %>
+                          <label for="active" class="ml-3 block text-sm font-medium text-gray-700"> Yes </label>
+                        </div>
+                        <div class="flex items-center">
+                          <%= radio_button(f, :approved_to_sell, :false, class: "focus:ring-primary-500 h-4 w-4 text-primary-600 border-gray-300") %>
+                          <label for="sms" class="ml-3 block text-sm font-medium text-gray-700"> No </label>
+                        </div>
+                      </div>
+                      <div class="text-xs text-gray-500">
+                        Listings will not be included in any search if the business in not approved to sell.
+                      </div>
+                    </.form>
+                  </div>
+                <% end %>
               </div>
               <div>
                 <.live_component module={PuppiesWeb.Admin.Flags} id="flags" flags={@flags} />
@@ -187,7 +324,7 @@ defmodule PuppiesWeb.Admin.User do
                   </div>
 
                   <div x-show="tab === 'ip'">
-                    Ip info
+                    <.live_component module={PuppiesWeb.Admin.IpAddresses} id="ip_address" user={@user}  />
                   </div>
 
                   <div x-show="tab === 'communications'">

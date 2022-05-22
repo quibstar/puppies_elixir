@@ -37,7 +37,7 @@ mix phx.gen.context ReviewLinks ReviewLink review_links email:string listing_id:
 - [x] Message access based on reputation level
 - [x] Filter for search
 - [ ] Record Activities
-- [ ] Record IP data
+- [x] Record IP data
 - [ ] background notifications
 - [ ] Popular breeds generation gen_server
 - [ ] delete user
@@ -52,9 +52,9 @@ mix phx.gen.context ReviewLinks ReviewLink review_links email:string listing_id:
 - [x] Transactions
 - [x] Flags
 - [x] Reviews
-- [ ] Listing
+- [x] Listing
 - [ ] Activities
-- [ ] IP Address
+- [x] IP Address
 - [ ] Elasticsearch
 
 TODO: finish subscriptions
