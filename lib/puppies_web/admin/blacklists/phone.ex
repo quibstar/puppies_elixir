@@ -1,22 +1,22 @@
 defmodule PuppiesWeb.Admin.BlackListPhone do
   @moduledoc """
-  PhoneBlacklist component modal
+  Phone component modal
   """
   use PuppiesWeb, :live_component
-  alias Puppies.{Blacklists, Blacklists.PhoneBlacklist}
+  alias Puppies.{Blacklists, Blacklists.Phone}
 
   def update(assigns, socket) do
-    changeset = Blacklists.change_phone_blacklist(%PhoneBlacklist{}, %{})
+    changeset = Blacklists.change_phone_blacklist(%Phone{}, %{})
 
     {:ok,
      socket
      |> assign(assigns)
      |> assign(:changeset, changeset)
-     |> assign(:phones, Blacklists.get_blacklisted_items(Blacklists.PhoneBlacklist))}
+     |> assign(:phones, Blacklists.get_blacklisted_items(Blacklists.Phone))}
   end
 
-  def handle_event("validate", %{"phone_blacklist" => params}, socket) do
-    changeset = Blacklists.change_phone_blacklist(%PhoneBlacklist{}, params)
+  def handle_event("validate", %{"phone" => params}, socket) do
+    changeset = Blacklists.change_phone_blacklist(%Phone{}, params)
     IO.inspect(changeset)
 
     {:noreply,
@@ -25,11 +25,10 @@ defmodule PuppiesWeb.Admin.BlackListPhone do
      )}
   end
 
-  def handle_event("save_phone_blacklist", %{"phone_blacklist" => params}, socket) do
+  def handle_event("save_phone_blacklist", %{"phone" => params}, socket) do
     %{"phone_number" => phone_number} = params
 
-    exists =
-      Blacklists.check_for_existence_of(Blacklists.PhoneBlacklist, :phone_number, phone_number)
+    exists = Blacklists.check_for_existence_of(Blacklists.Phone, :phone_number, phone_number)
 
     if exists do
       {:noreply,
@@ -43,8 +42,9 @@ defmodule PuppiesWeb.Admin.BlackListPhone do
            socket
            |> assign(
              :phones,
-             Blacklists.get_blacklisted_items(Blacklists.PhoneBlacklist)
+             Blacklists.get_blacklisted_items(Blacklists.Phone)
            )
+           |> assign(:changeset, Blacklists.change_phone_blacklist(%Phone{}))
            |> put_flash(:info, "Phone number added")
            |> push_patch(to: Routes.live_path(socket, PuppiesWeb.Admin.BlackLists))}
 
@@ -68,7 +68,7 @@ defmodule PuppiesWeb.Admin.BlackListPhone do
       {:ok, _phone_blacklist} ->
         {:noreply,
          socket
-         |> assign(:phones, Blacklists.get_blacklisted_items(Blacklists.PhoneBlacklist))
+         |> assign(:phones, Blacklists.get_blacklisted_items(Blacklists.Phone))
          |> put_flash(:info, "Phone number was removed")
          |> push_patch(to: Routes.live_path(socket, PuppiesWeb.Admin.BlackLists))}
 

@@ -1,22 +1,22 @@
 defmodule PuppiesWeb.Admin.BlackListContent do
   @moduledoc """
-  ContentBlacklist component modal
+  Content component modal
   """
   use PuppiesWeb, :live_component
-  alias Puppies.{Blacklists, Blacklists.ContentBlacklist}
+  alias Puppies.{Blacklists, Blacklists.Content}
 
   def update(assigns, socket) do
-    changeset = Blacklists.change_content_blacklist(%ContentBlacklist{}, %{})
+    changeset = Blacklists.change_content_blacklist(%Content{})
 
     {:ok,
      socket
      |> assign(assigns)
      |> assign(:changeset, changeset)
-     |> assign(:contents, Blacklists.get_blacklisted_items(Blacklists.ContentBlacklist))}
+     |> assign(:contents, Blacklists.get_blacklisted_items(Blacklists.Content))}
   end
 
-  def handle_event("validate", %{"content_blacklist" => params}, socket) do
-    changeset = Blacklists.change_content_blacklist(%ContentBlacklist{}, params)
+  def handle_event("validate", %{"content" => params}, socket) do
+    changeset = Blacklists.change_content_blacklist(%Content{}, params)
 
     {:noreply,
      assign(socket,
@@ -24,9 +24,9 @@ defmodule PuppiesWeb.Admin.BlackListContent do
      )}
   end
 
-  def handle_event("save_content_blacklist", %{"content_blacklist" => params}, socket) do
+  def handle_event("save_content_blacklist", %{"content" => params}, socket) do
     %{"content" => content} = params
-    exists = Blacklists.check_for_existence_of(Blacklists.ContentBlacklist, :content, content)
+    exists = Blacklists.check_for_existence_of(Blacklists.Content, :content, content)
 
     if exists do
       {:noreply,
@@ -38,7 +38,8 @@ defmodule PuppiesWeb.Admin.BlackListContent do
         {:ok, _content_blacklist} ->
           {:noreply,
            socket
-           |> assign(:contents, Blacklists.get_blacklisted_items(Blacklists.ContentBlacklist))
+           |> assign(:contents, Blacklists.get_blacklisted_items(Blacklists.Content))
+           |> assign(:changeset, Blacklists.change_content_blacklist(%Content{}))
            |> put_flash(:info, "Content added")
            |> push_patch(to: Routes.live_path(socket, PuppiesWeb.Admin.BlackLists))}
 
@@ -62,7 +63,7 @@ defmodule PuppiesWeb.Admin.BlackListContent do
       {:ok, _content_blacklist} ->
         {:noreply,
          socket
-         |> assign(:contents, Blacklists.get_blacklisted_items(Blacklists.ContentBlacklist))
+         |> assign(:contents, Blacklists.get_blacklisted_items(Blacklists.Content))
          |> put_flash(:info, "Content was removed")
          |> push_patch(to: Routes.live_path(socket, PuppiesWeb.Admin.BlackLists))}
 

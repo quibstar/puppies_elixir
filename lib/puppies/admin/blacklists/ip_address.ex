@@ -1,8 +1,8 @@
-defmodule Puppies.Blacklists.IPAddressBlacklist do
+defmodule Puppies.Blacklists.IPAddress do
   use Ecto.Schema
   import Ecto.Changeset
 
-  schema "ip_address_blacklists" do
+  schema "blacklisted_ip_addresses" do
     field(:ip_address, :string)
     belongs_to(:admin, Puppies.Admins.Admin)
     timestamps()

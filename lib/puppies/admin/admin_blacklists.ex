@@ -6,7 +6,7 @@ defmodule Puppies.Blacklists do
   import Ecto.Query, warn: false
   alias Puppies.Repo
 
-  alias Puppies.Blacklists.EmailBlacklist
+  alias Puppies.Blacklists.Domain
 
   def get_blacklisted_items(schema) do
     Repo.all(schema)
@@ -21,53 +21,53 @@ defmodule Puppies.Blacklists do
   end
 
   @doc """
-  Creates a email_blacklist.
+  Creates a domain_blacklist.
 
   ## Examples
 
-      iex> create_email_blacklist(%{field: value})
-      {:ok, %EmailBlacklist{}}
+      iex> create_domain_blacklist(%{field: value})
+      {:ok, %Domain{}}
 
-      iex> create_email_blacklist(%{field: bad_value})
+      iex> create_domain_blacklist(%{field: bad_value})
       {:error, %Ecto.Changeset{}}
 
   """
-  def create_email_blacklist(attrs \\ %{}) do
-    %EmailBlacklist{}
-    |> EmailBlacklist.changeset(attrs)
+  def create_domain_blacklist(attrs \\ %{}) do
+    %Domain{}
+    |> Domain.changeset(attrs)
     |> Repo.insert()
   end
 
   @doc """
-  Deletes a email_blacklist.
+  Deletes a domain_blacklist.
 
   ## Examples
 
-      iex> delete_email_blacklist(email_blacklist)
-      {:ok, %EmailBlacklist{}}
+      iex> delete_domain_blacklist(domain_blacklist)
+      {:ok, %Domain{}}
 
-      iex> delete_email_blacklist(email_blacklist)
+      iex> delete_domain_blacklist(domain_blacklist)
       {:error, %Ecto.Changeset{}}
 
   """
-  def delete_email_blacklist(%EmailBlacklist{} = email_blacklist) do
-    Repo.delete(email_blacklist)
+  def delete_domain_blacklist(%Domain{} = domain_blacklist) do
+    Repo.delete(domain_blacklist)
   end
 
   @doc """
-  Returns an `%Ecto.Changeset{}` for tracking email_blacklist changes.
+  Returns an `%Ecto.Changeset{}` for tracking domain_blacklist changes.
 
   ## Examples
 
-      iex> change_email_blacklist(email_blacklist)
-      %Ecto.Changeset{data: %EmailBlacklist{}}
+      iex> change_domain_blacklist(domain_blacklist)
+      %Ecto.Changeset{data: %Domain{}}
 
   """
-  def change_email_blacklist(%EmailBlacklist{} = email_blacklist, attrs \\ %{}) do
-    EmailBlacklist.changeset(email_blacklist, attrs)
+  def change_domain_blacklist(%Domain{} = domain_blacklist, attrs \\ %{}) do
+    Domain.changeset(domain_blacklist, attrs)
   end
 
-  alias Puppies.Blacklists.IPAddressBlacklist
+  alias Puppies.Blacklists.IPAddress
 
   @doc """
   Creates a ip_address_blacklist.
@@ -75,15 +75,15 @@ defmodule Puppies.Blacklists do
   ## Examples
 
       iex> create_ip_address_blacklist(%{field: value})
-      {:ok, %IPAddressBlacklist{}}
+      {:ok, %IPAddress{}}
 
       iex> create_ip_address_blacklist(%{field: bad_value})
       {:error, %Ecto.Changeset{}}
 
   """
   def create_ip_address_blacklist(attrs \\ %{}) do
-    %IPAddressBlacklist{}
-    |> IPAddressBlacklist.changeset(attrs)
+    %IPAddress{}
+    |> IPAddress.changeset(attrs)
     |> Repo.insert()
   end
 
@@ -93,13 +93,13 @@ defmodule Puppies.Blacklists do
   ## Examples
 
       iex> delete_ip_address_blacklist(ip_address_blacklist)
-      {:ok, %IPAddressBlacklist{}}
+      {:ok, %IPAddress{}}
 
       iex> delete_ip_address_blacklist(ip_address_blacklist)
       {:error, %Ecto.Changeset{}}
 
   """
-  def delete_ip_address_blacklist(%IPAddressBlacklist{} = ip_address_blacklist) do
+  def delete_ip_address_blacklist(%IPAddress{} = ip_address_blacklist) do
     Repo.delete(ip_address_blacklist)
   end
 
@@ -109,14 +109,14 @@ defmodule Puppies.Blacklists do
   ## Examples
 
       iex> change_ip_address_blacklist(ip_address_blacklist)
-      %Ecto.Changeset{data: %IPAddressBlacklist{}}
+      %Ecto.Changeset{data: %IPAddress{}}
 
   """
-  def change_ip_address_blacklist(%IPAddressBlacklist{} = ip_address_blacklist, attrs \\ %{}) do
-    IPAddressBlacklist.changeset(ip_address_blacklist, attrs)
+  def change_ip_address_blacklist(%IPAddress{} = ip_address_blacklist, attrs \\ %{}) do
+    IPAddress.changeset(ip_address_blacklist, attrs)
   end
 
-  alias Puppies.Blacklists.ContentBlacklist
+  alias Puppies.Blacklists.Content
 
   @doc """
   Creates a content_blacklist.
@@ -124,15 +124,15 @@ defmodule Puppies.Blacklists do
   ## Examples
 
       iex> create_content_blacklist(%{field: value})
-      {:ok, %ContentBlacklist{}}
+      {:ok, %Content{}}
 
       iex> create_content_blacklist(%{field: bad_value})
       {:error, %Ecto.Changeset{}}
 
   """
   def create_content_blacklist(attrs \\ %{}) do
-    %ContentBlacklist{}
-    |> ContentBlacklist.changeset(attrs)
+    %Content{}
+    |> Content.changeset(attrs)
     |> Repo.insert()
   end
 
@@ -142,13 +142,13 @@ defmodule Puppies.Blacklists do
   ## Examples
 
       iex> delete_content_blacklist(content_blacklist)
-      {:ok, %ContentBlacklist{}}
+      {:ok, %Content{}}
 
       iex> delete_content_blacklist(content_blacklist)
       {:error, %Ecto.Changeset{}}
 
   """
-  def delete_content_blacklist(%ContentBlacklist{} = content_blacklist) do
+  def delete_content_blacklist(%Content{} = content_blacklist) do
     Repo.delete(content_blacklist)
   end
 
@@ -158,14 +158,14 @@ defmodule Puppies.Blacklists do
   ## Examples
 
       iex> change_content_blacklist(content_blacklist)
-      %Ecto.Changeset{data: %ContentBlacklist{}}
+      %Ecto.Changeset{data: %Content{}}
 
   """
-  def change_content_blacklist(%ContentBlacklist{} = content_blacklist, attrs \\ %{}) do
-    ContentBlacklist.changeset(content_blacklist, attrs)
+  def change_content_blacklist(%Content{} = content_blacklist, attrs \\ %{}) do
+    Content.changeset(content_blacklist, attrs)
   end
 
-  alias Puppies.Blacklists.PhoneBlacklist
+  alias Puppies.Blacklists.Phone
 
   @doc """
   Creates a phone_blacklist.
@@ -173,15 +173,15 @@ defmodule Puppies.Blacklists do
   ## Examples
 
       iex> create_phone_blacklist(%{field: value})
-      {:ok, %PhoneBlacklist{}}
+      {:ok, %Phone{}}
 
       iex> create_phone_blacklist(%{field: bad_value})
       {:error, %Ecto.Changeset{}}
 
   """
   def create_phone_blacklist(attrs \\ %{}) do
-    %PhoneBlacklist{}
-    |> PhoneBlacklist.changeset(attrs)
+    %Phone{}
+    |> Phone.changeset(attrs)
     |> Repo.insert()
   end
 
@@ -191,13 +191,13 @@ defmodule Puppies.Blacklists do
   ## Examples
 
       iex> delete_phone_blacklist(phone_blacklist)
-      {:ok, %PhoneBlacklist{}}
+      {:ok, %Phone{}}
 
       iex> delete_phone_blacklist(phone_blacklist)
       {:error, %Ecto.Changeset{}}
 
   """
-  def delete_phone_blacklist(%PhoneBlacklist{} = phone_blacklist) do
+  def delete_phone_blacklist(%Phone{} = phone_blacklist) do
     Repo.delete(phone_blacklist)
   end
 
@@ -207,10 +207,10 @@ defmodule Puppies.Blacklists do
   ## Examples
 
       iex> change_phone_blacklist(phone_blacklist)
-      %Ecto.Changeset{data: %PhoneBlacklist{}}
+      %Ecto.Changeset{data: %Phone{}}
 
   """
-  def change_phone_blacklist(%PhoneBlacklist{} = phone_blacklist, attrs \\ %{}) do
-    PhoneBlacklist.changeset(phone_blacklist, attrs)
+  def change_phone_blacklist(%Phone{} = phone_blacklist, attrs \\ %{}) do
+    Phone.changeset(phone_blacklist, attrs)
   end
 end

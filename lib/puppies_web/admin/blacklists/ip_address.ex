@@ -1,22 +1,22 @@
 defmodule PuppiesWeb.Admin.BlackListIpAddress do
   @moduledoc """
-  IPAddressBlacklist component modal
+  IPAddress component modal
   """
   use PuppiesWeb, :live_component
-  alias Puppies.{Blacklists, Blacklists.IPAddressBlacklist}
+  alias Puppies.{Blacklists, Blacklists.IPAddress}
 
   def update(assigns, socket) do
-    changeset = Blacklists.change_ip_address_blacklist(%IPAddressBlacklist{}, %{})
+    changeset = Blacklists.change_ip_address_blacklist(%IPAddress{})
 
     {:ok,
      socket
      |> assign(assigns)
      |> assign(:changeset, changeset)
-     |> assign(:ip_addresses, Blacklists.get_blacklisted_items(Blacklists.IPAddressBlacklist))}
+     |> assign(:ip_addresses, Blacklists.get_blacklisted_items(Blacklists.IPAddress))}
   end
 
-  def handle_event("validate", %{"ip_address_blacklist" => params}, socket) do
-    changeset = Blacklists.change_ip_address_blacklist(%IPAddressBlacklist{}, params)
+  def handle_event("validate", %{"ip_address" => params}, socket) do
+    changeset = Blacklists.change_ip_address_blacklist(%IPAddress{}, params)
 
     {:noreply,
      assign(socket,
@@ -24,11 +24,10 @@ defmodule PuppiesWeb.Admin.BlackListIpAddress do
      )}
   end
 
-  def handle_event("save_ip_address_blacklist", %{"ip_address_blacklist" => params}, socket) do
+  def handle_event("save_ip_address_blacklist", %{"ip_address" => params}, socket) do
     %{"ip_address" => ip_address} = params
 
-    exists =
-      Blacklists.check_for_existence_of(Blacklists.IPAddressBlacklist, :ip_address, ip_address)
+    exists = Blacklists.check_for_existence_of(Blacklists.IPAddress, :ip_address, ip_address)
 
     if exists do
       {:noreply,
@@ -42,8 +41,9 @@ defmodule PuppiesWeb.Admin.BlackListIpAddress do
            socket
            |> assign(
              :ip_addresses,
-             Blacklists.get_blacklisted_items(Blacklists.IPAddressBlacklist)
+             Blacklists.get_blacklisted_items(Blacklists.IPAddress)
            )
+           |> assign(:changeset, Blacklists.change_ip_address_blacklist(%IPAddress{}))
            |> put_flash(:info, "Ip address added")
            |> push_patch(to: Routes.live_path(socket, PuppiesWeb.Admin.BlackLists))}
 
@@ -67,7 +67,7 @@ defmodule PuppiesWeb.Admin.BlackListIpAddress do
       {:ok, _ip_address_blacklist} ->
         {:noreply,
          socket
-         |> assign(:ip_addresses, Blacklists.get_blacklisted_items(Blacklists.IPAddressBlacklist))
+         |> assign(:ip_addresses, Blacklists.get_blacklisted_items(Blacklists.IPAddress))
          |> put_flash(:info, "Ip address was removed")
          |> push_patch(to: Routes.live_path(socket, PuppiesWeb.Admin.BlackLists))}
 
@@ -90,7 +90,7 @@ defmodule PuppiesWeb.Admin.BlackListIpAddress do
             <div class="mt-1">
               <%= text_input form, :ip_address,  class: "shadow-sm focus:ring-primary-500 focus:border-primary-500 block w-full sm:text-sm border-gray-300 rounded-md"  %>
             </div>
-            <div class="text-xs text-gray-500 my-2">Example: 192.168.1.1.</div>
+            <div class="text-xs text-gray-500 my-2">Example: 192.168.1.1</div>
           </div>
           <%= hidden_input form, :admin_id, value: @admin.id %>
           <%= submit "Submit", phx_disable_with: "Saving...",  disabled: !@changeset.valid?,  class: "w-full px-6 py-2 text-xs font-medium leading-6 text-center text-white uppercase transition bg-primary-500 rounded shadow hover:shadow-lg hover:bg-primary-600 focus:outline-none disabled:opacity-50" %>

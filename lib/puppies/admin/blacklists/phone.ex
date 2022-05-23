@@ -1,8 +1,8 @@
-defmodule Puppies.Blacklists.PhoneBlacklist do
+defmodule Puppies.Blacklists.Phone do
   use Ecto.Schema
   import Ecto.Changeset
 
-  schema "phone_blacklists" do
+  schema "blacklisted_phones" do
     field(:phone_number, :string)
     belongs_to(:admin, Puppies.Admins.Admin)
     timestamps()
