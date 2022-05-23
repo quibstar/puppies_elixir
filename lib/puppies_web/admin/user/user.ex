@@ -181,7 +181,7 @@ defmodule PuppiesWeb.Admin.User do
           <%= live_component PuppiesWeb.LoadingComponent, id: "admin-loading" %>
         <% else %>
           <div class="mx-auto px-4 sm:px-6 md:px-8 py-4">
-            <div class="md:grid grid-flow-col grid-cols-2 gap-2">
+            <div class="md:grid grid-flow-col grid-cols-2 gap-4">
               <div>
                 <div class="bg-white overflow-hidden shadow rounded-lg divide-y px-4">
                   <div class="px-4 py-5">
@@ -244,24 +244,24 @@ defmodule PuppiesWeb.Admin.User do
                   </div>
                 </div>
                 <%= if @user.is_seller do %>
-                 <div class="bg-white overflow-hidden shadow rounded-lg divide-y px-2 my-2">
-                  <div class="px-4 py-5">
-                    <div class="text-lg font-semibold mb-2">Business</div>
-                    <div class="flex">
-                      <div class="flex-none">
-                        <%= PuppiesWeb.Avatar.show(%{business: @business, user: @user, square: 10, extra_classes: "text-2xl"}) %>
-                      </div>
-                      <div class="ml-3 space-y-1">
-                        <p class="text-sm font-medium text-gray-900"><%= @business.name %></p>
-                        <p class="text-sm text-gray-500">Email website: <%= @business.website%></p>
-                        <p class="text-sm text-gray-500">State license: <%= @business.state_license%></p>
-                        <p class="text-sm text-gray-500">Fed license: <%= @business.federal_license%></p>
-                        <p class="text-sm text-gray-500">Phone: <%= @business.phone%></p>
-                        <p class="text-sm text-gray-500">Description: <%= @business.description %></p>
-                        <p class="text-sm text-gray-500">Created on: <%= Calendar.strftime(@business.inserted_at , "%m/%d/%y %I:%M:%S %p")%></p>
+                  <div class="bg-white overflow-hidden shadow rounded-lg divide-y px-2 my-4">
+                    <div class="px-4 py-5">
+                      <div class="text-lg font-semibold mb-2">Business</div>
+                      <div class="flex">
+                        <div class="flex-none">
+                          <%= PuppiesWeb.Avatar.show(%{business: @business, user: @user, square: 10, extra_classes: "text-2xl"}) %>
+                        </div>
+                        <div class="ml-3 space-y-1">
+                          <p class="text-sm font-medium text-gray-900"><%= @business.name %></p>
+                          <p class="text-sm text-gray-500">Email website: <%= @business.website%></p>
+                          <p class="text-sm text-gray-500">State license: <%= @business.state_license%></p>
+                          <p class="text-sm text-gray-500">Fed license: <%= @business.federal_license%></p>
+                          <p class="text-sm text-gray-500">Phone: <%= @business.phone%></p>
+                          <p class="text-sm text-gray-500">Description: <%= @business.description %></p>
+                          <p class="text-sm text-gray-500">Created on: <%= Calendar.strftime(@business.inserted_at , "%m/%d/%y %I:%M:%S %p")%></p>
+                        </div>
                       </div>
                     </div>
-                  </div>
                     <.form let={f} for={@changeset}  phx_change="update_user_selling_status", class="px-4 py-5">
                       <div class="text-lg font-semibold mb-2">Approved to sell</div>
                       <div class="space-y-4 sm:flex sm:items-center sm:space-y-0 sm:space-x-10">
@@ -280,6 +280,11 @@ defmodule PuppiesWeb.Admin.User do
                     </.form>
                   </div>
                 <% end %>
+                <div class="bg-white overflow-hidden shadow rounded-lg divide-y px-4">
+                  <div class="px-4 py-5">
+                    <div class="text-lg font-semibold mb-2">Activity</div>
+                  </div>
+                </div>
               </div>
               <div>
                 <.live_component module={PuppiesWeb.Admin.Flags} id="flags" flags={@flags} />

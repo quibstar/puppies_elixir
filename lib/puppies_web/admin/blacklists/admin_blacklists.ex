@@ -59,6 +59,7 @@ defmodule PuppiesWeb.Admin.BlackLists do
                     <a href="#email" :class="{ 'active-tab': tab === 'email' }"  x-on:click="tab = 'email'" class="border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm"> Email </a>
                     <a href="#phone" :class="{ 'active-tab': tab === 'phone' }"  x-on:click="tab = 'phone'" class="border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm" aria-current="page"> Phone </a>
                     <a href="#ip-address" :class="{ 'active-tab': tab === 'ip-address' }"   x-on:click="tab = 'ip-address'" class="border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm"> IP Address </a>
+                    <a href="#upload-file" :class="{ 'active-tab': tab === 'upload-file' }"   x-on:click="tab = 'upload-file'" class="border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm"> Upload File </a>
                   </nav>
                 </div>
               </div>
@@ -74,6 +75,9 @@ defmodule PuppiesWeb.Admin.BlackLists do
                 </div>
                 <div  x-show="tab === 'ip-address'">
                     <.live_component module={PuppiesWeb.Admin.BlackListIpAddress} id="blacklist_ip_address" admin={@admin} />
+                </div>
+                <div  x-show="tab === 'upload-file'">
+                    <.live_component module={PuppiesWeb.Admin.UploadBlackListFile} id="upload_blacklist_file"/>
                 </div>
               </div>
             </div>
