@@ -1,8 +1,8 @@
-defmodule Puppies.Blacklists.ContentBlacklist do
+defmodule Puppies.Blacklists.Content do
   use Ecto.Schema
   import Ecto.Changeset
 
-  schema "content_blacklists" do
+  schema "blacklisted_contents" do
     field(:content, :string)
     belongs_to(:admin, Puppies.Admins.Admin)
     timestamps()

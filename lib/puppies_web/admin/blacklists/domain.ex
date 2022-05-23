@@ -1,22 +1,22 @@
-defmodule PuppiesWeb.Admin.BlackListEmail do
+defmodule PuppiesWeb.Admin.BlackListDomain do
   @moduledoc """
-  EmailBlacklist component modal
+  Domain component modal
   """
   use PuppiesWeb, :live_component
-  alias Puppies.{Blacklists, Blacklists.EmailBlacklist}
+  alias Puppies.{Blacklists, Blacklists.Domain}
 
   def update(assigns, socket) do
-    changeset = Blacklists.change_email_blacklist(%EmailBlacklist{}, %{})
+    changeset = Blacklists.change_domain_blacklist(%Domain{}, %{})
 
     {:ok,
      socket
      |> assign(assigns)
      |> assign(:changeset, changeset)
-     |> assign(:emails, Blacklists.get_blacklisted_items(Blacklists.EmailBlacklist))}
+     |> assign(:domains, Blacklists.get_blacklisted_items(Blacklists.Domain))}
   end
 
-  def handle_event("validate", %{"email_blacklist" => params}, socket) do
-    changeset = Blacklists.change_email_blacklist(%EmailBlacklist{}, params)
+  def handle_event("validate", %{"domain" => params}, socket) do
+    changeset = Blacklists.change_domain_blacklist(%Domain{}, params)
 
     {:noreply,
      assign(socket,
@@ -24,9 +24,9 @@ defmodule PuppiesWeb.Admin.BlackListEmail do
      )}
   end
 
-  def handle_event("save_email_blacklist", %{"email_blacklist" => params}, socket) do
+  def handle_event("save_domain_blacklist", %{"domain" => params}, socket) do
     %{"domain" => domain} = params
-    exists = Blacklists.check_for_existence_of(Blacklists.EmailBlacklist, :domain, domain)
+    exists = Blacklists.check_for_existence_of(Blacklists.Domain, :domain, domain)
 
     if exists do
       {:noreply,
@@ -34,11 +34,12 @@ defmodule PuppiesWeb.Admin.BlackListEmail do
        |> put_flash(:error, "Domain already blacklisted")
        |> push_patch(to: Routes.live_path(socket, PuppiesWeb.Admin.BlackLists))}
     else
-      case Blacklists.create_email_blacklist(params) do
-        {:ok, _email_blacklist} ->
+      case Blacklists.create_domain_blacklist(params) do
+        {:ok, _domain_blacklist} ->
           {:noreply,
            socket
-           |> assign(:emails, Blacklists.get_blacklisted_items(Blacklists.EmailBlacklist))
+           |> assign(:domains, Blacklists.get_blacklisted_items(Blacklists.Domain))
+           |> assign(:changeset, Blacklists.change_domain_blacklist(%Domain{}))
            |> put_flash(:info, "Domain added")
            |> push_patch(to: Routes.live_path(socket, PuppiesWeb.Admin.BlackLists))}
 
@@ -46,23 +47,23 @@ defmodule PuppiesWeb.Admin.BlackListEmail do
           {:noreply,
            socket
            |> assign(:changeset, changeset)
-           |> put_flash(:error, "Email was not added")
+           |> put_flash(:error, "Domain was not added")
            |> push_patch(to: Routes.live_path(socket, PuppiesWeb.Admin.BlackLists))}
       end
     end
   end
 
-  def handle_event("delete", %{"email_id" => id}, socket) do
-    email =
-      Enum.find(socket.assigns.emails, fn email ->
-        email.id == String.to_integer(id)
+  def handle_event("delete", %{"domain_id" => id}, socket) do
+    domain =
+      Enum.find(socket.assigns.domains, fn domain ->
+        domain.id == String.to_integer(id)
       end)
 
-    case Blacklists.delete_email_blacklist(email) do
-      {:ok, _email_blacklist} ->
+    case Blacklists.delete_domain_blacklist(domain) do
+      {:ok, _domain_blacklist} ->
         {:noreply,
          socket
-         |> assign(:emails, Blacklists.get_blacklisted_items(Blacklists.EmailBlacklist))
+         |> assign(:domains, Blacklists.get_blacklisted_items(Blacklists.Domain))
          |> put_flash(:info, "Email was removed")
          |> push_patch(to: Routes.live_path(socket, PuppiesWeb.Admin.BlackLists))}
 
@@ -79,7 +80,7 @@ defmodule PuppiesWeb.Admin.BlackListEmail do
     ~H"""
     <div>
       <div class="md:w-80">
-        <.form let={form} for={@changeset}  phx_target={@myself} phx_change="validate" phx_submit="save_email_blacklist">
+        <.form let={form} for={@changeset}  phx_target={@myself} phx_change="validate" phx_submit="save_domain_blacklist">
           <div class="my-2">
             <%= label form, :domain, class: "block text-sm font-medium text-gray-700" %>
             <div class="mt-1">
@@ -105,11 +106,11 @@ defmodule PuppiesWeb.Admin.BlackListEmail do
                   </tr>
                 </thead>
                 <tbody class="divide-y divide-gray-200 bg-white">
-                  <%= for email <- @emails do %>
+                  <%= for domain <- @domains do %>
                     <tr>
-                        <td class="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-gray-900 sm:pl-6"><%= email.domain %></td>
+                        <td class="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-gray-900 sm:pl-6"><%= domain.domain %></td>
                         <td class="relative whitespace-nowrap py-4 pl-3 pr-4 text-right text-sm font-medium sm:pr-6">
-                          <a href="#" class="text-red-600 hover:text-red-900" phx-target={@myself} phx-click="delete" phx-value-email_id={email.id}>Delete</a>
+                          <a href="#" class="text-red-600 hover:text-red-900" phx-target={@myself} phx-click="delete" phx-value-domain_id={domain.id}>Delete</a>
                         </td>
                     </tr>
                   <% end %>

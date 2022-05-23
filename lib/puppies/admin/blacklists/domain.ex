@@ -1,8 +1,8 @@
-defmodule Puppies.Blacklists.EmailBlacklist do
+defmodule Puppies.Blacklists.Domain do
   use Ecto.Schema
   import Ecto.Changeset
 
-  schema "email_blacklists" do
+  schema "blacklisted_domains" do
     field(:domain, :string)
     belongs_to(:admin, Puppies.Admins.Admin)
     timestamps()
