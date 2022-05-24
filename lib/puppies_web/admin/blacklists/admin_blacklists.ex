@@ -40,18 +40,6 @@ defmodule PuppiesWeb.Admin.BlackLists do
           <div class="max-w-7xl mx-auto px-4 sm:px-6 md:px-8">
             <h1 class="text-2xl font-semibold text-gray-900">Blacklists</h1>
             <div>
-              <div class="sm:hidden">
-                <label for="tabs" class="sr-only">Select a tab</label>
-                <select id="tabs" name="tabs" class="block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-primary-500 focus:border-primary-500 sm:text-sm rounded-md">
-                  <option>Content</option>
-
-                  <option>Domain</option>
-
-                  <option selected>Phone</option>
-
-                  <option>IP address</option>
-                </select>
-              </div>
               <div class="hidden sm:block">
                 <div class="border-b border-gray-200">
                   <nav class="-mb-px flex space-x-8" aria-label="Tabs">
@@ -59,7 +47,7 @@ defmodule PuppiesWeb.Admin.BlackLists do
                     <a href="#domain" :class="{ 'active-tab': tab === 'domain' }"  x-on:click="tab = 'domain'" class="border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm"> Domain </a>
                     <a href="#phone" :class="{ 'active-tab': tab === 'phone' }"  x-on:click="tab = 'phone'" class="border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm" aria-current="page"> Phone </a>
                     <a href="#ip-address" :class="{ 'active-tab': tab === 'ip-address' }"   x-on:click="tab = 'ip-address'" class="border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm"> IP Address </a>
-                    <a href="#upload-file" :class="{ 'active-tab': tab === 'upload-file' }"   x-on:click="tab = 'upload-file'" class="border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm"> Upload File </a>
+                    <a href="#country" :class="{ 'active-tab': tab === 'country' }"   x-on:click="tab = 'country'" class="border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm"> Country </a>
                   </nav>
                 </div>
               </div>
@@ -76,13 +64,13 @@ defmodule PuppiesWeb.Admin.BlackLists do
                 <div  x-show="tab === 'ip-address'">
                     <.live_component module={PuppiesWeb.Admin.BlackListIpAddress} id="blacklist_ip_address" admin={@admin} />
                 </div>
-                <div  x-show="tab === 'upload-file'">
-                    <.live_component module={PuppiesWeb.Admin.UploadBlackListFile} id="upload_blacklist_file"/>
+
+                <div x-show="tab === 'country'">
+                  <.live_component module={PuppiesWeb.Admin.CountryBlacklist} id="blacklist_country" admin={@admin} />
                 </div>
               </div>
             </div>
           </div>
-
         </div>
       <% end %>
     """

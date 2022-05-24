@@ -79,18 +79,23 @@ defmodule PuppiesWeb.Admin.BlackListContent do
   def render(assigns) do
     ~H"""
     <div>
-      <div class="md:w-80">
-        <.form let={form} for={@changeset}  phx_target={@myself} phx_change="validate" phx_submit="save_content_blacklist">
-          <div class="my-2">
-            <%= label form, :content, class: "block text-sm font-medium text-gray-700" %>
-            <div class="mt-1">
-              <%= text_input form, :content,  class: "shadow-sm focus:ring-primary-500 focus:border-primary-500 block w-full sm:text-sm border-gray-300 rounded-md"  %>
+      <div class="flex gap-4">
+        <div class="md:w-80">
+          <.form let={form} for={@changeset}  phx_target={@myself} phx_change="validate" phx_submit="save_content_blacklist">
+            <div class="my-2">
+              <%= label form, :content, class: "block text-sm font-medium text-gray-700" %>
+              <div class="mt-1">
+                <%= text_input form, :content,  class: "shadow-sm focus:ring-primary-500 focus:border-primary-500 block w-full sm:text-sm border-gray-300 rounded-md"  %>
+              </div>
+              <div class="text-xs text-gray-500 my-2">Example: trust me</div>
             </div>
-            <div class="text-xs text-gray-500 my-2">Example: trust me</div>
-          </div>
-          <%= hidden_input form, :admin_id, value: @admin.id %>
-          <%= submit "Submit", phx_disable_with: "Saving...",  disabled: !@changeset.valid?,  class: "w-full px-6 py-2 text-xs font-medium leading-6 text-center text-white uppercase transition bg-primary-500 rounded shadow hover:shadow-lg hover:bg-primary-600 focus:outline-none disabled:opacity-50" %>
-        </.form>
+            <%= hidden_input form, :admin_id, value: @admin.id %>
+            <%= submit "Submit", phx_disable_with: "Saving...",  disabled: !@changeset.valid?,  class: "w-full px-6 py-2 text-xs font-medium leading-6 text-center text-white uppercase transition bg-primary-500 rounded shadow hover:shadow-lg hover:bg-primary-600 focus:outline-none disabled:opacity-50" %>
+          </.form>
+        </div>
+         <p class="text-sm text-gray-600 mt-8 w-80">
+          When a user adds content it will be scanned for bad words. If there are any found the user will be suspended. When an admin adds a new word all users content will be scanned, if a match is found the user will be suspended.
+        </p>
       </div>
       <div class="mt-8 flex flex-col">
         <div class="-my-2 -mx-4 overflow-x-auto sm:-mx-6 lg:-mx-8">

@@ -13,5 +13,6 @@ defmodule Puppies.Blacklists.IPAddress do
     ip_address_blacklist
     |> cast(attrs, [:ip_address, :admin_id])
     |> validate_required([:ip_address])
+    |> unique_constraint(:ip_address)
   end
 end

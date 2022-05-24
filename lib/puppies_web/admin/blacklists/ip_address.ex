@@ -83,18 +83,23 @@ defmodule PuppiesWeb.Admin.BlackListIpAddress do
   def render(assigns) do
     ~H"""
     <div>
-      <div class="md:w-80">
-        <.form let={form} for={@changeset}  phx_target={@myself} phx_change="validate" phx_submit="save_ip_address_blacklist">
-          <div class="my-2">
-            <%= label form, :ip_address, class: "block text-sm font-medium text-gray-700" %>
-            <div class="mt-1">
-              <%= text_input form, :ip_address,  class: "shadow-sm focus:ring-primary-500 focus:border-primary-500 block w-full sm:text-sm border-gray-300 rounded-md"  %>
+      <div class="flex gap-4">
+        <div class="md:w-80">
+          <.form let={form} for={@changeset}  phx_target={@myself} phx_change="validate" phx_submit="save_ip_address_blacklist">
+            <div class="my-2">
+              <%= label form, :ip_address, class: "block text-sm font-medium text-gray-700" %>
+              <div class="mt-1">
+                <%= text_input form, :ip_address,  class: "shadow-sm focus:ring-primary-500 focus:border-primary-500 block w-full sm:text-sm border-gray-300 rounded-md"  %>
+              </div>
+              <div class="text-xs text-gray-500 my-2">Example: 192.168.1.1</div>
             </div>
-            <div class="text-xs text-gray-500 my-2">Example: 192.168.1.1</div>
-          </div>
-          <%= hidden_input form, :admin_id, value: @admin.id %>
-          <%= submit "Submit", phx_disable_with: "Saving...",  disabled: !@changeset.valid?,  class: "w-full px-6 py-2 text-xs font-medium leading-6 text-center text-white uppercase transition bg-primary-500 rounded shadow hover:shadow-lg hover:bg-primary-600 focus:outline-none disabled:opacity-50" %>
-        </.form>
+            <%= hidden_input form, :admin_id, value: @admin.id %>
+            <%= submit "Submit", phx_disable_with: "Saving...",  disabled: !@changeset.valid?,  class: "w-full px-6 py-2 text-xs font-medium leading-6 text-center text-white uppercase transition bg-primary-500 rounded shadow hover:shadow-lg hover:bg-primary-600 focus:outline-none disabled:opacity-50" %>
+          </.form>
+        </div>
+        <p class="text-sm text-gray-600 mt-8 w-80">
+          When a user signs up/in there IP will be checked. If their IP is in the list below they will be automatically suspended.
+        </p>
       </div>
       <div class="mt-8 flex flex-col">
         <div class="-my-2 -mx-4 overflow-x-auto sm:-mx-6 lg:-mx-8">

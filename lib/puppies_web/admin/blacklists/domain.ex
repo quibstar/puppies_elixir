@@ -79,18 +79,23 @@ defmodule PuppiesWeb.Admin.BlackListDomain do
   def render(assigns) do
     ~H"""
     <div>
-      <div class="md:w-80">
-        <.form let={form} for={@changeset}  phx_target={@myself} phx_change="validate" phx_submit="save_domain_blacklist">
-          <div class="my-2">
-            <%= label form, :domain, class: "block text-sm font-medium text-gray-700" %>
-            <div class="mt-1">
-              <%= text_input form, :domain,  class: "shadow-sm focus:ring-primary-500 focus:border-primary-500 block w-full sm:text-sm border-gray-300 rounded-md"  %>
-              <div class="text-xs text-gray-500 my-2">Example: aol.com</div>
+      <div class="flex gap-4">
+        <div class="md:w-80">
+          <.form let={form} for={@changeset}  phx_target={@myself} phx_change="validate" phx_submit="save_domain_blacklist">
+            <div class="my-2">
+              <%= label form, :domain, class: "block text-sm font-medium text-gray-700" %>
+              <div class="mt-1">
+                <%= text_input form, :domain,  class: "shadow-sm focus:ring-primary-500 focus:border-primary-500 block w-full sm:text-sm border-gray-300 rounded-md"  %>
+                <div class="text-xs text-gray-500 my-2">Example: aol.com</div>
+              </div>
             </div>
-          </div>
-          <%= hidden_input form, :admin_id, value: @admin.id %>
-          <%= submit "Submit", phx_disable_with: "Saving...",  disabled: !@changeset.valid?,  class: "w-full px-6 py-2 text-xs font-medium leading-6 text-center text-white uppercase transition bg-primary-500 rounded shadow hover:shadow-lg hover:bg-primary-600 focus:outline-none disabled:opacity-50" %>
-        </.form>
+            <%= hidden_input form, :admin_id, value: @admin.id %>
+            <%= submit "Submit", phx_disable_with: "Saving...",  disabled: !@changeset.valid?,  class: "w-full px-6 py-2 text-xs font-medium leading-6 text-center text-white uppercase transition bg-primary-500 rounded shadow hover:shadow-lg hover:bg-primary-600 focus:outline-none disabled:opacity-50" %>
+          </.form>
+        </div>
+        <p class="text-sm text-gray-600 mt-8 w-80">
+          When a user signs up/in there email will be checked. If email is in the list below they will be automatically suspended.
+        </p>
       </div>
       <div class="mt-8 flex flex-col">
         <div class="-my-2 -mx-4 overflow-x-auto sm:-mx-6 lg:-mx-8">
@@ -99,7 +104,7 @@ defmodule PuppiesWeb.Admin.BlackListDomain do
               <table class="min-w-full divide-y divide-gray-300">
                 <thead class="bg-gray-50">
                   <tr>
-                    <th scope="col" class="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-gray-900 sm:pl-6">Email</th>
+                    <th scope="col" class="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-gray-900 sm:pl-6">Domain</th>
                     <th scope="col" class="relative py-3.5 pl-3 pr-4 sm:pr-6">
                       <span class="sr-only">Delete</span>
                     </th>

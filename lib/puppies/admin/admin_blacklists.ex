@@ -213,4 +213,36 @@ defmodule Puppies.Blacklists do
   def change_phone_blacklist(%Phone{} = phone_blacklist, attrs \\ %{}) do
     Phone.changeset(phone_blacklist, attrs)
   end
+
+  alias Puppies.Blacklists.Country
+
+  def get_country(id) do
+    Country
+    |> Repo.get(id)
+  end
+
+  def get_country_blacklist() do
+    Repo.all(from(c in Country, order_by: c.name))
+  end
+
+  def update_blacklisted_country(country, attrs) do
+    country
+    |> Country.changeset(attrs)
+    |> Repo.update()
+  end
+
+  def create_country_blacklist(attrs \\ %{}) do
+    %Country{}
+    |> Country.changeset(attrs)
+    |> Repo.insert()
+  end
+
+  def get_selected_blacklisted_countries() do
+    Repo.all(
+      from(c in Country,
+        where: c.selected == true,
+        order_by: c.name
+      )
+    )
+  end
 end

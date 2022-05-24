@@ -13,5 +13,6 @@ defmodule Puppies.Blacklists.Content do
     content_blacklist
     |> cast(attrs, [:content, :admin_id])
     |> validate_required([:content])
+    |> unique_constraint(:content)
   end
 end

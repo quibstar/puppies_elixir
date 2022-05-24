@@ -14,5 +14,6 @@ defmodule Puppies.Blacklists.Phone do
     |> cast(attrs, [:phone_number, :admin_id])
     |> validate_required([:phone_number])
     |> validate_length(:phone_number, min: 10, max: 10)
+    |> unique_constraint(:phone_number)
   end
 end
