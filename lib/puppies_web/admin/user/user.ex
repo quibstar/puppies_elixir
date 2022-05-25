@@ -93,7 +93,7 @@ defmodule PuppiesWeb.Admin.User do
   end
 
   def handle_event("update_user_status", %{"user" => params}, socket) do
-    user = Accounts.admin_update_status(socket.assigns.user, params)
+    user = Accounts.update_status(socket.assigns.user, params)
 
     case user do
       {:ok, user} ->
@@ -114,7 +114,7 @@ defmodule PuppiesWeb.Admin.User do
   end
 
   def handle_event("update_locked_status", %{"user" => params}, socket) do
-    user = Accounts.admin_update_user_locked_status(socket.assigns.user, params)
+    user = Accounts.update_user_locked_status(socket.assigns.user, params)
 
     case user do
       {:ok, user} ->
@@ -140,7 +140,7 @@ defmodule PuppiesWeb.Admin.User do
   end
 
   def handle_event("update_user_selling_status", %{"user" => params}, socket) do
-    user = Accounts.admin_update_user_selling_status(socket.assigns.user, params)
+    user = Accounts.update_user_selling_status(socket.assigns.user, params)
 
     case user do
       {:ok, user} ->

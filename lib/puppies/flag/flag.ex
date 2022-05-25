@@ -38,7 +38,7 @@ defmodule Puppies.Flag do
       :custom_reason,
       :admin_id
     ])
-    |> validate_required([:reason, :offender_id, :reporter_id])
+    |> validate_required([:reason, :offender_id])
     |> validate_length(:custom_reason, max: 180)
   end
 end

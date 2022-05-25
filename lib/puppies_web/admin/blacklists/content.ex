@@ -6,13 +6,22 @@ defmodule PuppiesWeb.Admin.BlackListContent do
   alias Puppies.{Blacklists, Blacklists.Content}
 
   def update(assigns, socket) do
+    IO.inspect(assigns)
     changeset = Blacklists.change_content_blacklist(%Content{})
+
+    data =
+      Blacklists.get_blacklisted_items(Blacklists.Content, %{
+        limit: assigns.limit,
+        page: assigns.page,
+        number_of_links: 7
+      })
 
     {:ok,
      socket
      |> assign(assigns)
      |> assign(:changeset, changeset)
-     |> assign(:contents, Blacklists.get_blacklisted_items(Blacklists.Content))}
+     |> assign(:pagination, Map.get(data, :pagination, %{count: 0}))
+     |> assign(:contents, data.blacklisted_items)}
   end
 
   def handle_event("validate", %{"content" => params}, socket) do
@@ -125,6 +134,9 @@ defmodule PuppiesWeb.Admin.BlackListContent do
           </div>
         </div>
       </div>
+      <%= if @pagination.count > 12 do %>
+        <%= live_component PuppiesWeb.PaginationComponent, id: "pagination-content", pagination: @pagination, socket: @socket, params: %{"page" => @pagination.page, "limit" => @pagination.limit, "tab" => "content"}, end_point: PuppiesWeb.Admin.BlackLists, segment_id: nil %>
+      <% end %>
     </div>
     """
   end

@@ -8,11 +8,19 @@ defmodule PuppiesWeb.Admin.BlackListDomain do
   def update(assigns, socket) do
     changeset = Blacklists.change_domain_blacklist(%Domain{}, %{})
 
+    data =
+      Blacklists.get_blacklisted_items(Blacklists.Domain, %{
+        limit: assigns.limit,
+        page: assigns.page,
+        number_of_links: 7
+      })
+
     {:ok,
      socket
      |> assign(assigns)
      |> assign(:changeset, changeset)
-     |> assign(:domains, Blacklists.get_blacklisted_items(Blacklists.Domain))}
+     |> assign(:pagination, Map.get(data, :pagination, %{count: 0}))
+     |> assign(:domains, data.blacklisted_items)}
   end
 
   def handle_event("validate", %{"domain" => params}, socket) do
@@ -125,6 +133,9 @@ defmodule PuppiesWeb.Admin.BlackListDomain do
           </div>
         </div>
       </div>
+      <%= if @pagination.count > 12 do %>
+        <%= live_component PuppiesWeb.PaginationComponent, id: "pagination-domain", pagination: @pagination, socket: @socket, params: %{"page" => @pagination.page, "limit" => @pagination.limit, "tab" => "domain"}, end_point: PuppiesWeb.Admin.BlackLists, segment_id: nil %>
+      <% end %>
     </div>
     """
   end

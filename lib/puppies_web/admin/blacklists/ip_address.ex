@@ -8,11 +8,19 @@ defmodule PuppiesWeb.Admin.BlackListIpAddress do
   def update(assigns, socket) do
     changeset = Blacklists.change_ip_address_blacklist(%IPAddress{})
 
+    data =
+      Blacklists.get_blacklisted_items(Blacklists.IPAddress, %{
+        limit: assigns.limit,
+        page: assigns.page,
+        number_of_links: 7
+      })
+
     {:ok,
      socket
      |> assign(assigns)
      |> assign(:changeset, changeset)
-     |> assign(:ip_addresses, Blacklists.get_blacklisted_items(Blacklists.IPAddress))}
+     |> assign(:pagination, Map.get(data, :pagination, %{count: 0}))
+     |> assign(:ip_addresses, data.blacklisted_items)}
   end
 
   def handle_event("validate", %{"ip_address" => params}, socket) do
@@ -129,6 +137,9 @@ defmodule PuppiesWeb.Admin.BlackListIpAddress do
           </div>
         </div>
       </div>
+      <%= if @pagination.count > 12 do %>
+        <%= live_component PuppiesWeb.PaginationComponent, id: "pagination-ip", pagination: @pagination, socket: @socket, params: %{"page" => @pagination.page, "limit" => @pagination.limit, "tab" => "ip-address"}, end_point: PuppiesWeb.Admin.BlackLists, segment_id: nil %>
+      <% end %>
     </div>
     """
   end

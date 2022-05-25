@@ -17,20 +17,40 @@ defmodule PuppiesWeb.Admin.BlackLists do
         Admins.get_admin_by_session_token(admin_token)
       end
 
-    {:ok, assign(socket, admin: admin, loading: false, current_tab: "content")}
+    {:ok,
+     assign(
+       socket,
+       admin: admin,
+       loading: false,
+       current_tab: "content",
+       limit: "12",
+       page: "1"
+     )}
   end
 
-  def handle_params(_params, uri, socket) do
-    hash = String.split(uri, "#")
-
+  def handle_params(params, _uri, socket) do
     current_tab =
-      if length(hash) == 2 do
-        List.last(hash)
+      if params["tab"] do
+        params["tab"]
       else
         "content"
       end
 
-    {:noreply, assign(socket, current_tab: current_tab)}
+    limit =
+      if params["limit"] do
+        params["limit"]
+      else
+        "12"
+      end
+
+    page =
+      if params["page"] do
+        params["page"]
+      else
+        "1"
+      end
+
+    {:noreply, assign(socket, current_tab: current_tab, limit: limit, page: page)}
   end
 
   def render(assigns) do
@@ -43,28 +63,27 @@ defmodule PuppiesWeb.Admin.BlackLists do
               <div class="hidden sm:block">
                 <div class="border-b border-gray-200">
                   <nav class="-mb-px flex space-x-8" aria-label="Tabs">
-                    <a href="#content" :class="{ 'active-tab': tab === 'content' }"   x-on:click="tab = 'content'" class="border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm"> Content </a>
-                    <a href="#domain" :class="{ 'active-tab': tab === 'domain' }"  x-on:click="tab = 'domain'" class="border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm"> Domain </a>
-                    <a href="#phone" :class="{ 'active-tab': tab === 'phone' }"  x-on:click="tab = 'phone'" class="border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm" aria-current="page"> Phone </a>
-                    <a href="#ip-address" :class="{ 'active-tab': tab === 'ip-address' }"   x-on:click="tab = 'ip-address'" class="border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm"> IP Address </a>
-                    <a href="#country" :class="{ 'active-tab': tab === 'country' }"   x-on:click="tab = 'country'" class="border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm"> Country </a>
+                    <a href="?tab=content" :class="{ 'active-tab': tab === 'content' }"  x-on:click="tab = 'content'" class="border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm"> Content </a>
+                    <a href="?tab=domain" :class="{ 'active-tab': tab === 'domain' }" x-on:click="tab = 'domain'" class="border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm"> Domain </a>
+                    <a href="?tab=phone" :class="{ 'active-tab': tab === 'phone' }" x-on:click="tab = 'phone'" class="border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm" aria-current="page"> Phone </a>
+                    <a href="?tab=ip-address" :class="{ 'active-tab': tab === 'ip-address' }"  x-on:click="tab = 'ip-address'" class="border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm"> IP Address </a>
+                    <a href="?tab=country" :class="{ 'active-tab': tab === 'country' }"  x-on:click="tab = 'country'" class="border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm"> Country </a>
                   </nav>
                 </div>
               </div>
               <div class="py-4">
                 <div x-show="tab === 'content'">
-                  <.live_component module={PuppiesWeb.Admin.BlackListContent} id="blacklist_content" admin={@admin} />
+                  <.live_component module={PuppiesWeb.Admin.BlackListContent} id="blacklist_content" admin={@admin} limit={@limit} page={@page}/>
                 </div>
                 <div  x-show="tab === 'domain'">
-                    <.live_component module={PuppiesWeb.Admin.BlackListDomain} id="blacklist_domain" admin={@admin} />
+                    <.live_component module={PuppiesWeb.Admin.BlackListDomain} id="blacklist_domain" admin={@admin} limit={@limit} page={@page}/>
                 </div>
                 <div  x-show="tab === 'phone'">
-                    <.live_component module={PuppiesWeb.Admin.BlackListPhone} id="blacklist_phone" admin={@admin} />
+                    <.live_component module={PuppiesWeb.Admin.BlackListPhone} id="blacklist_phone" admin={@admin} limit={@limit} page={@page}/>
                 </div>
                 <div  x-show="tab === 'ip-address'">
-                    <.live_component module={PuppiesWeb.Admin.BlackListIpAddress} id="blacklist_ip_address" admin={@admin} />
+                    <.live_component module={PuppiesWeb.Admin.BlackListIpAddress} id="blacklist_ip_address" admin={@admin} limit={@limit} page={@page}/>
                 </div>
-
                 <div x-show="tab === 'country'">
                   <.live_component module={PuppiesWeb.Admin.CountryBlacklist} id="blacklist_country" admin={@admin} />
                 </div>

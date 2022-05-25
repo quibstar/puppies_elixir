@@ -40,6 +40,7 @@ defmodule Puppies.Accounts.User do
     has_one(:photo, Puppies.Photos.Photo)
     has_many(:threads, Puppies.Thread)
     has_many(:flags, Puppies.Flag, on_delete: :delete_all, foreign_key: :offender_id)
+    has_many(:ip_addresses, Puppies.IPData, on_delete: :delete_all)
 
     timestamps()
   end
@@ -215,12 +216,12 @@ defmodule Puppies.Accounts.User do
     |> validate_required([:phone_number], message: "Please supply a phone number")
   end
 
-  def admin_update_status(user, attrs) do
+  def update_status(user, attrs) do
     user
     |> cast(attrs, [:status])
   end
 
-  def admin_update_selling_status(user, attrs) do
+  def update_selling_status(user, attrs) do
     user
     |> cast(attrs, [:approved_to_sell])
   end

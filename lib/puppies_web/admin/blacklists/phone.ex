@@ -8,11 +8,19 @@ defmodule PuppiesWeb.Admin.BlackListPhone do
   def update(assigns, socket) do
     changeset = Blacklists.change_phone_blacklist(%Phone{}, %{})
 
+    data =
+      Blacklists.get_blacklisted_items(Blacklists.Phone, %{
+        limit: assigns.limit,
+        page: assigns.page,
+        number_of_links: 7
+      })
+
     {:ok,
      socket
      |> assign(assigns)
      |> assign(:changeset, changeset)
-     |> assign(:phones, Blacklists.get_blacklisted_items(Blacklists.Phone))}
+     |> assign(:pagination, Map.get(data, :pagination, %{count: 0}))
+     |> assign(:phones, data.blacklisted_items)}
   end
 
   def handle_event("validate", %{"phone" => params}, socket) do
@@ -130,6 +138,9 @@ defmodule PuppiesWeb.Admin.BlackListPhone do
           </div>
         </div>
       </div>
+      <%= if @pagination.count > 12 do %>
+        <%= live_component PuppiesWeb.PaginationComponent, id: "pagination-phone", pagination: @pagination, socket: @socket, params: %{"page" => @pagination.page, "limit" => @pagination.limit, "tab" => "phone"}, end_point: PuppiesWeb.Admin.BlackLists, segment_id: nil %>
+      <% end %>
     </div>
     """
   end
