@@ -6,7 +6,6 @@ defmodule PuppiesWeb.Admin.BlackListContent do
   alias Puppies.{Blacklists, Blacklists.Content}
 
   def update(assigns, socket) do
-    IO.inspect(assigns)
     changeset = Blacklists.change_content_blacklist(%Content{})
 
     data =
@@ -88,7 +87,7 @@ defmodule PuppiesWeb.Admin.BlackListContent do
   def render(assigns) do
     ~H"""
     <div>
-      <div class="flex gap-4">
+      <div class="md:flex gap-4">
         <div class="md:w-80">
           <.form let={form} for={@changeset}  phx_target={@myself} phx_change="validate" phx_submit="save_content_blacklist">
             <div class="my-2">

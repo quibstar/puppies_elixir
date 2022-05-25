@@ -41,7 +41,7 @@ defmodule PuppiesWeb.Admin.CountryBlacklist do
   def render(assigns) do
     ~H"""
     <div>
-        <div class="flex gap-4">
+        <div class="md:flex gap-4">
           <.form let={_} for={:country_blacklist} phx-target={@myself} phx-change="add-country" >
             <fieldset class="space-y-5">
               <select name="country" class="mt-1 pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-primary-500 focus:border-primary-500 sm:text-sm rounded-md">

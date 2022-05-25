@@ -87,7 +87,7 @@ defmodule PuppiesWeb.Admin.BlackListDomain do
   def render(assigns) do
     ~H"""
     <div>
-      <div class="flex gap-4">
+      <div class="md:flex gap-4">
         <div class="md:w-80">
           <.form let={form} for={@changeset}  phx_target={@myself} phx_change="validate" phx_submit="save_domain_blacklist">
             <div class="my-2">
