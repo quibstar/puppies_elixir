@@ -45,12 +45,10 @@ defmodule PuppiesWeb.Admin.BlackListIpAddress do
     else
       case Blacklists.create_ip_address_blacklist(params) do
         {:ok, _ip_address_blacklist} ->
+          socket = blacklisted_items_with_pagination(socket)
+
           {:noreply,
            socket
-           |> assign(
-             :ip_addresses,
-             Blacklists.get_blacklisted_items(Blacklists.IPAddress)
-           )
            |> assign(:changeset, Blacklists.change_ip_address_blacklist(%IPAddress{}))
            |> put_flash(:info, "Ip address added")
            |> push_patch(to: Routes.live_path(socket, PuppiesWeb.Admin.BlackLists))}
@@ -73,9 +71,10 @@ defmodule PuppiesWeb.Admin.BlackListIpAddress do
 
     case Blacklists.delete_ip_address_blacklist(ip_address) do
       {:ok, _ip_address_blacklist} ->
+        socket = blacklisted_items_with_pagination(socket)
+
         {:noreply,
          socket
-         |> assign(:ip_addresses, Blacklists.get_blacklisted_items(Blacklists.IPAddress))
          |> put_flash(:info, "Ip address was removed")
          |> push_patch(to: Routes.live_path(socket, PuppiesWeb.Admin.BlackLists))}
 
@@ -86,6 +85,19 @@ defmodule PuppiesWeb.Admin.BlackListIpAddress do
          |> put_flash(:error, "Ip address was not removed")
          |> push_patch(to: Routes.live_path(socket, PuppiesWeb.Admin.BlackLists))}
     end
+  end
+
+  def blacklisted_items_with_pagination(socket) do
+    data =
+      Blacklists.get_blacklisted_items(Blacklists.IPAddress, %{
+        limit: socket.assigns.limit,
+        page: socket.assigns.page,
+        number_of_links: 7
+      })
+
+    socket
+    |> assign(:pagination, data.pagination)
+    |> assign(:ip_addresses, data.blacklisted_items)
   end
 
   def render(assigns) do

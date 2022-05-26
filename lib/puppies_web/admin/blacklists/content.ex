@@ -44,9 +44,10 @@ defmodule PuppiesWeb.Admin.BlackListContent do
     else
       case Blacklists.create_content_blacklist(params) do
         {:ok, _content_blacklist} ->
+          socket = blacklisted_items_with_pagination(socket)
+
           {:noreply,
            socket
-           |> assign(:contents, Blacklists.get_blacklisted_items(Blacklists.Content))
            |> assign(:changeset, Blacklists.change_content_blacklist(%Content{}))
            |> put_flash(:info, "Content added")
            |> push_patch(to: Routes.live_path(socket, PuppiesWeb.Admin.BlackLists))}
@@ -69,9 +70,10 @@ defmodule PuppiesWeb.Admin.BlackListContent do
 
     case Blacklists.delete_content_blacklist(content) do
       {:ok, _content_blacklist} ->
+        socket = blacklisted_items_with_pagination(socket)
+
         {:noreply,
          socket
-         |> assign(:contents, Blacklists.get_blacklisted_items(Blacklists.Content))
          |> put_flash(:info, "Content was removed")
          |> push_patch(to: Routes.live_path(socket, PuppiesWeb.Admin.BlackLists))}
 
@@ -82,6 +84,19 @@ defmodule PuppiesWeb.Admin.BlackListContent do
          |> put_flash(:error, "Content was not removed")
          |> push_patch(to: Routes.live_path(socket, PuppiesWeb.Admin.BlackLists))}
     end
+  end
+
+  def blacklisted_items_with_pagination(socket) do
+    data =
+      Blacklists.get_blacklisted_items(Blacklists.Content, %{
+        limit: socket.assigns.limit,
+        page: socket.assigns.page,
+        number_of_links: 7
+      })
+
+    socket
+    |> assign(:pagination, data.pagination)
+    |> assign(:contents, data.blacklisted_items)
   end
 
   def render(assigns) do

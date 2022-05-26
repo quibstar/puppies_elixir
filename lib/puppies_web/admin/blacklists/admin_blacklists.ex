@@ -53,6 +53,14 @@ defmodule PuppiesWeb.Admin.BlackLists do
     {:noreply, assign(socket, current_tab: current_tab, limit: limit, page: page)}
   end
 
+  def active_tab(tab, current_tab) do
+    if tab == current_tab do
+      "active-tab"
+    else
+      ""
+    end
+  end
+
   def render(assigns) do
     ~H"""
       <%= unless @loading do %>
@@ -63,30 +71,28 @@ defmodule PuppiesWeb.Admin.BlackLists do
               <div class="sm:block">
                 <div class="border-b border-gray-200">
                   <nav class="-mb-px flex space-x-8" aria-label="Tabs">
-                    <a href="?tab=content" :class="{ 'active-tab': tab === 'content' }"  x-on:click="tab = 'content'" class="border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm"> Content </a>
-                    <a href="?tab=domain" :class="{ 'active-tab': tab === 'domain' }" x-on:click="tab = 'domain'" class="border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm"> Domain </a>
-                    <a href="?tab=phone" :class="{ 'active-tab': tab === 'phone' }" x-on:click="tab = 'phone'" class="border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm" aria-current="page"> Phone </a>
-                    <a href="?tab=ip-address" :class="{ 'active-tab': tab === 'ip-address' }"  x-on:click="tab = 'ip-address'" class="border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm"> IP Address </a>
-                    <a href="?tab=country" :class="{ 'active-tab': tab === 'country' }"  x-on:click="tab = 'country'" class="border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm"> Country </a>
+                    <%= live_patch "Content", to: Routes.live_path(@socket, PuppiesWeb.Admin.BlackLists, tab: "content"), class: "#{active_tab("content", @current_tab)} border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm" %>
+                    <%= live_patch "Domain", to: Routes.live_path(@socket, PuppiesWeb.Admin.BlackLists, tab: "domain"), class: "#{active_tab("domain", @current_tab)} border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm" %>
+                    <%= live_patch "Phone", to: Routes.live_path(@socket, PuppiesWeb.Admin.BlackLists, tab: "phone"), class: "#{active_tab("phone", @current_tab)} border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm" %>
+                    <%= live_patch "IP Address", to: Routes.live_path(@socket, PuppiesWeb.Admin.BlackLists, tab: "ip-address"), class: "#{active_tab("ip-address", @current_tab)} border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm" %>
+                    <%= live_patch "Country", to: Routes.live_path(@socket, PuppiesWeb.Admin.BlackLists, tab: "country"), class: "#{active_tab("country", @current_tab)} border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm" %>
                   </nav>
                 </div>
               </div>
               <div class="py-4">
-                <div x-show="tab === 'content'">
-                  <.live_component module={PuppiesWeb.Admin.BlackListContent} id="blacklist_content" admin={@admin} limit={@limit} page={@page}/>
-                </div>
-                <div  x-show="tab === 'domain'">
+                <%= @current_tab %>
+                <%= case @current_tab do %>
+                  <% "content" -> %>
+                    <.live_component module={PuppiesWeb.Admin.BlackListContent} id="blacklist_content" admin={@admin} limit={@limit} page={@page}/>
+                  <% "domain" -> %>
                     <.live_component module={PuppiesWeb.Admin.BlackListDomain} id="blacklist_domain" admin={@admin} limit={@limit} page={@page}/>
-                </div>
-                <div  x-show="tab === 'phone'">
+                  <% "phone" -> %>
                     <.live_component module={PuppiesWeb.Admin.BlackListPhone} id="blacklist_phone" admin={@admin} limit={@limit} page={@page}/>
-                </div>
-                <div  x-show="tab === 'ip-address'">
+                  <% "ip-address" -> %>
                     <.live_component module={PuppiesWeb.Admin.BlackListIpAddress} id="blacklist_ip_address" admin={@admin} limit={@limit} page={@page}/>
-                </div>
-                <div x-show="tab === 'country'">
-                  <.live_component module={PuppiesWeb.Admin.CountryBlacklist} id="blacklist_country" admin={@admin} />
-                </div>
+                  <% "country" -> %>
+                    <.live_component module={PuppiesWeb.Admin.CountryBlacklist} id="blacklist_country" admin={@admin} />
+                <% end %>
               </div>
             </div>
           </div>

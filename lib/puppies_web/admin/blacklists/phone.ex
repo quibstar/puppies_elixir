@@ -45,12 +45,10 @@ defmodule PuppiesWeb.Admin.BlackListPhone do
     else
       case Blacklists.create_phone_blacklist(params) do
         {:ok, _phone_blacklist} ->
+          socket = blacklisted_items_with_pagination(socket)
+
           {:noreply,
            socket
-           |> assign(
-             :phones,
-             Blacklists.get_blacklisted_items(Blacklists.Phone)
-           )
            |> assign(:changeset, Blacklists.change_phone_blacklist(%Phone{}))
            |> put_flash(:info, "Phone number added")
            |> push_patch(to: Routes.live_path(socket, PuppiesWeb.Admin.BlackLists))}
@@ -73,9 +71,10 @@ defmodule PuppiesWeb.Admin.BlackListPhone do
 
     case Blacklists.delete_phone_blacklist(phone) do
       {:ok, _phone_blacklist} ->
+        socket = blacklisted_items_with_pagination(socket)
+
         {:noreply,
          socket
-         |> assign(:phones, Blacklists.get_blacklisted_items(Blacklists.Phone))
          |> put_flash(:info, "Phone number was removed")
          |> push_patch(to: Routes.live_path(socket, PuppiesWeb.Admin.BlackLists))}
 
@@ -86,6 +85,19 @@ defmodule PuppiesWeb.Admin.BlackListPhone do
          |> put_flash(:error, "Phone number was not removed")
          |> push_patch(to: Routes.live_path(socket, PuppiesWeb.Admin.BlackLists))}
     end
+  end
+
+  def blacklisted_items_with_pagination(socket) do
+    data =
+      Blacklists.get_blacklisted_items(Blacklists.Phone, %{
+        limit: socket.assigns.limit,
+        page: socket.assigns.page,
+        number_of_links: 7
+      })
+
+    socket
+    |> assign(:pagination, data.pagination)
+    |> assign(:phones, data.blacklisted_items)
   end
 
   def render(assigns) do

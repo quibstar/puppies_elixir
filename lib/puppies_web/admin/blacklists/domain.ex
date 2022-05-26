@@ -44,9 +44,10 @@ defmodule PuppiesWeb.Admin.BlackListDomain do
     else
       case Blacklists.create_domain_blacklist(params) do
         {:ok, _domain_blacklist} ->
+          socket = blacklisted_items_with_pagination(socket)
+
           {:noreply,
            socket
-           |> assign(:domains, Blacklists.get_blacklisted_items(Blacklists.Domain))
            |> assign(:changeset, Blacklists.change_domain_blacklist(%Domain{}))
            |> put_flash(:info, "Domain added")
            |> push_patch(to: Routes.live_path(socket, PuppiesWeb.Admin.BlackLists))}
@@ -69,9 +70,10 @@ defmodule PuppiesWeb.Admin.BlackListDomain do
 
     case Blacklists.delete_domain_blacklist(domain) do
       {:ok, _domain_blacklist} ->
+        socket = blacklisted_items_with_pagination(socket)
+
         {:noreply,
          socket
-         |> assign(:domains, Blacklists.get_blacklisted_items(Blacklists.Domain))
          |> put_flash(:info, "Email was removed")
          |> push_patch(to: Routes.live_path(socket, PuppiesWeb.Admin.BlackLists))}
 
@@ -82,6 +84,19 @@ defmodule PuppiesWeb.Admin.BlackListDomain do
          |> put_flash(:error, "Email was not removed")
          |> push_patch(to: Routes.live_path(socket, PuppiesWeb.Admin.BlackLists))}
     end
+  end
+
+  def blacklisted_items_with_pagination(socket) do
+    data =
+      Blacklists.get_blacklisted_items(Blacklists.Domain, %{
+        limit: socket.assigns.limit,
+        page: socket.assigns.page,
+        number_of_links: 7
+      })
+
+    socket
+    |> assign(:pagination, data.pagination)
+    |> assign(:domains, data.blacklisted_items)
   end
 
   def render(assigns) do

@@ -2,5 +2,5 @@
 |> File.read!()
 |> String.split(",")
 |> Enum.map(fn content ->
-  Puppies.Blacklists.create_content_blacklist(%{content: content})
+  Puppies.Blacklists.create_content_blacklist(%{content: String.trim(content)})
 end)
