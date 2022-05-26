@@ -4,10 +4,10 @@ defmodule PuppiesWeb.Admin.IpAddresses do
   """
   use PuppiesWeb, :live_component
 
-  alias Puppies.Admin.IPData
+  alias Puppies.Admin.IPDatum
 
   def update(assigns, socket) do
-    ip_addressses = IPData.get_ip_addresses_by_user_id(assigns.user.id)
+    ip_addressses = IPDatum.get_ip_addresses_by_user_id(assigns.user.id)
 
     {:ok,
      assign(

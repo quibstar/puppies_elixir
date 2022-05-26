@@ -9,7 +9,7 @@ defmodule Puppies.Blacklists do
   alias Puppies.Blacklists.Domain
   alias Puppies.{Pagination, Utilities}
 
-  def get_blacklisted_items(schema) do
+  def get_all_blacklisted_items(schema) do
     Repo.all(schema)
   end
 
@@ -43,6 +43,10 @@ defmodule Puppies.Blacklists do
         where: field(s, ^field) == ^other_field
       )
     )
+  end
+
+  def get_domain_blacklist!(id) do
+    Repo.get!(Domain, id)
   end
 
   @doc """
@@ -102,6 +106,10 @@ defmodule Puppies.Blacklists do
 
   alias Puppies.Blacklists.IPAddress
 
+  def get_ip_address_blacklist!(id) do
+    Repo.get!(IPAddress, id)
+  end
+
   @doc """
   Creates a ip_address_blacklist.
 
@@ -151,6 +159,10 @@ defmodule Puppies.Blacklists do
 
   alias Puppies.Blacklists.Content
 
+  def get_content_blacklist!(id) do
+    Repo.get!(Content, id)
+  end
+
   @doc """
   Creates a content_blacklist.
 
@@ -199,6 +211,10 @@ defmodule Puppies.Blacklists do
   end
 
   alias Puppies.Blacklists.Phone
+
+  def get_phone_blacklist!(id) do
+    Repo.get!(Phone, id)
+  end
 
   @doc """
   Creates a phone_blacklist.

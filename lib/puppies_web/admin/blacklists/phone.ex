@@ -25,7 +25,6 @@ defmodule PuppiesWeb.Admin.BlackListPhone do
 
   def handle_event("validate", %{"phone" => params}, socket) do
     changeset = Blacklists.change_phone_blacklist(%Phone{}, params)
-    IO.inspect(changeset)
 
     {:noreply,
      assign(socket,

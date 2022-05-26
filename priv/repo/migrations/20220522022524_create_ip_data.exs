@@ -13,7 +13,7 @@ defmodule Puppies.Repo.Migrations.CreateIpData do
       add(:region_code, :string)
       add(:region_name, :string)
       add(:city, :string)
-      add(:zip, :string)
+      add(:zip, :integer)
       add(:latitude, :float)
       add(:longitude, :float)
       add(:country_flag, :string)

@@ -5,7 +5,7 @@ defmodule Puppies.ImagesUtilitiesTest do
 
   # test "resizes image" do
   #   path = File.cwd!() <> "/priv/business/"
-  #   IO.inspect(path)
+
   #   {:ok, files} = File.ls(path)
 
   #   Enum.each(files, fn file ->

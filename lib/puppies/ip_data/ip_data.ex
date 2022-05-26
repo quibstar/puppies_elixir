@@ -1,4 +1,4 @@
-defmodule Puppies.IPData do
+defmodule Puppies.IPDatum do
   use Ecto.Schema
   import Ecto.Changeset
 
@@ -16,7 +16,7 @@ defmodule Puppies.IPData do
     field(:region_name, :string)
     field(:time_zone, :string)
     field(:type, :string)
-    field(:zip, :string)
+    field(:zip, :integer)
     belongs_to(:user, Puppies.Accounts.User)
 
     timestamps()

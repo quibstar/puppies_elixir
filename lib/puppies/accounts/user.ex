@@ -40,7 +40,7 @@ defmodule Puppies.Accounts.User do
     has_one(:photo, Puppies.Photos.Photo)
     has_many(:threads, Puppies.Thread)
     has_many(:flags, Puppies.Flag, on_delete: :delete_all, foreign_key: :offender_id)
-    has_many(:ip_addresses, Puppies.IPData, on_delete: :delete_all)
+    has_many(:ip_addresses, Puppies.IPDatum, on_delete: :delete_all)
 
     timestamps()
   end
@@ -93,7 +93,7 @@ defmodule Puppies.Accounts.User do
   defp validate_password(changeset, opts) do
     changeset
     |> validate_required([:password])
-    |> validate_length(:password, min: 8, max: 72)
+    |> validate_length(:password, min: 12, max: 72)
     # |> validate_format(:password, ~r/[a-z]/, message: "at least one lower case character")
     # |> validate_format(:password, ~r/[A-Z]/, message: "at least one upper case character")
     # |> validate_format(:password, ~r/[!?@#$%^&*_0-9]/, message: "at least one digit or punctuation character")

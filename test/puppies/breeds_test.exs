@@ -21,7 +21,7 @@ defmodule Puppies.BreedsTest do
     end
 
     test "create_breed/1 with valid data creates a breed" do
-      valid_attrs = %{category: "some category", name: "some name"}
+      valid_attrs = %{category: "some category", name: "some name", slug: "some-slug"}
 
       assert {:ok, %Breed{} = breed} = Breeds.create_breed(valid_attrs)
       assert breed.category == "some category"

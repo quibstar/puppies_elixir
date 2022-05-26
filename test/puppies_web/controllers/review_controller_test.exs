@@ -1,5 +1,5 @@
 defmodule PuppiesWeb.ReviewControllerTest do
-  use PuppiesWeb.ConnCase
+  use PuppiesWeb.ConnCase, async: true
 
   import Puppies.ReviewLinksFixtures
   import Puppies.ListingsFixtures
@@ -11,10 +11,11 @@ defmodule PuppiesWeb.ReviewControllerTest do
     user = user_fixture(%{email: "test@test.com"})
     business = business_fixture(%{user_id: user.id, location_autocomplete: "some place"})
     listing = listing_fixture(%{user_id: user.id})
+    conn = conn |> log_in_user(user)
 
     review_link =
       review_link_fixture(
-        email: "test@test.com",
+        email: user.email,
         listing_id: listing.id,
         uuid: Ecto.UUID.generate()
       )

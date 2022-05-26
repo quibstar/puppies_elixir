@@ -59,9 +59,9 @@ defmodule Puppies.Listings do
       ** (Ecto.NoResultsError)
 
   """
-  def get_listing_alt!(id), do: Repo.get!(Listing, id)
+  def get_listing!(id), do: Repo.get!(Listing, id)
 
-  def get_listing!(id) do
+  def get_listing(id) do
     q =
       from(b in Listing,
         where: b.id == ^id

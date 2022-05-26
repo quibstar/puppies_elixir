@@ -27,7 +27,7 @@ defmodule Puppies.ActivitiesListingTest do
 
   describe "Activities" do
     test "check for diff in listing", %{user: user, listing: listing, dogs: dogs} do
-      listing = Listings.get_listing!(listing.id)
+      listing = Listings.get_listing(listing.id)
 
       Listings.update_listing(listing, %{
         name: "updated name",
@@ -35,7 +35,7 @@ defmodule Puppies.ActivitiesListingTest do
         listing_breeds: [%{breed_id: dogs.shih_tzu.id}, %{breed_id: dogs.bulldog.id}]
       })
 
-      updated_listing = Listings.get_listing!(listing.id)
+      updated_listing = Listings.get_listing(listing.id)
       changes = Activities.listing_changes(listing, updated_listing)
 
       assert(
@@ -52,13 +52,13 @@ defmodule Puppies.ActivitiesListingTest do
     end
 
     test "no changes to breed", %{user: user, listing: listing, dogs: dogs} do
-      listing = Listings.get_listing!(listing.id)
+      listing = Listings.get_listing(listing.id)
 
       Listings.update_listing(listing, %{
         name: "test"
       })
 
-      updated_listing = Listings.get_listing!(listing.id)
+      updated_listing = Listings.get_listing(listing.id)
       changes = Activities.listing_changes(listing, updated_listing)
       assert(changes == [%{field: :name, new_value: "test", old_value: "spike"}])
     end

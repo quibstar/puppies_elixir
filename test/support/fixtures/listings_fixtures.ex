@@ -34,7 +34,11 @@ defmodule Puppies.ListingsFixtures do
         pedigree: true,
         hypoallergenic: true,
         microchip: true,
-        purebred: true
+        purebred: true,
+        breeds: [],
+        listing_breeds: [],
+        photos: [],
+        user: nil
       })
       |> Puppies.Listings.create_listing()
 

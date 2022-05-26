@@ -20,7 +20,7 @@ defmodule PuppiesWeb.ListingShow do
         Accounts.get_user_by_session_token(user_token)
       end
 
-    listing = Listings.get_listing!(listing_id)
+    listing = Listings.get_listing(listing_id)
 
     user_id =
       if is_nil(user) do

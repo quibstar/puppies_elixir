@@ -124,7 +124,7 @@ defmodule PuppiesWeb.MessagesLive do
 
     listing_threads = Threads.get_threads_by_user_and_listing(user_id, listing_id)
 
-    listing = Listings.get_listing!(listing_id)
+    listing = Listings.get_listing(listing_id)
 
     current_thread =
       if is_nil(params["thread"]) do

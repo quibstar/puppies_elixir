@@ -2,29 +2,22 @@ defmodule Puppies.BlacklistsTest do
   use Puppies.DataCase
 
   alias Puppies.Blacklists
+  alias Puppies.Blacklists.{Domain, IPAddress, Content, Phone}
 
   describe "domain_blacklists" do
-    alias Puppies.Blacklists.EmailBlacklist
-
     import Puppies.BlacklistsFixtures
 
     @invalid_attrs %{domain: nil}
 
     test "list_domain_blacklists/0 returns all domain_blacklists" do
-      domain_blacklist = domain_blacklist_fixture()
-      assert Blacklists.list_domain_blacklists() == [domain_blacklist]
-    end
-
-    test "get_domain_blacklist!/1 returns the domain_blacklist with given id" do
-      domain_blacklist = domain_blacklist_fixture()
-      assert Blacklists.get_domain_blacklist!(domain_blacklist.id) == domain_blacklist
+      domains = domain_blacklist_fixture()
+      assert Blacklists.get_all_blacklisted_items(Domain) == [domains]
     end
 
     test "create_domain_blacklist/1 with valid data creates a domain_blacklist" do
       valid_attrs = %{domain: "some domain"}
 
-      assert {:ok, %EmailBlacklist{} = domain_blacklist} =
-               Blacklists.create_domain_blacklist(valid_attrs)
+      assert {:ok, %Domain{} = domain_blacklist} = Blacklists.create_domain_blacklist(valid_attrs)
 
       assert domain_blacklist.domain == "some domain"
     end
@@ -33,28 +26,9 @@ defmodule Puppies.BlacklistsTest do
       assert {:error, %Ecto.Changeset{}} = Blacklists.create_domain_blacklist(@invalid_attrs)
     end
 
-    test "update_domain_blacklist/2 with valid data updates the domain_blacklist" do
-      domain_blacklist = domain_blacklist_fixture()
-      update_attrs = %{domain: "some updated domain"}
-
-      assert {:ok, %EmailBlacklist{} = domain_blacklist} =
-               Blacklists.update_domain_blacklist(domain_blacklist, update_attrs)
-
-      assert domain_blacklist.domain == "some updated domain"
-    end
-
-    test "update_domain_blacklist/2 with invalid data returns error changeset" do
-      domain_blacklist = domain_blacklist_fixture()
-
-      assert {:error, %Ecto.Changeset{}} =
-               Blacklists.update_domain_blacklist(domain_blacklist, @invalid_attrs)
-
-      assert domain_blacklist == Blacklists.get_domain_blacklist!(domain_blacklist.id)
-    end
-
     test "delete_domain_blacklist/1 deletes the domain_blacklist" do
       domain_blacklist = domain_blacklist_fixture()
-      assert {:ok, %EmailBlacklist{}} = Blacklists.delete_domain_blacklist(domain_blacklist)
+      assert {:ok, %Domain{}} = Blacklists.delete_domain_blacklist(domain_blacklist)
 
       assert_raise Ecto.NoResultsError, fn ->
         Blacklists.get_domain_blacklist!(domain_blacklist.id)
@@ -68,15 +42,13 @@ defmodule Puppies.BlacklistsTest do
   end
 
   describe "ip_address_blacklists" do
-    alias Puppies.Blacklists.IPAddressBlacklist
-
     import Puppies.BlacklistsFixtures
 
     @invalid_attrs %{ip_address: nil}
 
     test "list_ip_address_blacklists/0 returns all ip_address_blacklists" do
       ip_address_blacklist = ip_address_blacklist_fixture()
-      assert Blacklists.list_ip_address_blacklists() == [ip_address_blacklist]
+      assert Blacklists.get_all_blacklisted_items(IPAddress) == [ip_address_blacklist]
     end
 
     test "get_ip_address_blacklist!/1 returns the ip_address_blacklist with given id" do
@@ -87,7 +59,7 @@ defmodule Puppies.BlacklistsTest do
     test "create_ip_address_blacklist/1 with valid data creates a ip_address_blacklist" do
       valid_attrs = %{ip_address: "some ip_address"}
 
-      assert {:ok, %IPAddressBlacklist{} = ip_address_blacklist} =
+      assert {:ok, %IPAddress{} = ip_address_blacklist} =
                Blacklists.create_ip_address_blacklist(valid_attrs)
 
       assert ip_address_blacklist.ip_address == "some ip_address"
@@ -97,30 +69,10 @@ defmodule Puppies.BlacklistsTest do
       assert {:error, %Ecto.Changeset{}} = Blacklists.create_ip_address_blacklist(@invalid_attrs)
     end
 
-    test "update_ip_address_blacklist/2 with valid data updates the ip_address_blacklist" do
-      ip_address_blacklist = ip_address_blacklist_fixture()
-      update_attrs = %{ip_address: "some updated ip_address"}
-
-      assert {:ok, %IPAddressBlacklist{} = ip_address_blacklist} =
-               Blacklists.update_ip_address_blacklist(ip_address_blacklist, update_attrs)
-
-      assert ip_address_blacklist.ip_address == "some updated ip_address"
-    end
-
-    test "update_ip_address_blacklist/2 with invalid data returns error changeset" do
-      ip_address_blacklist = ip_address_blacklist_fixture()
-
-      assert {:error, %Ecto.Changeset{}} =
-               Blacklists.update_ip_address_blacklist(ip_address_blacklist, @invalid_attrs)
-
-      assert ip_address_blacklist == Blacklists.get_ip_address_blacklist!(ip_address_blacklist.id)
-    end
-
     test "delete_ip_address_blacklist/1 deletes the ip_address_blacklist" do
       ip_address_blacklist = ip_address_blacklist_fixture()
 
-      assert {:ok, %IPAddressBlacklist{}} =
-               Blacklists.delete_ip_address_blacklist(ip_address_blacklist)
+      assert {:ok, %IPAddress{}} = Blacklists.delete_ip_address_blacklist(ip_address_blacklist)
 
       assert_raise Ecto.NoResultsError, fn ->
         Blacklists.get_ip_address_blacklist!(ip_address_blacklist.id)
@@ -134,15 +86,13 @@ defmodule Puppies.BlacklistsTest do
   end
 
   describe "content_blacklists" do
-    alias Puppies.Blacklists.ContentBlacklist
-
     import Puppies.BlacklistsFixtures
 
     @invalid_attrs %{content: nil}
 
     test "list_content_blacklists/0 returns all content_blacklists" do
       content_blacklist = content_blacklist_fixture()
-      assert Blacklists.list_content_blacklists() == [content_blacklist]
+      assert Blacklists.get_all_blacklisted_items(Content) == [content_blacklist]
     end
 
     test "get_content_blacklist!/1 returns the content_blacklist with given id" do
@@ -153,7 +103,7 @@ defmodule Puppies.BlacklistsTest do
     test "create_content_blacklist/1 with valid data creates a content_blacklist" do
       valid_attrs = %{content: "some content"}
 
-      assert {:ok, %ContentBlacklist{} = content_blacklist} =
+      assert {:ok, %Content{} = content_blacklist} =
                Blacklists.create_content_blacklist(valid_attrs)
 
       assert content_blacklist.content == "some content"
@@ -163,28 +113,9 @@ defmodule Puppies.BlacklistsTest do
       assert {:error, %Ecto.Changeset{}} = Blacklists.create_content_blacklist(@invalid_attrs)
     end
 
-    test "update_content_blacklist/2 with valid data updates the content_blacklist" do
-      content_blacklist = content_blacklist_fixture()
-      update_attrs = %{content: "some updated content"}
-
-      assert {:ok, %ContentBlacklist{} = content_blacklist} =
-               Blacklists.update_content_blacklist(content_blacklist, update_attrs)
-
-      assert content_blacklist.content == "some updated content"
-    end
-
-    test "update_content_blacklist/2 with invalid data returns error changeset" do
-      content_blacklist = content_blacklist_fixture()
-
-      assert {:error, %Ecto.Changeset{}} =
-               Blacklists.update_content_blacklist(content_blacklist, @invalid_attrs)
-
-      assert content_blacklist == Blacklists.get_content_blacklist!(content_blacklist.id)
-    end
-
     test "delete_content_blacklist/1 deletes the content_blacklist" do
       content_blacklist = content_blacklist_fixture()
-      assert {:ok, %ContentBlacklist{}} = Blacklists.delete_content_blacklist(content_blacklist)
+      assert {:ok, %Content{}} = Blacklists.delete_content_blacklist(content_blacklist)
 
       assert_raise Ecto.NoResultsError, fn ->
         Blacklists.get_content_blacklist!(content_blacklist.id)
@@ -206,7 +137,7 @@ defmodule Puppies.BlacklistsTest do
 
     test "list_phone_blacklists/0 returns all phone_blacklists" do
       phone_blacklist = phone_blacklist_fixture()
-      assert Blacklists.list_phone_blacklists() == [phone_blacklist]
+      assert Blacklists.get_all_blacklisted_items(Phone) == [phone_blacklist]
     end
 
     test "get_phone_blacklist!/1 returns the phone_blacklist with given id" do
@@ -216,48 +147,21 @@ defmodule Puppies.BlacklistsTest do
 
     test "create_phone_blacklist/1 with valid data creates a phone_blacklist" do
       valid_attrs = %{
-        phone_intl_format: "some phone_intl_format",
-        phone_number: "some phone_number"
+        phone_number: "1616444444"
       }
 
-      assert {:ok, %PhoneBlacklist{} = phone_blacklist} =
-               Blacklists.create_phone_blacklist(valid_attrs)
+      assert {:ok, %Phone{} = phone_blacklist} = Blacklists.create_phone_blacklist(valid_attrs)
 
-      assert phone_blacklist.phone_intl_format == "some phone_intl_format"
-      assert phone_blacklist.phone_number == "some phone_number"
+      assert phone_blacklist.phone_number == "1616444444"
     end
 
     test "create_phone_blacklist/1 with invalid data returns error changeset" do
       assert {:error, %Ecto.Changeset{}} = Blacklists.create_phone_blacklist(@invalid_attrs)
     end
 
-    test "update_phone_blacklist/2 with valid data updates the phone_blacklist" do
-      phone_blacklist = phone_blacklist_fixture()
-
-      update_attrs = %{
-        phone_intl_format: "some updated phone_intl_format",
-        phone_number: "some updated phone_number"
-      }
-
-      assert {:ok, %PhoneBlacklist{} = phone_blacklist} =
-               Blacklists.update_phone_blacklist(phone_blacklist, update_attrs)
-
-      assert phone_blacklist.phone_intl_format == "some updated phone_intl_format"
-      assert phone_blacklist.phone_number == "some updated phone_number"
-    end
-
-    test "update_phone_blacklist/2 with invalid data returns error changeset" do
-      phone_blacklist = phone_blacklist_fixture()
-
-      assert {:error, %Ecto.Changeset{}} =
-               Blacklists.update_phone_blacklist(phone_blacklist, @invalid_attrs)
-
-      assert phone_blacklist == Blacklists.get_phone_blacklist!(phone_blacklist.id)
-    end
-
     test "delete_phone_blacklist/1 deletes the phone_blacklist" do
       phone_blacklist = phone_blacklist_fixture()
-      assert {:ok, %PhoneBlacklist{}} = Blacklists.delete_phone_blacklist(phone_blacklist)
+      assert {:ok, %Phone{}} = Blacklists.delete_phone_blacklist(phone_blacklist)
 
       assert_raise Ecto.NoResultsError, fn ->
         Blacklists.get_phone_blacklist!(phone_blacklist.id)

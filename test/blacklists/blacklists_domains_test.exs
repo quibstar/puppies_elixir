@@ -1,5 +1,4 @@
 defmodule Puppies.BlacklistsDomainTests do
-  use ExUnit.Case
   use Puppies.DataCase
 
   import Puppies.AccountsFixtures

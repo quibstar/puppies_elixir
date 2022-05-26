@@ -42,10 +42,8 @@ defmodule Puppies.User.PhoneNumber do
 
     test "should save twilio sid" do
       user = user_fixture()
-      res = Puppies.Verifications.insert_verification(%{sid: "some id", user_id: user.id})
-      user = Accounts.get_user_by_email(user.email)
-
-      assert user.reputation_level == 2
+      res = Puppies.Verifications.Phone.insert_verification(%{sid: "some id", user_id: user.id})
+      assert(!is_nil(res))
     end
   end
 end

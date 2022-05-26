@@ -82,10 +82,18 @@ defmodule Puppies.Breeds do
     from([l, b] in q, limit: ^limit, offset: ^offset)
   end
 
+  def change_breed(%Breed{} = breed, attrs \\ %{}) do
+    Breed.changeset(breed, attrs)
+  end
+
   def create_breed(attrs \\ %{}) do
     %Breed{}
     |> Breed.changeset(attrs)
     |> Repo.insert()
+  end
+
+  def delete_breed(%Breed{} = breed) do
+    Repo.delete(breed)
   end
 
   def list_breeds do

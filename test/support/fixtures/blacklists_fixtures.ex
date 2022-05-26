@@ -5,17 +5,17 @@ defmodule Puppies.BlacklistsFixtures do
   """
 
   @doc """
-  Generate a email_blacklist.
+  Generate a domain_blacklist.
   """
-  def email_blacklist_fixture(attrs \\ %{}) do
-    {:ok, email_blacklist} =
+  def domain_blacklist_fixture(attrs \\ %{}) do
+    {:ok, domain_blacklist} =
       attrs
       |> Enum.into(%{
         domain: "some domain"
       })
-      |> Puppies.Blacklists.create_email_blacklist()
+      |> Puppies.Blacklists.create_domain_blacklist()
 
-    email_blacklist
+    domain_blacklist
   end
 
   @doc """
@@ -53,8 +53,7 @@ defmodule Puppies.BlacklistsFixtures do
     {:ok, phone_blacklist} =
       attrs
       |> Enum.into(%{
-        phone_intl_format: "some phone_intl_format",
-        phone_number: "some phone_number"
+        phone_number: "6164444444"
       })
       |> Puppies.Blacklists.create_phone_blacklist()
 

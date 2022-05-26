@@ -24,7 +24,7 @@ defmodule Puppies.BlacklistsContentTest do
   describe "Scan content for bad words" do
     test "test listing for blacklisted content", %{user: user, listing: listing} do
       BlacklistsProcessor.check_content_has_blacklisted_phrase(
-        user,
+        listing.user_id,
         listing.description,
         "listing description"
       )
@@ -36,9 +36,9 @@ defmodule Puppies.BlacklistsContentTest do
       assert(user.status == "suspended")
     end
 
-    test "test buiness for blacklisted content", %{user: user, business: business} do
+    test "test business for blacklisted content", %{user: user, business: business} do
       BlacklistsProcessor.check_content_has_blacklisted_phrase(
-        user,
+        business.user_id,
         business.description,
         "business description"
       )

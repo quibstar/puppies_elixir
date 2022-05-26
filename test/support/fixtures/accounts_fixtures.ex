@@ -13,7 +13,7 @@ defmodule Puppies.AccountsFixtures do
       last_name: "Smith",
       terms_of_service: true,
       is_seller: Map.get(attrs, :is_seller, false),
-      email: unique_user_email(),
+      email: Map.get(attrs, :email, unique_user_email()),
       password: valid_user_password()
     })
   end

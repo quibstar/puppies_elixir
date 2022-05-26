@@ -16,7 +16,7 @@ defmodule PuppiesWeb.ReviewController do
         true ->
           user = Accounts.get_user_by_email(review_link.email)
           listing = Listings.get_listing_for_review(review_link.listing_id)
-          changeset = Reviews.change_review(%Review{})
+          changeset = Reviews.change_review(%Review{}, %{})
 
           status =
             if user.id == listing.user_id do

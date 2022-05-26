@@ -21,7 +21,7 @@ defmodule PuppiesWeb.AdminAuthTest do
       conn = AdminAuth.log_in_admin(conn, admin)
       assert token = get_session(conn, :admin_token)
       assert get_session(conn, :live_socket_id) == "admins_sessions:#{Base.url_encode64(token)}"
-      assert redirected_to(conn) == "/"
+      assert redirected_to(conn) == "/admin/dashboard"
       assert Admins.get_admin_by_session_token(token)
     end
 
@@ -115,9 +115,11 @@ defmodule PuppiesWeb.AdminAuthTest do
 
   describe "redirect_if_admin_is_authenticated/2" do
     test "redirects if admin is authenticated", %{conn: conn, admin: admin} do
-      conn = conn |> assign(:current_admin, admin) |> AdminAuth.redirect_if_admin_is_authenticated([])
+      conn =
+        conn |> assign(:current_admin, admin) |> AdminAuth.redirect_if_admin_is_authenticated([])
+
       assert conn.halted
-      assert redirected_to(conn) == "/"
+      assert redirected_to(conn) == "/admin/dashboard"
     end
 
     test "does not redirect if admin is not authenticated", %{conn: conn} do

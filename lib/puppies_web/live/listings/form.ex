@@ -9,7 +9,7 @@ defmodule PuppiesWeb.ListingsForm do
         changeset = Listings.change_listing(%Listing{sex: "male", breeds: []})
         %{changeset: changeset, selected_breeds: [], max_uploads: 6, photos: []}
       else
-        lst = Listings.get_listing!(assigns.listing_id)
+        lst = Listings.get_listing(assigns.listing_id)
         changeset = Listings.change_listing(lst)
 
         %{
@@ -62,13 +62,12 @@ defmodule PuppiesWeb.ListingsForm do
       end)
 
     params = Map.put(params, "listing_breeds", listing_breeds)
-    IO.inspect(params)
 
     listing =
       if id == "" do
         Listings.create_listing(params)
       else
-        listing = Listings.get_listing!(params["id"])
+        listing = Listings.get_listing(params["id"])
         Listings.update_listing(listing, params)
       end
 

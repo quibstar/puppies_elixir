@@ -13,25 +13,29 @@ defmodule Puppies.ThreadsTest do
     business = business_fixture(%{user_id: seller.id, location_autocomplete: "some place"})
     listing = listing_fixture(%{user_id: seller.id})
 
-    {:ok, seller: seller, buyer: buyer, listing: listing}
+    {:ok, seller: seller, buyer: buyer, listing: listing, business: business}
   end
 
   describe "Threads" do
-    test "create new thread", %{seller: s, buyer: buyer, listing: listing} do
+    test "create new thread", %{seller: s, buyer: buyer, listing: listing, business: business} do
       uuid = Ecto.UUID.generate()
 
       seller = %{
         uuid: uuid,
-        user_id: s.id,
+        sender_id: s.id,
         listing_id: listing.id,
-        receiver_id: buyer.id
+        receiver_id: buyer.id,
+        message: "test",
+        business_id: business.id
       }
 
       buyer = %{
         uuid: uuid,
-        user_id: buyer.id,
+        sender_id: buyer.id,
         listing_id: listing.id,
-        receiver_id: s.id
+        receiver_id: s.id,
+        message: "test",
+        business_id: business.id
       }
 
       {:ok, seller} = Threads.create_thread(seller)
@@ -41,13 +45,19 @@ defmodule Puppies.ThreadsTest do
       assert(seller.listing_id == buyer.listing_id)
     end
 
-    test "create new threads in one pass", %{seller: seller, buyer: buyer, listing: listing} do
+    test "create new threads in one pass", %{
+      seller: seller,
+      buyer: buyer,
+      listing: listing,
+      business: business
+    } do
       {:ok, res} =
         Threads.create_threads(%{
           "sender_id" => seller.id,
           "receiver_id" => buyer.id,
           "listing_id" => listing.id,
-          "message" => "Let's talk!"
+          "message" => "Let's talk!",
+          "business_id" => business.id
         })
 
       assert(Map.has_key?(res, :buyer))
@@ -58,7 +68,8 @@ defmodule Puppies.ThreadsTest do
           "sender_id" => nil,
           "receiver_id" => buyer.id,
           "listing_id" => listing.id,
-          "message" => "Let's talk!"
+          "message" => "Let's talk!",
+          "business_id" => business.id
         })
 
       assert(changeset.valid? == false)

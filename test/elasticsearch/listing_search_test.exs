@@ -27,9 +27,9 @@ defmodule Puppies.ListingSearchTest do
 
     test "get by age" do
       res = ListingsSearch.query_age(%{"dob" => "7"})
-      assert(res == %{range: %{age: %{gte: "now-7d", lte: "now"}}})
+      assert(res == %{range: %{dob: %{gte: "now-7d", lte: "now"}}})
       res = ListingsSearch.query_age(%{"dob" => "180"})
-      assert(res == %{range: %{age: %{gte: "now-180d", lte: "now"}}})
+      assert(res == %{range: %{dob: %{gte: "now-180d", lte: "now"}}})
     end
 
     test "get by price" do
@@ -54,7 +54,6 @@ defmodule Puppies.ListingSearchTest do
 
     test "query builder" do
       res = ListingsSearch.query_builder(example)
-      IO.inspect(res)
     end
   end
 

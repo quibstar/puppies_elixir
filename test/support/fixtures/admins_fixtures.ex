@@ -9,6 +9,8 @@ defmodule Puppies.AdminsFixtures do
 
   def valid_admin_attributes(attrs \\ %{}) do
     Enum.into(attrs, %{
+      first_name: "Joe",
+      last_name: "Smith",
       email: unique_admin_email(),
       password: valid_admin_password()
     })

@@ -11,8 +11,8 @@ defmodule Puppies.BreedFixtures do
     {:ok, breed} =
       attrs
       |> Enum.into(%{
-        category: "some category",
-        name: "some name"
+        name: "Shih Tzu",
+        slug: "shih-tzu"
       })
       |> Puppies.Breeds.create_breed()
 

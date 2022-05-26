@@ -204,8 +204,6 @@ defmodule Puppies.ES.ListingsSearch do
       }
     }
 
-    IO.inspect(body)
-
     Api.post("/listings/_search", body)
   end
 

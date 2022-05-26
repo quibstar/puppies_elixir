@@ -15,7 +15,7 @@ defmodule Puppies.EmailInContent do
     exists =
       Flags.check_for_flag(%{
         "offender_id" => user.id,
-        "type" => type
+        "reason" => "Email in content is not the same as #{user.email}"
       })
 
     if !exists do

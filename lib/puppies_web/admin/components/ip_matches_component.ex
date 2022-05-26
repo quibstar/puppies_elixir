@@ -3,10 +3,10 @@ defmodule PuppiesWeb.Admin.IpMatches do
   Profile component
   """
   use PuppiesWeb, :live_component
-  alias Puppies.Admin.IPData
+  alias Puppies.Admin.IPDatum
 
   def update(assigns, socket) do
-    matches = IPData.get_ip_data_by_ip(assigns.id)
+    matches = IPDatum.get_ip_data_by_ip(assigns.id)
 
     {:ok,
      socket

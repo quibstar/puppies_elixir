@@ -1,12 +1,12 @@
-defmodule Puppies.Admin.IPData do
+defmodule Puppies.Admin.IPDatum do
   import Ecto.Query, warn: false
   alias Puppies.Repo
-  alias Puppies.IPData
+  alias Puppies.IPDatum
   # Admin
   def get_ip_addresses_by_user_id(user_id) do
     res =
       Repo.all(
-        from(p in IPData,
+        from(p in IPDatum,
           where: p.user_id == ^user_id
         )
       )
@@ -18,7 +18,7 @@ defmodule Puppies.Admin.IPData do
   end
 
   def get_ip_data_count_by_ip(ip, user_id) do
-    q = from(i in IPData, where: i.ip == ^ip and i.user_id != ^user_id)
+    q = from(i in IPDatum, where: i.ip == ^ip and i.user_id != ^user_id)
 
     Repo.aggregate(
       q,
@@ -29,11 +29,11 @@ defmodule Puppies.Admin.IPData do
 
   def get_ip_data_by_ip(ip_id) do
     ip_data =
-      IPData
+      IPDatum
       |> Repo.get(ip_id)
 
     Repo.all(
-      from(i in IPData, where: i.ip == ^ip_data.ip and i.user_id != ^ip_data.user_id)
+      from(i in IPDatum, where: i.ip == ^ip_data.ip and i.user_id != ^ip_data.user_id)
       |> preload(user: :photos)
     )
   end

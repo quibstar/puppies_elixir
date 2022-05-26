@@ -181,10 +181,10 @@ defmodule PuppiesWeb.Router do
     post("/register", AdminRegistrationController, :create)
     get("/log_in", AdminSessionController, :new)
     post("/log_in", AdminSessionController, :create)
-    get("/reset_password", AdminResetPasswordController, :new)
-    post("/reset_password", AdminResetPasswordController, :create)
-    get("/reset_password/:token", AdminResetPasswordController, :edit)
-    put("/reset_password/:token", AdminResetPasswordController, :update)
+    # get("/reset_password", AdminResetPasswordController, :new)
+    # post("/reset_password", AdminResetPasswordController, :create)
+    # get("/reset_password/:token", AdminResetPasswordController, :edit)
+    # put("/reset_password/:token", AdminResetPasswordController, :update)
   end
 
   scope "/admin/", PuppiesWeb do

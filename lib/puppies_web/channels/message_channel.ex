@@ -3,7 +3,6 @@
 
 #   @impl true
 #   def join("message:lobby", payload, socket) do
-#     IO.inspect("TEST")
 
 #     if authorized?(payload) do
 #       {:ok, socket}

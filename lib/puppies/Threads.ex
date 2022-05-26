@@ -57,7 +57,7 @@ defmodule Puppies.Threads do
     seller =
       thread_changes(%{
         uuid: uuid,
-        user_id: sender_id,
+        sender_id: sender_id,
         receiver_id: receiver_id,
         listing_id: listing_id,
         business_id: business_id
@@ -66,7 +66,7 @@ defmodule Puppies.Threads do
     buyer =
       thread_changes(%{
         uuid: uuid,
-        user_id: receiver_id,
+        sender_id: receiver_id,
         receiver_id: sender_id,
         listing_id: listing_id,
         business_id: business_id
@@ -94,7 +94,7 @@ defmodule Puppies.Threads do
   def get_user_threads(user_id) do
     threads =
       from(t in Thread,
-        where: t.user_id == ^user_id,
+        where: t.sender_id == ^user_id,
         distinct: t.listing_id,
         preload: [[listing: :photos], messages: ^unread_messages()]
       )
@@ -120,7 +120,7 @@ defmodule Puppies.Threads do
 
   def get_first_listing_thread_and_messages(user_id) do
     from(t in Thread,
-      where: t.user_id == ^user_id,
+      where: t.sender_id == ^user_id,
       order_by: [desc: :updated_at],
       limit: 1,
       preload: [
@@ -135,7 +135,7 @@ defmodule Puppies.Threads do
 
   def get_threads_by_user_and_listing(user_id, listing_id) do
     from(t in Thread,
-      where: t.user_id == ^user_id and t.listing_id == ^listing_id,
+      where: t.sender_id == ^user_id and t.listing_id == ^listing_id,
       order_by: [desc: :updated_at],
       preload: [
         [listing: :photos],
@@ -149,7 +149,7 @@ defmodule Puppies.Threads do
 
   def buyer_threads(user_id) do
     from(t in Thread,
-      where: t.user_id == ^user_id,
+      where: t.sender_id == ^user_id,
       order_by: [desc: t.updated_at],
       preload: [
         [listing: :photos],
@@ -163,7 +163,7 @@ defmodule Puppies.Threads do
 
   def current_thread(user_id, uuid) do
     from(t in Thread,
-      where: t.user_id == ^user_id and t.uuid == ^uuid,
+      where: t.sender_id == ^user_id and t.uuid == ^uuid,
       preload: [
         [listing: :photos],
         receiver: [business: :photo],
@@ -184,7 +184,7 @@ defmodule Puppies.Threads do
   def conversation_started(user_id, receiver_id, listing_id) do
     from(t in Thread,
       where:
-        t.user_id == ^user_id and t.receiver_id == ^receiver_id and t.listing_id == ^listing_id
+        t.sender_id == ^user_id and t.receiver_id == ^receiver_id and t.listing_id == ^listing_id
     )
     |> Repo.one()
   end
@@ -193,7 +193,7 @@ defmodule Puppies.Threads do
   def get_user_communication_with_business(user_id) do
     businesses =
       from(t in Thread,
-        where: t.user_id == ^user_id,
+        where: t.sender_id == ^user_id,
         distinct: :business_id,
         preload: [business: [:photo, :user]]
       )
@@ -201,7 +201,7 @@ defmodule Puppies.Threads do
 
     listings =
       from(t in Thread,
-        where: t.user_id == ^user_id,
+        where: t.sender_id == ^user_id,
         preload: [[listing: :photos], messages: ^not_read()]
       )
       |> Repo.all()

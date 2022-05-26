@@ -13,7 +13,7 @@ defmodule PuppiesWeb.UserRegistrationControllerTest do
 
     test "redirects if already logged in", %{conn: conn} do
       conn = conn |> log_in_user(user_fixture()) |> get(Routes.user_registration_path(conn, :new))
-      assert redirected_to(conn) == "/"
+      assert redirected_to(conn) == "/users/dashboard"
     end
   end
 
@@ -28,14 +28,11 @@ defmodule PuppiesWeb.UserRegistrationControllerTest do
         })
 
       assert get_session(conn, :user_token)
-      assert redirected_to(conn) == "/"
+      assert redirected_to(conn) == "/users/dashboard"
 
       # Now do a logged in request and assert on the menu
-      conn = get(conn, "/")
+      conn = get(conn, "/users/dashboard")
       response = html_response(conn, 200)
-      assert response =~ email
-      assert response =~ "Settings</a>"
-      assert response =~ "Log out</a>"
     end
 
     test "render errors for invalid data", %{conn: conn} do

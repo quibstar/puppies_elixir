@@ -16,7 +16,8 @@ defmodule Puppies.BusinessesFixtures do
         name: "some name",
         phone: "some phone",
         state_license: true,
-        website: "some website"
+        website: "some website",
+        location_autocomplete: "grand rapids"
       })
       |> Puppies.Businesses.create_business()
 

@@ -17,7 +17,7 @@ defmodule PuppiesWeb.ListingsStatusUpdateForm do
         Accounts.get_user_by_session_token(user_token)
       end
 
-    listing = Listings.get_listing!(listing_id)
+    listing = Listings.get_listing(listing_id)
     changeset = Listings.change_listing(listing)
 
     {:ok, assign(socket, user: user, loading: false, listing: listing, changeset: changeset)}
@@ -36,7 +36,7 @@ defmodule PuppiesWeb.ListingsStatusUpdateForm do
 
   def handle_event("save_listing", %{"listing" => params}, socket) do
     %{"id" => id} = params
-    listing = Listings.get_listing!(id)
+    listing = Listings.get_listing(id)
     listing = Listings.update_listing(listing, params)
 
     case listing do
