@@ -73,10 +73,6 @@ defmodule PuppiesWeb.SellerMessageCenter do
                 <div class="text-sm mt-0.5 text-center flex-grow text-gray-500 ">
                   Conversation with: <%= @current_thread.receiver.first_name %> <%= @current_thread.receiver.last_name %>
                 </div>
-
-                <svg @click="{ modal: (modal = !modal), showFlag: showFlag = !showFlag}" xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 mr-2 cursor-pointer text-gray-500 " fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 21v-4m0 0V5a2 2 0 012-2h6.5l1 1H21l-3 6 3 6h-8.5l-1-1H5a2 2 0 00-2 2zm9-13.5V9" />
-                </svg>
               <% end %>
             </div>
           <ul class="h-[calc(100vh-295px)] overflow-scroll flex flex-col" id="chat-messages" phx-hook="chatMessages" phx-update="replace">

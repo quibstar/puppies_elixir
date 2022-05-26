@@ -86,25 +86,6 @@ defmodule PuppiesWeb.ListingShow do
      )}
   end
 
-  def handle_event("favorite", %{"listing_id" => listing_id}, socket) do
-    user_id = socket.assigns.user.id
-    listing_id = String.to_integer(listing_id)
-
-    if Enum.member?(socket.assigns.favorites, listing_id) do
-      Favorites.delete_favorite(user_id, listing_id)
-    else
-      Favorites.create_favorite(%{user_id: user_id, listing_id: listing_id})
-    end
-
-    socket =
-      assign(
-        socket,
-        favorites: Favorites.get_favorite_ids(user_id)
-      )
-
-    {:noreply, socket}
-  end
-
   def render(assigns) do
     ~H"""
       <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -130,7 +111,7 @@ defmodule PuppiesWeb.ListingShow do
                 <%= live_component  PuppiesWeb.ContactCTA, id: "contact_cta",  user: @user, business_or_listing: @business %>
               <% end %>
             </div>
-            <%= live_component  PuppiesWeb.ListingDetails, id: "listing_details", user_id: @user, listing: @listing, views: @views, is_favorite: @is_favorite %>
+            <%= live_component  PuppiesWeb.ListingDetails, id: "listing_details", user_id: @user.id, listing: @listing, views: @views, is_favorite: @is_favorite %>
           </div>
         <% end %>
       </div>

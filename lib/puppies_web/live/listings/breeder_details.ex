@@ -1,7 +1,7 @@
 defmodule PuppiesWeb.BreederDetails do
   use PuppiesWeb, :live_component
 
-  alias PuppiesWeb.{FlagIcon, ChatIcon}
+  alias PuppiesWeb.ChatIcon
 
   def render(assigns) do
     ~H"""
@@ -50,7 +50,7 @@ defmodule PuppiesWeb.BreederDetails do
 
                 <% end %>
 
-                <.live_component module={FlagIcon} id="flag_icon" business={@business} user={@user} listing={@listing} return_to={ Routes.live_path(@socket, PuppiesWeb.ListingShow, @listing.id)}/>
+                <.live_component module={PuppiesWeb.FlagSellerIcon} id="flag_icon" business={@business} user={@user} listing={@listing} return_to={ Routes.live_path(@socket, PuppiesWeb.ListingShow, @listing.id)}/>
               </div>
             <% else %>
                 <div class="flex place-content-center">

@@ -191,7 +191,7 @@ defmodule Puppies.Accounts.User do
 
   def profile_changeset(user, attrs) do
     user
-    |> cast(attrs, [:first_name, :last_name])
+    |> cast(attrs, [:first_name, :last_name, :is_seller])
     |> cast_assoc(:user_location)
     |> validate_required([:first_name], message: "Please supply a first name")
     |> validate_required([:last_name], message: "Please supply a last name")

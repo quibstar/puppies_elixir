@@ -90,7 +90,7 @@ defmodule PuppiesWeb.ListingsStatusUpdateForm do
                     <%= hidden_input f, :id %>
                     <div class="mt-4">
                       <%= label f, :status, class: "block text-sm font-medium text-gray-700" %>
-                      <%= select f, :status, ["available", "hold", "sold"], class: "capitalize pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md" %>
+                      <%= select f, :status, ["available", "hold", "sold"], class: "capitalize pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-primary-500 focus:border-primary-500 sm:text-sm rounded-md" %>
                     </div>
 
                     <%= if Map.has_key?(@changeset.changes, :status ) && @changeset.changes.status == "sold" do %>

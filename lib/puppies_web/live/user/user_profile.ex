@@ -129,7 +129,7 @@ defmodule PuppiesWeb.UserProfile do
           <div class="my-4 max-w-3xl mx-auto bg-white shadow px-4 py-5 sm:rounded-lg sm:p-6">
             <.form let={f} for={@changeset} id="user-form" phx-submit="save_user" phx_change="validate">
               <div class="space-y-8 divide-y divide-gray-200">
-                <div class="pt-8">
+                <div>
                   <%= if !is_nil(@user.photo) && !is_nil(@user.photo.url) && !@hide_current_photo do %>
                     <div id="profile-image" class="my-4 mx-auto border-2 border-dashed rounded-full w-60 h-60 flex justify-center items-center overflow-hidden">
                       <%= img_tag( @user.photo.url) %>
@@ -172,7 +172,6 @@ defmodule PuppiesWeb.UserProfile do
                   <% end %>
 
                   <div class="mt-6 grid grid-cols-1 gap-y-6 gap-x-4 sm:grid-cols-6">
-
                     <div class="col-span-6 sm:col-span-6 lg:col-span-2">
                       <label for="first-name" class="block text-sm font-medium text-gray-700">
                         First name
@@ -218,12 +217,20 @@ defmodule PuppiesWeb.UserProfile do
                       </div>
                     <% end %>
                   </div>
+
                 </div>
-                <div class="pt-5">
-                  <div class="py-5">
-                    <div class="flex flex-col" x-on:click.debounce="show_drawer = !show_drawer">
-                      <%= submit "Submit", phx_disable_with: "Saving...",  disabled: !@changeset.valid?,  class: "inline-block px-6 py-2 text-xs font-medium leading-6 text-center text-white uppercase transition bg-primary-500 rounded shadow hover:shadow-lg hover:bg-primary-600 focus:outline-none disabled:opacity-50" %>
+                <%= unless @user.is_seller do %>
+                  <div class="pt-5">
+                    <div class="text-800 font-medium">Become a seller</div>
+                    <div class="col-span-6 sm:col-span-3 lg:col-span-2">
+                      <%= checkbox f, :is_seller, class: "-4 w-4 text-primary-600 focus:ring-primary-500 border-gray-300 rounded" %> <label for="postal-code" class="inline-block text-sm font-medium text-gray-700">Yes, I want to start listing.</label>
                     </div>
+                    <span class="inline-block bg-red-500 rounded text-white px-2 text-sm mt-2">This cannot be undone</span>
+                  </div>
+                <% end %>
+                <div class="pt-5">
+                  <div class="flex flex-col" x-on:click.debounce="show_drawer = !show_drawer">
+                    <%= submit "Submit", phx_disable_with: "Saving...",  disabled: !@changeset.valid?,  class: "inline-block px-6 py-2 text-xs font-medium leading-6 text-center text-white uppercase transition bg-primary-500 rounded shadow hover:shadow-lg hover:bg-primary-600 focus:outline-none disabled:opacity-50" %>
                   </div>
                 </div>
               </div>
