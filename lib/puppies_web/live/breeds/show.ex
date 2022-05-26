@@ -31,7 +31,7 @@ defmodule PuppiesWeb.BreedsShowLive do
         pagination:
           Map.get(matches, :pagination, %{pagination: %{count: 0, page: "1", limit: "12"}}),
         breed: breed,
-        page_title: "Breed "
+        page_title: breed.name
       )
 
     {:ok, socket}

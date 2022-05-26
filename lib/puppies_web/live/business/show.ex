@@ -30,7 +30,8 @@ defmodule PuppiesWeb.BusinessPageLive do
        business: business,
        listings: data.listings,
        review_stats: review_stats,
-       pagination: Map.get(data, :pagination, %{count: 0})
+       pagination: Map.get(data, :pagination, %{count: 0}),
+       page_title: business.name
      )}
   end
 

@@ -78,7 +78,7 @@ defmodule PuppiesWeb.ListingShow do
        current_photo: List.first(photos),
        photos: photos,
        business: business,
-       page_title: "#{business.name} #{listing.name} - ",
+       page_title: "#{business.name} - #{listing.name} ",
        is_favorite: favorites,
        views: views,
        review_stats: review_stats,

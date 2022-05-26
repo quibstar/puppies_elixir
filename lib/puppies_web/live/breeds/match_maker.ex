@@ -19,7 +19,7 @@ defmodule PuppiesWeb.BreedsMatchMakerLive do
         changeset: changeset,
         loading: false,
         breeds: [],
-        page_title: "Breeds"
+        page_title: "Puppy Matcher"
       )
 
     {:ok, socket}

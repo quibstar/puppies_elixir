@@ -76,7 +76,8 @@ defmodule PuppiesWeb.UserDashboardLive do
          active_subscriptions: active_subscriptions,
          subscription_count: subscription_count,
          id_credit: id_credit,
-         available_listing_to_post: available_listing_to_post
+         available_listing_to_post: available_listing_to_post,
+         page_title: "#{user.first_name} #{user.last_name}'s Dashboard"
        )}
     else
       # buyer
