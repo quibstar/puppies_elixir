@@ -42,7 +42,10 @@ mix phx.gen.context ReviewLinks ReviewLink review_links email:string listing_id:
 - [ ] Popular breeds generation gen_server
 - [ ] delete user
 - [ ] Email set up
-- [ ] Fraud detection
+- [ ] Apply Fraud detection for domains
+- [ ] Apply Fraud detection for ip address
+- [ ] Apply Fraud detection for content
+- [ ] Apply Fraud detection countries
 
 # Admin
 

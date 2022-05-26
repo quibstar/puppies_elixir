@@ -47,33 +47,37 @@ defmodule PuppiesWeb.VerificationsLive do
 
   def render(assigns) do
     ~H"""
-      <div class="mx-4">
-      <%= if @loading == false && !is_nil(@user)do %>
+      <div class="mx-4 h-full">
+        <%= if @loading == false && !is_nil(@user)do %>
           <%= cond do %>
             <% @user.reputation_level == 0 -> %>
-                Need to confirm email
+              <div class="h-full flex justify-center items-center mx-auto">
+                <div class="text-center">
+                    <svg class="mx-auto h-12 w-12 text-gray-400" xmlns="http://www.w3.org/2000/svg"  fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path stroke-linecap="round" stroke-linejoin="round" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                    </svg>
+                    <h3 class="mt-2 text-sm font-medium text-gray-900">We need to communicate.</h3>
+                    <p class="mt-1 text-sm text-gray-500">
+                      You need to verify your email before you can upgrade you verifications.
+                    </p>
+                </div>
+              </div>
               <% @user.reputation_level == 1 -> %>
                 <.live_component module={NeedsSilverUpgrade} id="needs-silver-upgrade" user={@user} />
-
               <% @user.reputation_level == 2 -> %>
                 <%= if @id_credit do %>
                   <.live_component module={NeedsGoldUpgrade} id="needs-gold-upgrade" user={@user} />
                 <% else %>
                   <.live_component module={SilverVerified} id="silver-verified" />
                 <% end %>
-
               <% @user.reputation_level == 3 -> %>
                 <.live_component module={GoldVerified} id="gold-verified" />
-
             <% true -> %>
               Contact customer support.
           <% end %>
-
-
-
-      <% else %>
-        <%= live_component PuppiesWeb.LoadingComponent,  id: :loading %>
-      <% end %>
+        <% else %>
+          <%= live_component PuppiesWeb.LoadingComponent,  id: :loading %>
+        <% end %>
       </div>
     """
   end
