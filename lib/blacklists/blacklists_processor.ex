@@ -105,18 +105,19 @@ defmodule Puppies.BlacklistsProcessor do
   end
 
   # Phone
-  def check_for_banned_phone_number(user, phone_number) do
+  def check_for_banned_phone_number(user_id, phone_number) do
     phone_numbers = blacklisted_phone_numbers()
 
     Enum.each(phone_numbers, fn phone ->
       if phone == phone_number do
         Flags.create(%{
           system_reported: true,
-          offender_id: user.id,
+          offender_id: user_id,
           reason: "Blacklisted phone number: #{phone_number}",
           type: "blacklisted_phone_number"
         })
 
+        user = get_user(user_id)
         Accounts.update_status(user, %{status: "suspended"})
       end
     end)

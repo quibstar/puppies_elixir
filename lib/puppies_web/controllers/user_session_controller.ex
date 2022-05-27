@@ -58,13 +58,15 @@ defmodule PuppiesWeb.UserSessionController do
   def delete(conn, _params) do
     user = conn.assigns.current_user
 
-    %{
-      user_id: user.id,
-      action: "sign_out",
-      description: "#{user.first_name} #{user.last_name} signed out."
-    }
-    |> Puppies.RecordActivityBackgroundJob.new()
-    |> Oban.insert()
+    unless is_nil(user) do
+      %{
+        user_id: user.id,
+        action: "sign_out",
+        description: "#{user.first_name} #{user.last_name} signed out."
+      }
+      |> Puppies.RecordActivityBackgroundJob.new()
+      |> Oban.insert()
+    end
 
     conn
     |> put_flash(:info, "Logged out successfully.")

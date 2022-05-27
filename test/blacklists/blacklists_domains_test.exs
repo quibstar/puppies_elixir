@@ -12,7 +12,7 @@ defmodule Puppies.BlacklistsDomainTests do
 
   describe "Scan email data" do
     test "creates flag and suspends user for blacklisted email", %{user: user} do
-      BlacklistsProcessor.check_user_email_for_banned_domain(user.id)
+      BlacklistsProcessor.check_user_email_for_banned_domain(user.id, user.email)
       flags = Puppies.Flags.get_offender_flags(user.id)
       assert(flags != [])
       user = Accounts.get_user!(user.id)

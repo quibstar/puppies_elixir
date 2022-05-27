@@ -23,7 +23,7 @@ defmodule Puppies.BlacklistsEmailTest do
   describe "Blacklisted email" do
     test "test user email", %{user: user} do
       BlacklistsProcessor.check_for_banned_phone_number(
-        user,
+        user.id,
         "6164015666"
       )
 

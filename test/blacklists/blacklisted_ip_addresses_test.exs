@@ -21,7 +21,7 @@ defmodule Puppies.BlacklistsIPAddressTest do
   describe "Blacklisted IP Addresses" do
     test "test for baned ip address", %{user: user} do
       BlacklistsProcessor.check_for_banned_ip_address(
-        user,
+        user.id,
         "10.10.10.10"
       )
 
