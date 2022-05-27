@@ -27,25 +27,7 @@ defmodule PuppiesWeb.UserSessionController do
         true ->
           ip = Utilities.x_forward_or_remote_ip(conn)
           # check blacklisted country, ip and email
-          %{user_id: user.id, ip: ip}
-          |> Puppies.BlacklistCountryIPAddressBackgroundJob.new()
-          |> Oban.insert()
-
-          %{user_id: user.id, email: user.email}
-          |> Puppies.BlacklistEmailBackgroundJob.new()
-          |> Oban.insert()
-
-          %{
-            user_id: user.id,
-            action: "sign_in",
-            description: "#{user.first_name} #{user.last_name} signed in."
-          }
-          |> Puppies.RecordActivityBackgroundJob.new()
-          |> Oban.insert()
-
-          %{ip: ip, user_id: user.id}
-          |> Puppies.RecordIPBackgroundJob.new()
-          |> Oban.insert()
+          Puppies.BackgroundJobCoordinator.login(user, ip)
 
           UserAuth.log_in_user(conn, user, user_params)
       end
@@ -57,16 +39,7 @@ defmodule PuppiesWeb.UserSessionController do
 
   def delete(conn, _params) do
     user = conn.assigns.current_user
-
-    unless is_nil(user) do
-      %{
-        user_id: user.id,
-        action: "sign_out",
-        description: "#{user.first_name} #{user.last_name} signed out."
-      }
-      |> Puppies.RecordActivityBackgroundJob.new()
-      |> Oban.insert()
-    end
+    Puppies.BackgroundJobCoordinator.logout(user)
 
     conn
     |> put_flash(:info, "Logged out successfully.")

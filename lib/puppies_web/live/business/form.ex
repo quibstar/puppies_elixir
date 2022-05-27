@@ -102,11 +102,16 @@ defmodule PuppiesWeb.BusinessForm do
     saved_results =
       if Map.has_key?(params, "id") do
         saved_results = Businesses.update_business(socket.assigns.business, params)
-        record_updated_business_activity(socket.assigns.business, saved_results)
+
+        Puppies.BackgroundJobCoordinator.record_updated_business_activity(
+          socket.assigns.business,
+          saved_results
+        )
+
         saved_results
       else
         saved_results = Businesses.create_business(params)
-        record_new_business_activity(saved_results)
+        Puppies.BackgroundJobCoordinator.record_new_business_activity(saved_results)
         saved_results
       end
 
@@ -238,35 +243,6 @@ defmodule PuppiesWeb.BusinessForm do
         {:ok, photo} ->
           Photos.resize_and_send_to_aws(photo)
       end
-    end
-  end
-
-  defp record_new_business_activity(saved_results) do
-    case saved_results do
-      {:ok, business} ->
-        %{
-          user_id: business.user_id,
-          action: "business_created",
-          description: "New business created: #{business.name}, ID: #{business.id}"
-        }
-        |> Puppies.RecordActivityBackgroundJob.new()
-        |> Oban.insert()
-    end
-  end
-
-  defp record_updated_business_activity(business, saved_results) do
-    case saved_results do
-      {:ok, _} ->
-        updated_business = Businesses.get_business(business.id)
-
-        %{
-          user_id: updated_business.user_id,
-          action: "business_updated",
-          description: "Business updated: #{updated_business.name}, ID: #{updated_business.id}",
-          data: Puppies.Activities.business_changes(business, updated_business)
-        }
-        |> Puppies.RecordActivityBackgroundJob.new()
-        |> Oban.insert()
     end
   end
 

@@ -65,11 +65,11 @@ defmodule PuppiesWeb.ListingsForm do
       if Map.has_key?(params, "id") do
         listing = Listings.get_listing(params["id"])
         saved_results = Listings.update_listing(listing, params)
-        record_updated_listing_activity(listing, saved_results)
+        Puppies.BackgroundJobCoordinator.record_updated_listing_activity(listing, saved_results)
         saved_results
       else
         saved_results = Listings.create_listing(params)
-        record_new_listing_activity(saved_results)
+        Puppies.BackgroundJobCoordinator.record_new_listing_activity(saved_results)
         saved_results
       end
 
@@ -192,36 +192,6 @@ defmodule PuppiesWeb.ListingsForm do
 
   def current_photos_and_uploaded_photos(current_photos, uploads) do
     length(current_photos) + length(uploads.images.entries) > 6
-  end
-
-  defp record_new_listing_activity(listing) do
-    case listing do
-      {:ok, listing} ->
-        %{
-          user_id: listing.user_id,
-          action: "listing_created",
-          description: "New listing created: #{listing.name}, ID: #{listing.id}"
-        }
-        |> Puppies.RecordActivityBackgroundJob.new()
-        |> Oban.insert()
-    end
-  end
-
-  defp record_updated_listing_activity(listing, saved_results) do
-    case saved_results do
-      {:ok, _} ->
-        # To get associations
-        updated_listing = Listings.get_listing(listing.id)
-
-        %{
-          user_id: updated_listing.user_id,
-          action: "listing_updated",
-          description: "Listing updated: #{updated_listing.name}, ID: #{updated_listing.id}",
-          data: Puppies.Activities.listing_changes(listing, updated_listing)
-        }
-        |> Puppies.RecordActivityBackgroundJob.new()
-        |> Oban.insert()
-    end
   end
 
   def render(assigns) do
