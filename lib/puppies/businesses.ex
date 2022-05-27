@@ -37,6 +37,16 @@ defmodule Puppies.Businesses do
   """
   def get_business!(id), do: Repo.get!(Business, id)
 
+  def get_business(id) do
+    q =
+      from(b in Business,
+        where: b.id == ^id
+      )
+      |> preload([:breeds, :location, :photo, :business_breeds, :user])
+
+    Repo.one(q)
+  end
+
   def get_business_by_user_id(id) do
     q =
       from(b in Business,

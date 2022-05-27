@@ -33,7 +33,15 @@ defmodule PuppiesWeb.UserResetPasswordController do
   # leaked token giving the user access to the account.
   def update(conn, %{"user" => user_params}) do
     case Accounts.reset_user_password(conn.assigns.user, user_params) do
-      {:ok, _} ->
+      {:ok, user} ->
+        %{
+          user_id: user.id,
+          action: "reset_password",
+          description: "#{user.first_name} #{user.last_name} reset their password."
+        }
+        |> Puppies.RecordActivityBackgroundJob.new()
+        |> Oban.insert()
+
         conn
         |> put_flash(:info, "Password reset successfully.")
         |> redirect(to: Routes.user_session_path(conn, :new))

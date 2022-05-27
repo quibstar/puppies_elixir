@@ -46,6 +46,7 @@ mix phx.gen.context ReviewLinks ReviewLink review_links email:string listing_id:
 - [ ] Apply Fraud detection for ip address
 - [ ] Apply Fraud detection for content
 - [ ] Apply Fraud detection countries
+- [ ] make review updatable
 
 # Admin
 
@@ -67,3 +68,25 @@ https://stripe.com/docs/billing/subscriptions/build-subscriptions?card-or-paymen
 
 stripe login --api-key rk_test_51KszeNJLqL890V2TZMXtWB3lEToc5Z2PYTIbqYq7RXkAN7muNsIeC9piJ12khnEC8nFSYlInzL2Hvdxuibcd3txx006PDHpqxs
 stripe listen --forward-to http://localhost:4000/stripe/webhooks
+
+# Activities to record
+
+- [x] log in
+- [x] log out
+- [x] update email
+- [x] update password
+- [x] create listing
+- [-] update listing
+  - [ ] photos
+  - [x] breeds
+- [x] create business
+- [-] update business
+  - [ ] photo
+  - [x] breeds
+- [ ] Blacklists by user
+  - [x] ip
+  - [ ] content
+  - [ ] phone
+  - [x] country
+- [ ] membership
+- [ ] verifications

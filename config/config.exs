@@ -65,4 +65,4 @@ config :tailwind,
 config :puppies, Oban,
   repo: Puppies.Repo,
   plugins: [],
-  queues: [default: 10, mailers: 20, events: 50]
+  queues: [default: 10, blacklist: 15, mailers: 20, events: 30, activity: 40]

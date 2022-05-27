@@ -199,8 +199,8 @@ defmodule Puppies.Listings do
   end
 
   def update_view_count(listing_id, views) do
-    listing = __MODULE__.get_listing_alt!(listing_id)
-    __MODULE__.update_listing(listing, %{views: views})
+    listing = get_listing!(listing_id)
+    update_listing(listing, %{views: views})
   end
 
   def get_listings_ids_for_user(user_id) do

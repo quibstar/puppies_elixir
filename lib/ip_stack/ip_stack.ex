@@ -38,6 +38,7 @@ defmodule Puppies.IPStack do
       continent_name: data["continent_name"],
       country_code: data["country_code"],
       country_name: data["country_name"],
+      country_flag: data["location"]["country_flag_emoji_unicode"],
       region_code: data["region_code"],
       region_name: data["region_name"],
       city: data["city"],

@@ -1,15 +1,18 @@
 defmodule Puppies.Activities do
-  alias Puppies.{Listings.Listing, Businesses.Business, Accounts.User}
+  alias Puppies.Repo
+  alias Puppies.{Listings.Listing, Businesses.Business, Accounts.User, Activity}
 
   def listing_changes(old_resource, new_resource) do
-    listing_changes = changes(old_resource, new_resource, Listing.__schema__(:fields))
+    listing_fields = Listing.__schema__(:fields) -- [:inserted_at, :updated_at]
+    listing_changes = changes(old_resource, new_resource, listing_fields)
 
     breed_changes = breed_changes(old_resource, new_resource, :listing_breeds)
     listing_changes ++ breed_changes
   end
 
   def business_changes(old_resource, new_resource) do
-    listing_changes = changes(old_resource, new_resource, Business.__schema__(:fields))
+    business_fields = Business.__schema__(:fields) -- [:inserted_at, :updated_at]
+    listing_changes = changes(old_resource, new_resource, business_fields)
     breed_changes = breed_changes(old_resource, new_resource, :business_breeds)
     listing_changes ++ breed_changes
   end
@@ -72,6 +75,45 @@ defmodule Puppies.Activities do
 
   # user changes
   def user_changes(old, new) do
-    changes(old, new, User.__schema__(:fields))
+    fields = User.__schema__(:fields) -- [:inserted_at, :updated_at]
+    changes(old, new, fields)
   end
+
+  def create_activity(attrs \\ %{}) do
+    %Activity{}
+    |> Activity.changeset(attrs)
+    |> Repo.insert()
+  end
+
+  # def sign_up(user) do
+  #   create_activity(%{
+  #     user_id: user.id,
+  #     action: "sign_up",
+  #     description: "#{user.first_name} #{user.last_name} registered a new account"
+  #   })
+  # end
+
+  # def sign_in(user) do
+  #   create_activity(%{
+  #     user_id: user.id,
+  #     action: "sign_in",
+  #     description: "#{user.first_name} #{user.last_name} signed in"
+  #   })
+  # end
+
+  # def sign_out(user) do
+  #   create_activity(%{
+  #     user_id: user.id,
+  #     action: "sign_out",
+  #     description: "#{user.first_name} #{user.last_name} signed out"
+  #   })
+  # end
+
+  # def password_reset(user, description) do
+  #   create_activity(%{
+  #     user_id: user.id,
+  #     action: "password_reset",
+  #     description: "#{user.first_name} #{user.last_name} #{description}"
+  #   })
+  # end
 end

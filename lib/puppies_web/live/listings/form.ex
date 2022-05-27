@@ -54,8 +54,6 @@ defmodule PuppiesWeb.ListingsForm do
   end
 
   def handle_event("save_listing", %{"listing" => params}, socket) do
-    %{"id" => id} = params
-
     listing_breeds =
       Enum.reduce(socket.assigns.selected_breeds, [], fn breed, acc ->
         [%{breed_id: breed.id} | acc]
@@ -63,12 +61,16 @@ defmodule PuppiesWeb.ListingsForm do
 
     params = Map.put(params, "listing_breeds", listing_breeds)
 
-    listing =
-      if id == "" do
-        Listings.create_listing(params)
-      else
+    saved_results =
+      if Map.has_key?(params, "id") do
         listing = Listings.get_listing(params["id"])
-        Listings.update_listing(listing, params)
+        saved_results = Listings.update_listing(listing, params)
+        record_updated_listing_activity(listing, saved_results)
+        saved_results
+      else
+        saved_results = Listings.create_listing(params)
+        record_new_listing_activity(saved_results)
+        saved_results
       end
 
     Enum.each(socket.assigns.remove_photos, fn photo ->
@@ -78,23 +80,21 @@ defmodule PuppiesWeb.ListingsForm do
     end)
 
     message =
-      if id == "" do
-        "Listing created."
-      else
+      if Map.has_key?(params, "id") do
         "Listing updated."
+      else
+        "Listing created."
       end
 
-    case listing do
+    case saved_results do
       {:ok, listing} ->
         save_photo(socket, listing)
         ES.Listings.re_index_listing(listing.id)
-        changeset = Listings.change_listing(%Listing{sex: "male", breeds: []})
 
         {
           :noreply,
           socket
           |> put_flash(:info, message)
-          |> assign(:changeset, changeset)
           |> push_redirect(to: Routes.live_path(socket, PuppiesWeb.UserDashboardLive))
         }
 
@@ -192,6 +192,36 @@ defmodule PuppiesWeb.ListingsForm do
 
   def current_photos_and_uploaded_photos(current_photos, uploads) do
     length(current_photos) + length(uploads.images.entries) > 6
+  end
+
+  defp record_new_listing_activity(listing) do
+    case listing do
+      {:ok, listing} ->
+        %{
+          user_id: listing.user_id,
+          action: "listing_created",
+          description: "New listing created: #{listing.name}, ID: #{listing.id}"
+        }
+        |> Puppies.RecordActivityBackgroundJob.new()
+        |> Oban.insert()
+    end
+  end
+
+  defp record_updated_listing_activity(listing, saved_results) do
+    case saved_results do
+      {:ok, _} ->
+        # To get associations
+        updated_listing = Listings.get_listing(listing.id)
+
+        %{
+          user_id: updated_listing.user_id,
+          action: "listing_updated",
+          description: "Listing updated: #{updated_listing.name}, ID: #{updated_listing.id}",
+          data: Puppies.Activities.listing_changes(listing, updated_listing)
+        }
+        |> Puppies.RecordActivityBackgroundJob.new()
+        |> Oban.insert()
+    end
   end
 
   def render(assigns) do

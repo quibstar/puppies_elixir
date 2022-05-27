@@ -46,10 +46,8 @@ defmodule Puppies.BlacklistsProcessor do
   end
 
   # Check domain/email
-  def check_user_email_for_banned_domain(user_id) do
-    user = get_user(user_id)
-
-    list = String.split(user.email, "@")
+  def check_user_email_for_banned_domain(user_id, email) do
+    list = String.split(email, "@")
     domain = List.last(list)
 
     if Blacklists.domain_in_excluded_list(domain) &&
@@ -59,10 +57,11 @@ defmodule Puppies.BlacklistsProcessor do
          }) do
       Flags.create(%{
         system_reported: true,
-        offender_id: user.id,
+        offender_id: user_id,
         reason: "User suspended. High risk domain: #{domain}"
       })
 
+      user = get_user(user_id)
       Accounts.update_status(user, %{status: "suspended"})
     end
   end
@@ -87,18 +86,19 @@ defmodule Puppies.BlacklistsProcessor do
   end
 
   # ip address
-  def check_for_banned_ip_address(user, ip_address) do
+  def check_for_banned_ip_address(user_id, ip_address) do
     blacklisted_ips = blacklisted_ips()
 
     Enum.each(blacklisted_ips, fn ip ->
       if ip == ip_address do
         Flags.create(%{
           system_reported: true,
-          offender_id: user.id,
+          offender_id: user_id,
           reason: "Blacklisted IP Address: #{ip_address}",
           type: "blacklisted_ip"
         })
 
+        user = get_user(user_id)
         Accounts.update_status(user, %{status: "suspended"})
       end
     end)

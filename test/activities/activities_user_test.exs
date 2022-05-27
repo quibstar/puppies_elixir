@@ -17,16 +17,22 @@ defmodule Puppies.ActivitiesUserTest do
       user = user_fixture()
 
       {:ok, updated_user} =
-        Accounts.update_user_profile(user, %{first_name: "Ilav", last_name: "Turtles"})
+        Accounts.update_user_profile(user, %{first_name: "Ilove", last_name: "Turtles"})
 
-      res = Activities.user_changes(user, updated_user)
+      changes = Activities.user_changes(user, updated_user)
 
       assert(
-        res == [
-          %{field: :first_name, new_value: "Ilav", old_value: "Joe"},
+        changes == [
+          %{field: :first_name, new_value: "Ilove", old_value: "Joe"},
           %{field: :last_name, new_value: "Turtles", old_value: "Smith"}
         ]
       )
+
+      {:ok, res} =
+        Activities.create_activity(%{user_id: user.id, action: "user_update", data: changes})
+
+      assert(res.action == "user_update")
+      assert(res.data == changes)
     end
 
     test "updates user password" do

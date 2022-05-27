@@ -63,6 +63,12 @@ defmodule Puppies.ActivitiesBusinessTest do
       updated_business = Businesses.get_business_by_user_id(user.id)
       changes = Activities.business_changes(business, updated_business)
       assert(changes == [%{field: :name, new_value: "test", old_value: "TEST Business"}])
+
+      {:ok, res} =
+        Activities.create_activity(%{user_id: user.id, action: "business_update", data: changes})
+
+      assert(res.action == "business_update")
+      assert(res.data == changes)
     end
 
     # test "no changes to photo", %{user: user, business: business, dogs: dogs} do
