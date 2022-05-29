@@ -135,6 +135,14 @@ defmodule PuppiesWeb.UserDashboardLive do
     end
   end
 
+  def available_readout(count, available) do
+    available_count = length(available)
+
+    if count - available_count >= 0 do
+      "You have #{count - available_count} listings available."
+    end
+  end
+
   def render(assigns) do
     ~H"""
     <div class="mb-4" x-data="{ show_drawer: false, show_modal: false }">
@@ -183,8 +191,24 @@ defmodule PuppiesWeb.UserDashboardLive do
                     <%= if  @listings == [] or @subscription_count == 0 or is_nil(@business) do %>
                       <%= PuppiesWeb.ListingRequirements.html(%{listings: @listings, business: @business, user: @user, subscription_count: @subscription_count, socket: @socket}) %>
                     <% end %>
-                    <%= PuppiesWeb.Capabilities.show(%{available: @available, user: @user, active_subscriptions: @active_subscriptions,}) %>
                   <% end %>
+                  <%= PuppiesWeb.Capabilities.show(%{reputation_level: @user.reputation_level}) %>
+
+                  <%= if @user.is_seller do %>
+                    <%= for subscription <- @active_subscriptions do %>
+                      <%= if subscription.product.name == "Premium" do %>
+                        <p class="mt-1 text-sm text-gray-500 text-sm">Your <span class="text-gray-600 font-semibold"><%= subscription.product.name %></span> membership allows you 50 active listings.
+                        <%= available_readout(50, @available) %>
+                        </p>
+                      <% end %>
+                      <%= if subscription.product.name == "Standard" do %>
+                        <p class="mt-1 text-sm text-gray-500 text-sm">Your <span class="text-gray-600 font-semibold"><%= subscription.product.name %></span> membership allows you 25 active listings.
+                          <%= available_readout(25, @available) %>
+                        </p>
+                      <% end %>
+                    <% end %>
+                  <% end %>
+
                 </div>
               </div>
             </section>

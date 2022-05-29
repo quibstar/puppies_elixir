@@ -221,4 +221,25 @@ defmodule Puppies.Utilities do
   def format_short_date_time(date) do
     Calendar.strftime(date, "%m/%d/%y %I:%M:%S %p")
   end
+
+  def check_date(list, idx, inserted_at) do
+    if idx == 0 do
+      true
+    else
+      idx = idx - 1
+      res = Enum.fetch(list, idx)
+
+      case res do
+        :error ->
+          true
+
+        {:ok, message} ->
+          [inserted_at.year, inserted_at.month, inserted_at.day] != [
+            message.inserted_at.year,
+            message.inserted_at.month,
+            message.inserted_at.day
+          ]
+      end
+    end
+  end
 end

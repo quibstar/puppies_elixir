@@ -6,7 +6,7 @@ defmodule Puppies.Businesses.Business do
            only: [
              :name,
              :slug,
-             :phone,
+             :phone_number,
              :state_license,
              :federal_license,
              :website,
@@ -20,7 +20,7 @@ defmodule Puppies.Businesses.Business do
     field(:federal_license, :boolean, default: false)
     field(:name, :string)
     field(:slug, :string)
-    field(:phone, :string)
+    field(:phone_number, :string)
     field(:state_license, :boolean, default: false)
     field(:website, :string)
     field(:location_autocomplete, :string, virtual: true)
@@ -41,14 +41,14 @@ defmodule Puppies.Businesses.Business do
       :name,
       :slug,
       :website,
-      :phone,
+      :phone_number,
       :description,
       :state_license,
       :federal_license,
       :user_id,
       :location_autocomplete
     ])
-    |> validate_required([:phone], message: "Phone can't be blank")
+    |> validate_required([:phone_number], message: "Phone can't be blank")
     |> validate_required([:name], message: "Name can't be blank")
     |> unique_constraint([:name], message: "Name taken, please choose another")
     |> validate_required([:location_autocomplete], message: "Location can't be blank")

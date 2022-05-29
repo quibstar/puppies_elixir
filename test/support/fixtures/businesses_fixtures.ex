@@ -14,7 +14,7 @@ defmodule Puppies.BusinessesFixtures do
         description: "some description",
         federal_license: true,
         name: "some name",
-        phone: "some phone",
+        phone_number: "some phone",
         state_license: true,
         website: "some website",
         location_autocomplete: "grand rapids"

@@ -37,13 +37,13 @@ defmodule Puppies.Blacklists do
     from([b] in q, limit: ^limit, offset: ^offset)
   end
 
-  def check_for_existence_of(schema, field, other_field) do
-    Repo.exists?(
-      from(s in schema,
-        where: field(s, ^field) == ^other_field
-      )
-    )
-  end
+  # def check_for_existence_of(schema, field, other_field) do
+  #   Repo.exists?(
+  #     from(s in schema,
+  #       where: field(s, ^field) == ^other_field
+  #     )
+  #   )
+  # end
 
   def get_domain_blacklist!(id) do
     Repo.get!(Domain, id)

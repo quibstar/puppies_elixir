@@ -30,15 +30,11 @@ defmodule PuppiesWeb.ListingShow do
       end
 
     if !is_nil(user) && user.id != listing.user_id do
-      %{user_id: user_id, listing_id: listing_id}
-      |> Puppies.ViewBackgroundJob.new()
-      |> Oban.insert()
+      Puppies.BackgroundJobCoordinator.update_view_count_by_registered_user(user.id, listing.id)
     end
 
     if is_nil(user) do
-      %{user_id: nil, listing_id: listing_id}
-      |> Puppies.ViewBackgroundJob.new()
-      |> Oban.insert()
+      Puppies.BackgroundJobCoordinator.update_view_count_by_anonymous_user(listing.id)
     end
 
     business = Businesses.get_business_by_user_id(listing.user_id)

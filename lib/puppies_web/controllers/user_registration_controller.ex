@@ -20,25 +20,14 @@ defmodule PuppiesWeb.UserRegistrationController do
 
         ip = Utilities.x_forward_or_remote_ip(conn)
         # check blacklisted country, ip and email
-        %{user_id: user.id, ip: ip}
-        |> Puppies.BlacklistCountryIPAddressBackgroundJob.new()
-        |> Oban.insert()
-
-        %{user_id: user.id, email: user.email}
-        |> Puppies.BlacklistEmailBackgroundJob.new()
-        |> Oban.insert()
-
-        %{
-          user_id: user.id,
-          action: "sign_up",
-          description: "#{user.first_name} #{user.last_name} signed up."
-        }
-        |> Puppies.RecordActivityBackgroundJob.new()
-        |> Oban.insert()
-
-        %{ip: ip, user_id: user.id}
-        |> Puppies.RecordIPBackgroundJob.new()
-        |> Oban.insert()
+        Puppies.BackgroundJobCoordinator.session(
+          user.id,
+          user.first_name,
+          user.last_name,
+          user.email,
+          ip,
+          "registered"
+        )
 
         conn
         |> put_flash(:info, "User created successfully.")

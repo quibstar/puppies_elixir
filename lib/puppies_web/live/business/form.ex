@@ -117,9 +117,9 @@ defmodule PuppiesWeb.BusinessForm do
 
     message =
       if Map.has_key?(params, "id") do
-        "business created."
-      else
         "business updated."
+      else
+        "business created."
       end
 
     case saved_results do
@@ -129,6 +129,17 @@ defmodule PuppiesWeb.BusinessForm do
         else
           save_photo(socket, business)
         end
+
+        Puppies.BackgroundJobCoordinator.check_for_blacklisted_content(
+          business.user_id,
+          business.description,
+          "business description"
+        )
+
+        Puppies.BackgroundJobCoordinator.check_for_blacklisted_phone(
+          business.user_id,
+          business.phone_number
+        )
 
         {
           :noreply,
@@ -386,9 +397,9 @@ defmodule PuppiesWeb.BusinessForm do
               </div>
 
               <div class="mt-4 flex-grow">
-                <%= label f, :phone, class: "inline-block text-sm font-medium text-gray-700" %> <small class="text-xs text-red-500">*</small>
-                <%= text_input f, :phone, class: "shadow-sm focus:ring-primary-500 focus:border-primary-500 block w-full sm:text-sm border-gray-300 rounded-md" %>
-                <%= error_tag f, :phone %>
+                <%= label f, :phone_number, class: "inline-block text-sm font-medium text-gray-700" %> <small class="text-xs text-red-500">*</small>
+                <%= text_input f, :phone_number, class: "shadow-sm focus:ring-primary-500 focus:border-primary-500 block w-full sm:text-sm border-gray-300 rounded-md" %>
+                <%= error_tag f, :phone_number %>
               </div>
 
               <div class="mt-4 flex-grow relative">

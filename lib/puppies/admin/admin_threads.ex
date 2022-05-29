@@ -10,7 +10,7 @@ defmodule Puppies.Admin.Threads do
 
   def seller_threads(user_id) do
     from(t in Thread,
-      where: t.user_id == ^user_id,
+      where: t.sender_id == ^user_id,
       preload: [
         [listing: :photos],
         receiver: [business: :photo],
@@ -22,7 +22,7 @@ defmodule Puppies.Admin.Threads do
 
   def buyer_threads(user_id) do
     from(t in Thread,
-      where: t.user_id == ^user_id,
+      where: t.sender_id == ^user_id,
       order_by: [desc: t.updated_at],
       preload: [
         [listing: :photos],

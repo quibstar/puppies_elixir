@@ -12,7 +12,7 @@ defmodule Puppies.ReviewsFixtures do
       attrs
       |> Enum.into(%{
         review: "some review",
-        email: "some email",
+        email: "test@test.com",
         first_name: "some first_name",
         rating: 42
       })

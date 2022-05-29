@@ -34,13 +34,11 @@ defmodule PuppiesWeb.UserResetPasswordController do
   def update(conn, %{"user" => user_params}) do
     case Accounts.reset_user_password(conn.assigns.user, user_params) do
       {:ok, user} ->
-        %{
-          user_id: user.id,
-          action: "reset_password",
-          description: "#{user.first_name} #{user.last_name} reset their password."
-        }
-        |> Puppies.RecordActivityBackgroundJob.new()
-        |> Oban.insert()
+        Puppies.BackgroundJobCoordinator.user_reset_password(
+          user.id,
+          user.first_name,
+          user.last_name
+        )
 
         conn
         |> put_flash(:info, "Password reset successfully.")

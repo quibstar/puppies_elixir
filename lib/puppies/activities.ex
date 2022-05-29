@@ -1,6 +1,14 @@
 defmodule Puppies.Activities do
   alias Puppies.Repo
-  alias Puppies.{Listings.Listing, Businesses.Business, Accounts.User, Activity}
+
+  alias Puppies.{
+    Listings.Listing,
+    Businesses.Business,
+    Accounts.User,
+    Activity,
+    Reviews.Review,
+    UserSettings
+  }
 
   def listing_changes(old_resource, new_resource) do
     listing_fields = Listing.__schema__(:fields) -- [:inserted_at, :updated_at]
@@ -79,41 +87,19 @@ defmodule Puppies.Activities do
     changes(old, new, fields)
   end
 
+  def review_changes(old, new) do
+    fields = Review.__schema__(:fields) -- [:inserted_at, :updated_at]
+    changes(old, new, fields)
+  end
+
+  def user_settings_changes(old, new) do
+    fields = UserSettings.__schema__(:fields) -- [:inserted_at, :updated_at]
+    changes(old, new, fields)
+  end
+
   def create_activity(attrs \\ %{}) do
     %Activity{}
     |> Activity.changeset(attrs)
     |> Repo.insert()
   end
-
-  # def sign_up(user) do
-  #   create_activity(%{
-  #     user_id: user.id,
-  #     action: "sign_up",
-  #     description: "#{user.first_name} #{user.last_name} registered a new account"
-  #   })
-  # end
-
-  # def sign_in(user) do
-  #   create_activity(%{
-  #     user_id: user.id,
-  #     action: "sign_in",
-  #     description: "#{user.first_name} #{user.last_name} signed in"
-  #   })
-  # end
-
-  # def sign_out(user) do
-  #   create_activity(%{
-  #     user_id: user.id,
-  #     action: "sign_out",
-  #     description: "#{user.first_name} #{user.last_name} signed out"
-  #   })
-  # end
-
-  # def password_reset(user, description) do
-  #   create_activity(%{
-  #     user_id: user.id,
-  #     action: "password_reset",
-  #     description: "#{user.first_name} #{user.last_name} #{description}"
-  #   })
-  # end
 end

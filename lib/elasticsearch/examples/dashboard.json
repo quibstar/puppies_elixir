@@ -9,7 +9,7 @@
   "business": {
     "name": "Mike's Kennel",
     "slug": null,
-    "phone": "616-555-5555",
+    "phone_number": "616-555-5555",
     "state_license": false,
     "federal_license": false,
     "website": "tes.com",

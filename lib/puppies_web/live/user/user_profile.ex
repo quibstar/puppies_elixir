@@ -58,7 +58,7 @@ defmodule PuppiesWeb.UserProfile do
           save_photo(socket, user)
         end
 
-        record_profile_activity(original_user, user)
+        Puppies.BackgroundJobCoordinator.record_profile_activity(original_user, user)
 
         {
           :noreply,
@@ -121,19 +121,6 @@ defmodule PuppiesWeb.UserProfile do
           Photos.resize_and_send_to_aws(photo)
       end
     end
-  end
-
-  defp record_profile_activity(original_user, user) do
-    data = Puppies.Activities.user_changes(original_user, user)
-
-    %{
-      user_id: user.id,
-      action: "profile_update",
-      description: "#{user.first_name} #{user.last_name} updated their profile.",
-      data: data
-    }
-    |> Puppies.RecordActivityBackgroundJob.new()
-    |> Oban.insert()
   end
 
   def render(assigns) do

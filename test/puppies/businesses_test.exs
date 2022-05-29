@@ -12,7 +12,7 @@ defmodule Puppies.BusinessesTest do
       description: nil,
       federal_license: nil,
       name: nil,
-      phone: nil,
+      phone_number: nil,
       state_license: nil,
       website: nil,
       location_autocomplete: "grand rapids"
@@ -35,7 +35,7 @@ defmodule Puppies.BusinessesTest do
         description: "some description",
         federal_license: true,
         name: "some name",
-        phone: "some phone",
+        phone_number: "some phone",
         state_license: true,
         website: "some website",
         location_autocomplete: "grand rapids"
@@ -45,7 +45,7 @@ defmodule Puppies.BusinessesTest do
       assert business.description == "some description"
       assert business.federal_license == true
       assert business.name == "some name"
-      assert business.phone == "some phone"
+      assert business.phone_number == "some phone"
       assert business.state_license == true
       assert business.website == "some website"
     end
@@ -61,7 +61,7 @@ defmodule Puppies.BusinessesTest do
         description: "some updated description",
         federal_license: false,
         name: "some updated name",
-        phone: "some updated phone",
+        phone_number: "some updated phone",
         state_license: false,
         website: "some updated website",
         location_autocomplete: "grand rapids"
@@ -71,7 +71,7 @@ defmodule Puppies.BusinessesTest do
       assert business.description == "some updated description"
       assert business.federal_license == false
       assert business.name == "some updated name"
-      assert business.phone == "some updated phone"
+      assert business.phone_number == "some updated phone"
       assert business.state_license == false
       assert business.website == "some updated website"
     end

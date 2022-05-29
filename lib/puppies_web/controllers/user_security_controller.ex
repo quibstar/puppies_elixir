@@ -40,7 +40,7 @@ defmodule PuppiesWeb.UserSecurityController do
 
     case Accounts.update_user_password(original_user, password, user_params) do
       {:ok, user} ->
-        record_password_activity(original_user, user)
+        Puppies.BackgroundJobCoordinator.record_password_activity(original_user, user)
 
         conn
         |> put_flash(:info, "Password updated successfully.")
@@ -57,7 +57,7 @@ defmodule PuppiesWeb.UserSecurityController do
 
     case Accounts.update_user_email(original_user, token) do
       :ok ->
-        record_email_activity(original_user)
+        Puppies.BackgroundJobCoordinator.record_email_activity(original_user)
 
         conn
         |> put_flash(:info, "Email changed successfully.")
@@ -76,32 +76,5 @@ defmodule PuppiesWeb.UserSecurityController do
     conn
     |> assign(:email_changeset, Accounts.change_user_email(user))
     |> assign(:password_changeset, Accounts.change_user_password(user))
-  end
-
-  defp record_email_activity(original_user) do
-    user = Accounts.get_user!(original_user.id)
-    data = Puppies.Activities.user_changes(original_user, user)
-
-    %{
-      user_id: user.id,
-      action: "security_update",
-      description: "#{user.first_name} #{user.last_name} updated their email.",
-      data: data
-    }
-    |> Puppies.RecordActivityBackgroundJob.new()
-    |> Oban.insert()
-  end
-
-  defp record_password_activity(original_user, user) do
-    data = Puppies.Activities.user_changes(original_user, user)
-
-    %{
-      user_id: user.id,
-      action: "security_update",
-      description: "#{user.first_name} #{user.last_name} updated their password.",
-      data: data
-    }
-    |> Puppies.RecordActivityBackgroundJob.new()
-    |> Oban.insert()
   end
 end

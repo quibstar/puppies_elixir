@@ -10,10 +10,18 @@ defmodule PuppiesWeb.Admin.Transactions do
     {:ok,
      assign(
        socket,
-       transactions: get_transactions(assigns.customer_id),
+       transactions: transactions(assigns.customer_id),
        user_id: assigns.user_id,
        admin: assigns.admin
      )}
+  end
+
+  defp transactions(customer_id) do
+    if is_nil(customer_id) do
+      []
+    else
+      get_transactions(customer_id)
+    end
   end
 
   def handle_event("refund-transaction", %{"transaction_id" => transaction_id}, socket) do
@@ -22,7 +30,7 @@ defmodule PuppiesWeb.Admin.Transactions do
     {:noreply,
      assign(
        socket,
-       transactions: get_transactions(socket.assigns.customer_id)
+       transactions: transactions(socket.assigns.customer_id)
      )}
   end
 

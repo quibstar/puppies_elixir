@@ -51,7 +51,7 @@ defmodule PuppiesSeeds do
       name: name,
       slug: Utilities.string_to_slug(name),
       website: Faker.Internet.domain_name(),
-      phone: Faker.Phone.EnUs.phone(),
+      phone_number: Faker.Phone.EnUs.phone(),
       description: Enum.join(Faker.Lorem.paragraphs(1..3), " "),
       state_license: yes_or_no(),
       federal_license: yes_or_no(),

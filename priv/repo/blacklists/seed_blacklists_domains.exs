@@ -8,6 +8,7 @@
     |> String.replace("\"", "")
     |> String.replace("\n", "")
     |> String.split(",")
+    |> String.trim()
 
   Puppies.Blacklists.create_domain_blacklist(%{domain: domain})
 end)

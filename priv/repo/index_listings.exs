@@ -1,1 +1,1 @@
-Puppies.ES.IndexListings.create_mappings_and_index()
+Puppies.ES.Listings.create_mappings_and_index()

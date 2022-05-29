@@ -28,6 +28,10 @@ defmodule PuppiesWeb.Admin.Flags do
     end)
   end
 
+  defp human_readable(str) do
+    String.replace(str, "_", " ")
+  end
+
   def render(assigns) do
     ~H"""
     <div x-data="{ tab: 'flags' }" class="bg-white shadow rounded-lg p-4 mb-4">
@@ -80,7 +84,7 @@ defmodule PuppiesWeb.Admin.Flags do
                           <%= if flag.reason == "other" do %>
                             <%= flag.custom_reason %>
                           <% else %>
-                            <%= flag.reason %>
+                            <%= human_readable(flag.reason) %>
                           <% end %>
                         </div>
                       </div>
@@ -94,18 +98,21 @@ defmodule PuppiesWeb.Admin.Flags do
                   <%= live_component(PuppiesWeb.Admin.Empty, id: "no-resolved-flags", title: "No Resolved Flags", message: "") %>
                 </div>
               <% else %>
-                <div class="bg-white divide-y divide-gray-500">
+                <div class="bg-white divide-y">
                   <%= for flag <- @closed_flags do %>
                     <div class="text-sm py-2">
                       <div class="text-gray-500">
                         <%= if flag.system_reported do %>
                           <div>System Flag</div>
+                          <div class="text-red-500 my-2 bg-red-100  p-2 border border-red-400 rounded-md">
+                            <%= flag.reason %>
+                          </div>
                         <% else %>
                           <div class="text-red-500 my-2 bg-red-100  p-2 border border-red-400 rounded-md">
                             <%= if flag.reason == "other" do %>
                               <%= flag.custom_reason %>
                             <% else %>
-                              <%= flag.reason %>
+                              <%= human_readable(flag.reason) %>
                             <% end %>
                           </div>
                         <% end %>

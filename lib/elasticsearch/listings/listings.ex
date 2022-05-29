@@ -26,7 +26,7 @@ defmodule Puppies.ES.Listings do
     listing_mapping = data_type_mapping()
     Indexing.create_mappings(listing, listing_mapping)
 
-    # Api.delete("/listings")
+    Api.delete("/listings")
     Indexing.alias(listing, "listings")
     index_listings(listing)
   end
@@ -68,6 +68,7 @@ defmodule Puppies.ES.Listings do
       first_name: listing.user.first_name,
       last_name: listing.user.last_name,
       user_status: listing.user.status,
+      user_phone_number: listing.user.phone_number,
       reputation_level: listing.user.reputation_level,
       approved_to_sell: listing.user.approved_to_sell,
       locked: listing.user.locked,
@@ -102,7 +103,7 @@ defmodule Puppies.ES.Listings do
       business_photo: business_photo_url,
       business_breeds_slug:
         Enum.reduce(listing.user.business.breeds, [], fn breed, acc -> [breed.slug | acc] end),
-      phone: listing.user.business.phone,
+      business_phone_number: listing.user.business.phone_number,
       state_license: listing.user.business.state_license,
       federal_license: listing.user.business.federal_license,
       website: listing.user.business.website,
@@ -128,6 +129,7 @@ defmodule Puppies.ES.Listings do
           id: %{type: :integer},
           email: %{type: :keyword},
           first_name: %{type: :text},
+          user_phone_number: %{type: :keyword},
           approved_to_sell: %{type: :boolean},
           locked: %{type: :boolean},
           last_name: %{type: :text},
@@ -163,7 +165,7 @@ defmodule Puppies.ES.Listings do
           business_slug: %{type: :keyword},
           business_photo: %{type: :keyword},
           business_breeds_slug: %{type: :keyword},
-          phone: %{type: :keyword},
+          business_phone_number: %{type: :keyword},
           state_license: %{type: :boolean},
           federal_license: %{type: :boolean},
           website: %{type: :keyword},

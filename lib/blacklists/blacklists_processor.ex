@@ -9,14 +9,11 @@ defmodule Puppies.BlacklistsProcessor do
   alias Puppies.{Accounts, Flags, Blacklists}
 
   # Check country
-  defp get_user(user_id) do
-    Accounts.User
-    |> Repo.get_by(id: user_id)
-  end
 
   def check_users_country_origin(user_id) do
     user =
-      get_user(user_id)
+      Accounts.User
+      |> Repo.get_by(id: user_id)
       |> Repo.preload(:ip_addresses)
 
     if user.status == "active" do
@@ -61,7 +58,7 @@ defmodule Puppies.BlacklistsProcessor do
         reason: "User suspended. High risk domain: #{domain}"
       })
 
-      user = get_user(user_id)
+      user = Accounts.get_user!(user_id)
       Accounts.update_status(user, %{status: "suspended"})
     end
   end
@@ -79,7 +76,7 @@ defmodule Puppies.BlacklistsProcessor do
           type: "blacklisted_content"
         })
 
-        user = get_user(user_id)
+        user = Accounts.get_user!(user_id)
         Accounts.update_status(user, %{status: "suspended"})
       end
     end)
@@ -98,7 +95,7 @@ defmodule Puppies.BlacklistsProcessor do
           type: "blacklisted_ip"
         })
 
-        user = get_user(user_id)
+        user = Accounts.get_user!(user_id)
         Accounts.update_status(user, %{status: "suspended"})
       end
     end)
@@ -117,7 +114,7 @@ defmodule Puppies.BlacklistsProcessor do
           type: "blacklisted_phone_number"
         })
 
-        user = get_user(user_id)
+        user = Accounts.get_user!(user_id)
         Accounts.update_status(user, %{status: "suspended"})
       end
     end)
@@ -167,10 +164,7 @@ defmodule Puppies.BlacklistsProcessor do
         get_users()
         |> Repo.stream()
         |> Stream.map(fn user ->
-          list = String.split(user.email, "@")
-          domain = List.last(list)
-
-          if domain == blacklisted_domain do
+          if String.contains?(user.email, blacklisted_domain) do
             Flags.create(%{
               system_reported: true,
               offender_id: user.id,
@@ -194,7 +188,7 @@ defmodule Puppies.BlacklistsProcessor do
         |> Repo.stream()
         |> Stream.map(fn ip ->
           if ip.ip == ip_address do
-            user = get_user(ip.user_id)
+            user = Accounts.get_user!(ip.user_id)
 
             Flags.create(%{
               system_reported: true,
@@ -203,6 +197,44 @@ defmodule Puppies.BlacklistsProcessor do
               type: "blacklisted_ip_address"
             })
 
+            Accounts.update_status(user, %{status: "suspended"})
+          end
+        end)
+        |> Stream.run()
+      end,
+      timeout: :infinity
+    )
+  end
+
+  def check_against_new_blacklist_phone_number(phone_number, resource) do
+    query =
+      if resource == "user" do
+        get_users()
+      else
+        get_businesses()
+      end
+
+    Repo.transaction(
+      fn ->
+        query
+        |> Repo.stream()
+        |> Stream.map(fn resource ->
+          if resource.phone_number == phone_number do
+            id =
+              if Map.has_key?(resource, :user_id) do
+                resource.user_id
+              else
+                resource.id
+              end
+
+            Flags.create(%{
+              system_reported: true,
+              offender_id: id,
+              reason: "Blacklisted phone number: #{phone_number}",
+              type: "blacklisted_phone_number"
+            })
+
+            user = Accounts.get_user!(id)
             Accounts.update_status(user, %{status: "suspended"})
           end
         end)
@@ -227,7 +259,7 @@ defmodule Puppies.BlacklistsProcessor do
             type: "blacklisted_content"
           })
 
-          user = get_user(resource.user_id)
+          user = Accounts.get_user!(resource.user_id)
           Accounts.update_status(user, %{status: "suspended"})
         end
       end)
@@ -238,9 +270,11 @@ defmodule Puppies.BlacklistsProcessor do
   # private
 
   defp get_users() do
-    from(u in Puppies.Accounts.User,
-      where: u.is_seller == true
-    )
+    from(u in Puppies.Accounts.User)
+  end
+
+  defp get_businesses() do
+    from(b in Puppies.Businesses.Business)
   end
 
   defp get_ip_data() do

@@ -49,7 +49,11 @@ defmodule PuppiesWeb.ReviewController do
       {:ok, review} ->
         review_link = ReviewLinks.get_review_link_by_uuid(uuid)
         ReviewLinks.update_review_link(review_link, %{expired: true})
-        # ReviewLinks.delete_review_link(review_link)
+
+        Puppies.BackgroundJobCoordinator.record_new_review_activity(
+          review.user_id,
+          review
+        )
 
         conn
         |> put_flash(:info, "Review created successfully.")

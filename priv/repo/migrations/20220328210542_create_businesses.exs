@@ -6,7 +6,7 @@ defmodule Puppies.Repo.Migrations.CreateBusinesses do
       add(:name, :string)
       add(:slug, :string)
       add(:website, :string)
-      add(:phone, :string)
+      add(:phone_number, :string)
       add(:description, :text)
       add(:state_license, :boolean, default: false, null: false)
       add(:federal_license, :boolean, default: false, null: false)

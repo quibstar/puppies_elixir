@@ -91,6 +91,12 @@ defmodule PuppiesWeb.ListingsForm do
         save_photo(socket, listing)
         ES.Listings.re_index_listing(listing.id)
 
+        Puppies.BackgroundJobCoordinator.check_for_blacklisted_content(
+          listing.user_id,
+          listing.description,
+          "listing description"
+        )
+
         {
           :noreply,
           socket

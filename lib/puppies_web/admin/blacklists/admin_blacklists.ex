@@ -80,7 +80,6 @@ defmodule PuppiesWeb.Admin.BlackLists do
                 </div>
               </div>
               <div class="py-4">
-                <%= @current_tab %>
                 <%= case @current_tab do %>
                   <% "content" -> %>
                     <.live_component module={PuppiesWeb.Admin.BlackListContent} id="blacklist_content" admin={@admin} limit={@limit} page={@page}/>

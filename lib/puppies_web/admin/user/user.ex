@@ -12,9 +12,11 @@ defmodule PuppiesWeb.Admin.User do
     Admin.Reviews,
     Admin.Flags,
     Admin.Listings,
-    Admin.Business
+    Admin.Business,
+    Admin.Activities
   }
 
+  @limit "20"
   def mount(params, session, socket) do
     case connected?(socket) do
       true -> connected_mount(params, session, socket)
@@ -30,6 +32,13 @@ defmodule PuppiesWeb.Admin.User do
     notes = Notes.user_notes(user.id)
     reviews = Reviews.get_reviews_by_user(user.id)
     flags = Flags.flags_by_user_id(user.id)
+
+    data =
+      Activities.get_activities(user.id, %{
+        limit: @limit,
+        page: "1",
+        number_of_links: 7
+      })
 
     admin =
       if connected?(socket) && Map.has_key?(session, "admin_token") do
@@ -57,7 +66,11 @@ defmodule PuppiesWeb.Admin.User do
        flags: flags,
        listings: listings,
        business: business,
-       changeset: changeset
+       changeset: changeset,
+       activities: data.activities,
+       pagination: Map.get(data, :pagination, %{count: 0}),
+       page: "1",
+       limit: @limit
      )}
   end
 
@@ -83,12 +96,13 @@ defmodule PuppiesWeb.Admin.User do
     })
 
     user = Accounts.get_user_business_and_listings(socket.assigns.user.id)
+    flags = Flags.flags_by_user_id(user.id)
 
     {:noreply,
      assign(
        socket,
        user: user,
-       loading: false
+       flags: flags
      )}
   end
 
@@ -244,7 +258,7 @@ defmodule PuppiesWeb.Admin.User do
                   </div>
                 </div>
                 <%= if @user.is_seller do %>
-                  <div class="bg-white overflow-hidden shadow rounded-lg divide-y px-2 my-4">
+                  <div class="bg-white overflow-hidden shadow rounded-lg divide-y px-2 mt-4">
                     <div class="px-4 py-5">
                       <div class="text-lg font-semibold mb-2">Business</div>
                       <div class="flex">
@@ -256,7 +270,7 @@ defmodule PuppiesWeb.Admin.User do
                           <p class="text-sm text-gray-500">Email website: <%= @business.website%></p>
                           <p class="text-sm text-gray-500">State license: <%= @business.state_license%></p>
                           <p class="text-sm text-gray-500">Fed license: <%= @business.federal_license%></p>
-                          <p class="text-sm text-gray-500">Phone: <%= @business.phone%></p>
+                          <p class="text-sm text-gray-500">Phone: <%= @business.phone_number %></p>
                           <p class="text-sm text-gray-500">Description: <%= @business.description %></p>
                           <p class="text-sm text-gray-500">Created on: <%= Calendar.strftime(@business.inserted_at , "%m/%d/%y %I:%M:%S %p")%></p>
                         </div>
@@ -280,11 +294,7 @@ defmodule PuppiesWeb.Admin.User do
                     </.form>
                   </div>
                 <% end %>
-                <div class="bg-white overflow-hidden shadow rounded-lg divide-y px-4">
-                  <div class="px-4 py-5">
-                    <div class="text-lg font-semibold mb-2">Activity</div>
-                  </div>
-                </div>
+                <.live_component module={Puppies.Admin.ActivitiesComponent} id="activities" activities={@activities} pagination={@pagination} page={@page} limit={@limit} user_id={@user.id} />
               </div>
               <div>
                 <.live_component module={PuppiesWeb.Admin.Flags} id="flags" flags={@flags} />

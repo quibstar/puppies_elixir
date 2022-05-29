@@ -8,6 +8,14 @@ defmodule Puppies.Reviews do
 
   alias Puppies.Reviews.Review
 
+  def get_reviews_by_user_id(id) do
+    from(r in Review,
+      where: r.user_id == ^id,
+      preload: [business: [:photo, :user]]
+    )
+    |> Repo.all()
+  end
+
   @doc """
   Returns the list of reviews.
 

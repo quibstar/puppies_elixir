@@ -26,8 +26,15 @@ defmodule PuppiesWeb.UserSessionController do
 
         true ->
           ip = Utilities.x_forward_or_remote_ip(conn)
-          # check blacklisted country, ip and email
-          Puppies.BackgroundJobCoordinator.login(user, ip)
+
+          Puppies.BackgroundJobCoordinator.session(
+            user.id,
+            user.first_name,
+            user.last_name,
+            user.email,
+            ip,
+            "signed in"
+          )
 
           UserAuth.log_in_user(conn, user, user_params)
       end
