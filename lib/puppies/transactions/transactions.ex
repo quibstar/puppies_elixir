@@ -15,6 +15,7 @@ defmodule Puppies.Transaction do
     field(:refund_id, :string)
     field(:admin_id, :integer)
     field(:reference_number, :string)
+    field(:last_4, :string)
 
     has_one(:admin, Puppies.Admins.Admin,
       references: :admin_id,
@@ -39,7 +40,8 @@ defmodule Puppies.Transaction do
       :refunded,
       :refund_id,
       :admin_id,
-      :reference_number
+      :reference_number,
+      :last_4
     ])
     |> validate_required([
       :status,

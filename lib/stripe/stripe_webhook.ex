@@ -30,6 +30,10 @@ defmodule PuppiesWeb.StripeWebhooksController do
 
   # subscriptions
 
+  defp handle_webhook(%{type: "invoice.finalized"} = stripe_event) do
+    Puppies.Transactions.check_and_save_stripe_invoice(stripe_event.data.object)
+  end
+
   defp handle_webhook(%{type: "invoice.payment_succeeded"} = stripe_event) do
     Stripe.update_subscription_payment_method(stripe_event.data.object)
   end

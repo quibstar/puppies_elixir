@@ -33,6 +33,7 @@ defmodule Puppies.Transactions do
   def check_and_save_stripe_invoice(invoice) do
     unless invoice_exists(invoice.id) do
       item = List.first(invoice.lines.data)
+      {:ok, charge} = Stripe.Charge.retrieve(invoice.charge)
 
       trans = %{
         invoice_id: invoice.id,
@@ -44,7 +45,8 @@ defmodule Puppies.Transactions do
         customer_id: invoice.customer,
         created: invoice.created,
         merchant: "stripe",
-        reference_number: invoice.number
+        reference_number: invoice.number,
+        last_4: charge.payment_method_details.card.last4
       }
 
       create_transaction(trans)
@@ -84,7 +86,8 @@ defmodule Puppies.Transactions do
         refunded: charge.refunded,
         status: charge.status,
         description: product_name,
-        reference_number: number
+        reference_number: number,
+        last_4: charge.payment_method_details.card.last4
       }
 
       create_transaction(transaction)

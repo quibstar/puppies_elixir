@@ -60,10 +60,10 @@ mix phx.gen.context ReviewLinks ReviewLink review_links email:string listing_id:
 - [x] IP Address
 - [x] Activities, with pagination
 - [ ] Elasticsearch
-- [ ] Apply Fraud detection for domains
-- [ ] Apply Fraud detection for ip address
-- [ ] Apply Fraud detection for content
-- [ ] Apply Fraud detection countries
+- [x] Apply Fraud detection for domains
+- [x] Apply Fraud detection for ip address
+- [x] Apply Fraud detection for content
+- [x] Apply Fraud detection countries
 
 TODO: finish subscriptions
 http://localhost:4000/success?payment_intent=pi_3Ktl0uJLqL890V2T13dikKLg&payment_intent_client_secret=pi_3Ktl0uJLqL890V2T13dikKLg_secret_FtSK0uxZfT9q8h70N390AsCsR&redirect_status=succeeded

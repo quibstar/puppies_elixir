@@ -12,13 +12,12 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.8/css/intlTelInput.css">
   </head>
 
-  <body class="bg-gray-50" x-data="{ show_mobile: false }">
+  <body class="bg-gray-50" x-data="{ show_mobile: false, show_search: false}"  @keydown.meta.k="show_search = true, $nextTick(() => $refs.input.focus());"  @keyup.escape.window="show_search = false" >
     <div>
       <%= render "_admin_side_nav.html", assigns %>
       <%= render "_admin_side_nav_desktop.html", assigns %>
 
       <div class="md:pl-64 flex flex-col">
-        <%= render "_admin_header.html", assigns %>
         <main class="flex-1">
           <%= @inner_content %>
         </main>

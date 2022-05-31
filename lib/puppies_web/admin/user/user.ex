@@ -195,7 +195,7 @@ defmodule PuppiesWeb.Admin.User do
           <%= live_component PuppiesWeb.LoadingComponent, id: "admin-loading" %>
         <% else %>
           <div class="mx-auto px-4 sm:px-6 md:px-8 py-4">
-            <div class="md:grid grid-flow-col grid-cols-2 gap-4">
+            <div class="lg:grid md:grid-cols-2 gap-4">
               <div>
                 <div class="bg-white overflow-hidden shadow rounded-lg divide-y px-4">
                   <div class="px-4 py-5">

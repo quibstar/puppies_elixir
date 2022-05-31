@@ -15,6 +15,7 @@ defmodule Puppies.Repo.Migrations.CreateTransactions do
       add(:refund_id, :string)
       add(:admin_id, :integer)
       add(:reference_number, :string)
+      add(:last_4, :string)
 
       timestamps()
     end

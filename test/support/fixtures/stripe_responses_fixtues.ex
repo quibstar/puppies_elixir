@@ -472,7 +472,7 @@ defmodule Puppies.StripeResponsesFixtures do
     }
   end
 
-  def charge() do
+  def charge(customer_id) do
     %{
       object: %{
         id: "ch_3KuVJqJLqL890V2T06KnDVuQ",
@@ -501,7 +501,7 @@ defmodule Puppies.StripeResponsesFixtures do
         captured: true,
         created: 1_651_382_900,
         currency: "usd",
-        customer: "cus_LbKRGfqn03uVwt",
+        customer: customer_id,
         description: nil,
         destination: nil,
         dispute: nil,

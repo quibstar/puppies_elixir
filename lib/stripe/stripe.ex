@@ -121,19 +121,4 @@ defmodule Puppies.Stripe do
     {:ok, response} = Stripe.PaymentIntent.retrieve(pi, %{})
     response
   end
-
-  # def admin_refund(transaction_id, admin) do
-  #   transaction = Transactions.get!(transaction_id)
-  #   {:ok, refund} = Stripe.Refund.create(%{charge: transaction.charge_id})
-
-  #   if refund.status == "succeeded" do
-  #     Transactions.update(transaction, %{
-  #       refund_id: refund.id,
-  #       refunded: true,
-  #       refunded_by: admin
-  #     })
-  #   else
-  #     {:error, "Stripe Error"}
-  #   end
-  # end
 end
