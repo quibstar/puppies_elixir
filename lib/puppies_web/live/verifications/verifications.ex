@@ -6,11 +6,7 @@ defmodule PuppiesWeb.VerificationsLive do
 
   alias Puppies.{
     Accounts,
-    Profiles,
-    Verifications.ID,
-    Verifications.Phone,
     Verification.Credits,
-    Utilities,
     Transactions
   }
 

@@ -1,6 +1,6 @@
 defmodule Puppies.ES.Indexing do
   @moduledoc """
-  Elaticsearch: Health check, creating indexing and deleting indexing
+  Elasticsearch: Health check, creating indexing and deleting indexing
   """
   alias Puppies.ES.Api
 

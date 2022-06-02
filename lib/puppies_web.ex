@@ -44,8 +44,7 @@ defmodule PuppiesWeb do
 
   def live_view do
     quote do
-      use Phoenix.LiveView,
-        layout: {PuppiesWeb.LayoutView, "live.html"}
+      use Phoenix.LiveView, layout: {PuppiesWeb.LayoutView, "live.html"}
 
       unquote(view_helpers())
     end

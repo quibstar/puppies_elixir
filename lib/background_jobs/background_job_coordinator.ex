@@ -94,6 +94,14 @@ defmodule Puppies.BackgroundJobCoordinator do
     check_for_blacklisted_phone(user.id, user.phone_number)
   end
 
+  def re_index_user(user_id) do
+    %{
+      user_id: user_id
+    }
+    |> Puppies.ReindexUserBackgroundJob.new()
+    |> Oban.insert()
+  end
+
   ##################################
   # Listings                       #
   ##################################
@@ -125,6 +133,22 @@ defmodule Puppies.BackgroundJobCoordinator do
         |> Puppies.RecordActivityBackgroundJob.new()
         |> Oban.insert()
     end
+  end
+
+  def re_index_listing(listing_id) do
+    %{
+      listing_id: listing_id
+    }
+    |> Puppies.ReindexListingBackgroundJob.new()
+    |> Oban.insert()
+  end
+
+  def re_index_listing_by_user_id(user_id) do
+    %{
+      user_id: user_id
+    }
+    |> Puppies.ReindexListingByUserIdBackgroundJob.new()
+    |> Oban.insert()
   end
 
   ##################################

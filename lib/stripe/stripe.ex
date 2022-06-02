@@ -1,6 +1,26 @@
 defmodule Puppies.Stripe do
-  alias Puppies.{Accounts, Transactions}
+  alias Puppies.{Accounts, Transactions, Products}
   import Stripe.Request
+
+  def get_products() do
+    # {:ok, products} = Stripe.Product.list()
+
+    {:ok, plans} = Stripe.Plan.list()
+
+    Enum.each(plans.data, fn plan ->
+      {:ok, product} = Stripe.Product.retrieve(plan.product)
+      IO.inspect(product)
+
+      if product.active do
+        Products.create_product(%{
+          product_id: product.id,
+          name: product.name,
+          price_id: plan.id,
+          unit_amount: plan.amount
+        })
+      end
+    end)
+  end
 
   def get_customer(customer_id) do
     {:ok, customer} = Stripe.Charge.list(%{customer: customer_id})

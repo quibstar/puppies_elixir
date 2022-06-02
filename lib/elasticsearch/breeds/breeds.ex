@@ -1,6 +1,6 @@
 defmodule Puppies.ES.Breeds do
   @moduledoc """
-  Elaticsearch: creating indexing and deleting indexing
+  Elasticsearch: creating indexing and deleting indexing
   """
   alias Puppies.{ES.Api, ES.Indexing, Breeds}
 

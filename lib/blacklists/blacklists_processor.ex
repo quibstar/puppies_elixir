@@ -36,7 +36,7 @@ defmodule Puppies.BlacklistsProcessor do
             reason: "User suspended. High risk country: #{x.country_name}"
           })
 
-          Accounts.update_status(user, %{status: "suspended"})
+          update_status_and_re_index(user)
         end
       end)
     end
@@ -58,8 +58,7 @@ defmodule Puppies.BlacklistsProcessor do
         reason: "User suspended. High risk domain: #{domain}"
       })
 
-      user = Accounts.get_user!(user_id)
-      Accounts.update_status(user, %{status: "suspended"})
+      update_status_and_re_index_by_user_id(user_id)
     end
   end
 
@@ -76,8 +75,7 @@ defmodule Puppies.BlacklistsProcessor do
           type: "blacklisted_content"
         })
 
-        user = Accounts.get_user!(user_id)
-        Accounts.update_status(user, %{status: "suspended"})
+        update_status_and_re_index_by_user_id(user_id)
       end
     end)
   end
@@ -95,8 +93,7 @@ defmodule Puppies.BlacklistsProcessor do
           type: "blacklisted_ip"
         })
 
-        user = Accounts.get_user!(user_id)
-        Accounts.update_status(user, %{status: "suspended"})
+        update_status_and_re_index_by_user_id(user_id)
       end
     end)
   end
@@ -114,8 +111,7 @@ defmodule Puppies.BlacklistsProcessor do
           type: "blacklisted_phone_number"
         })
 
-        user = Accounts.get_user!(user_id)
-        Accounts.update_status(user, %{status: "suspended"})
+        update_status_and_re_index_by_user_id(user_id)
       end
     end)
   end
@@ -149,7 +145,7 @@ defmodule Puppies.BlacklistsProcessor do
               type: "blacklisted_country"
             })
 
-            Accounts.update_status(user, %{status: "suspended"})
+            update_status_and_re_index(user)
           end
         end)
         |> Stream.run()
@@ -172,7 +168,7 @@ defmodule Puppies.BlacklistsProcessor do
               type: "blacklisted_domain"
             })
 
-            Accounts.update_status(user, %{status: "suspended"})
+            update_status_and_re_index(user)
           end
         end)
         |> Stream.run()
@@ -197,7 +193,7 @@ defmodule Puppies.BlacklistsProcessor do
               type: "blacklisted_ip_address"
             })
 
-            Accounts.update_status(user, %{status: "suspended"})
+            update_status_and_re_index(user)
           end
         end)
         |> Stream.run()
@@ -234,8 +230,7 @@ defmodule Puppies.BlacklistsProcessor do
               type: "blacklisted_phone_number"
             })
 
-            user = Accounts.get_user!(id)
-            Accounts.update_status(user, %{status: "suspended"})
+            update_status_and_re_index_by_user_id(id)
           end
         end)
         |> Stream.run()
@@ -259,8 +254,7 @@ defmodule Puppies.BlacklistsProcessor do
             type: "blacklisted_content"
           })
 
-          user = Accounts.get_user!(resource.user_id)
-          Accounts.update_status(user, %{status: "suspended"})
+          update_status_and_re_index_by_user_id(resource.user_id)
         end
       end)
       |> Stream.run()
@@ -301,5 +295,16 @@ defmodule Puppies.BlacklistsProcessor do
     |> Enum.reduce([], fn content, acc ->
       [content.phone_number | acc]
     end)
+  end
+
+  defp update_status_and_re_index_by_user_id(user_id) do
+    user = Accounts.get_user!(user_id)
+    Accounts.update_status(user, %{status: "suspended"})
+    Puppies.BackgroundJobCoordinator.re_index_user(user_id)
+  end
+
+  defp update_status_and_re_index(user) do
+    Accounts.update_status(user, %{status: "suspended"})
+    Puppies.BackgroundJobCoordinator.re_index_user(user.id)
   end
 end

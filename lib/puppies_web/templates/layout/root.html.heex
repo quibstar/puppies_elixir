@@ -18,7 +18,7 @@
     <script defer src="https://js.stripe.com/v3/"></script>
     <script defer src="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.8/js/intlTelInput.min.js"></script>
   </head>
-  <body class="flex flex-col bg-gray-50 note-hidden overflow-x-hidden">
+  <body class="flex flex-col bg-gray-50 note-hidden overflow-x-hidden" x-data="{ show_search: false}" >
     <%= render "header.html", assigns %>
     <div class="flex-grow">
       <%= @inner_content %>

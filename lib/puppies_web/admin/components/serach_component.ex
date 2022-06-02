@@ -10,15 +10,27 @@ defmodule Puppies.SearchComponent do
   def handle_event("changed", %{"search_schema" => %{"term" => term}}, socket) do
     changeset = SearchSchema.changeset(%SearchSchema{}, %{term: term})
 
+    users =
+      if String.length(term) > 2 do
+        Puppies.ES.AdminSearch.query(term)
+      else
+        %{users: [], count: 0}
+      end
+
     {:noreply,
      assign(socket,
-       changeset: changeset
+       changeset: changeset,
+       users: users.users,
+       users_count: users.count,
+       term: term
      )}
   end
 
   def render(assigns) do
+    IO.inspect(assigns)
+
     ~H"""
-    <div>
+    <div >
       <div class="relative z-10" role="dialog" aria-modal="true"
         x-show="show_search"
         x-transition:enter="ease-out duration-300"
@@ -56,13 +68,21 @@ defmodule Puppies.SearchComponent do
               </.form>
             </div>
 
-           <%= unless @results == [] do %>
-              <ul class="max-h-72 scroll-py-2 overflow-y-auto py-2 text-sm text-gray-800" id="options" role="listbox">
-                <%= for result <- @results  do %>
-                  <li class="cursor-default select-none px-4 py-2" role="option" tabindex="-1">works</li>
+           <%= if Map.has_key?(assigns, :users) && @users != [] do %>
+              <ul class="max-h-full scroll-py-2 overflow-y-auto py-2 text-sm text-gray-800" id="options" role="listbox">
+                <%= for user <- @users  do %>
+                  <li class="cursor-default select-none px-4 py-2" role="option" tabindex="-1">
+                    <div><%= user.name %></div>
+                    <div><%= user.email %></div>
+                  </li>
                 <% end %>
               </ul>
-              <p class="p-4 text-sm text-gray-500">No people found.</p>
+
+            <% end %>
+            <%= if Map.has_key?(assigns, :term) do %>
+              <%= if String.length(@term) > 2 && @users == [] do %>
+                <p class="p-4 text-sm text-gray-500">No people found.</p>
+              <% end %>
             <% end %>
           </div>
         </div>

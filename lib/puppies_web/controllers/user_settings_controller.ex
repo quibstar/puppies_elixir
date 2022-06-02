@@ -39,7 +39,9 @@ defmodule PuppiesWeb.UserSettingsController do
     us = Settings.get_user_settings(conn.assigns.current_user.id)
 
     case Settings.update_user_settings(us, user_settings) do
-      {:ok, _} ->
+      {:ok, user_settings} ->
+        Puppies.BackgroundJobCoordinator.re_index_user(user_settings.user_id)
+
         conn
         |> put_flash(:info, "Setting updated.")
         |> redirect(to: Routes.user_settings_path(conn, :edit))

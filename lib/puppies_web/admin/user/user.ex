@@ -183,9 +183,7 @@ defmodule PuppiesWeb.Admin.User do
   end
 
   defp reindex_user_listings(user_id) do
-    Task.start(fn ->
-      Puppies.ES.Listings.re_index_listings_by_user_id(user_id)
-    end)
+    Puppies.BackgroundJobCoordinator.re_index_listing_by_user_id(user_id)
   end
 
   def render(assigns) do

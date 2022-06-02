@@ -74,6 +74,8 @@ defmodule PuppiesWeb.SilverComponent do
   defp update_account(user, sid) do
     Accounts.update_reputation_level(user, %{reputation_level: 2})
     Phone.insert_verification(%{user_id: user.id, sid: sid})
+
+    Puppies.BackgroundJobCoordinator.re_index_user(user.id)
   end
 
   def render(assigns) do

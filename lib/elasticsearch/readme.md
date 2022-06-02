@@ -28,15 +28,6 @@ status: listing.status,
 photos: Enum.reduce(listing.photos, [], fn photo, acc -> [photo.url | acc] end),
 breeds_slug: Enum.reduce(listing.breeds, [], fn breed, acc -> [breed.slug | acc] end),
 breeds_name: Enum.reduce(listing.breeds, [], fn breed, acc -> [breed.name | acc] end),
-state_license: listing.user.business.state_license,
-federal_license: listing.user.business.federal_license,
-website: listing.user.business.website,
-place_name: listing.user.business.location.place_name,
-region_slug: listing.user.business.location.region_slug,
-place_slug: listing.user.business.location.place_slug,
-region_short_code: listing.user.business.location.region_short_code,
-place: listing.user.business.location.place,
-region: listing.user.business.location.region,
 location: %{
 	lat: listing.user.business.location.lat,
 	lon: listing.user.business.location.lng
@@ -46,7 +37,6 @@ views: listing.views,
 business_name: listing.user.business.name,
 business_slug: listing.user.business.slug,
 business_photo: business_photo_url,
-business_breeds_slug: Enum.reduce(listing.user.business.breeds, [], fn breed, acc -> [breed.slug | acc] end),
 user_status: listing.user.status,
 reputation_level: listing.user.reputation_level,
 approved_to_sell: listing.user.approved_to_sell,
@@ -55,36 +45,46 @@ locked: listing.user.locked,
 
 # User
 
-user.email,
-user.first_name,
-user.last_name,
-user.status,
-user.membership_end_date,
-user.phone_number,
-user.visitor_id,
-user.is_seller,
-user.approved_to_sell,
-user.reputation_level,
-user.locked,
+email: user.email,
+first_name: user.first_name,
+last_name: user.last_name,
+status: user.status,
+membership_end_date: user.membership_end_date,
+phone_number: user.phone_number,
+visitor_id: user.visitor_id,
+is_seller: user.is_seller,
+approved_to_sell: user.approved_to_sell,
+reputation_level: user.reputation_level,
+locked: user.locked,
 
 # Business
 
-business.name,
-business.slug,
-business.phone_number,
-business.state_license,
-business.federal_license,
-business.description,
+name: business.name,
+slug: business.slug,
+phone_number: business.phone_number,
+state_license: business.state_license,
+federal_license: business.federal_license,
+description: business.description,
+state_license: listing.user.business.state_license,
+federal_license: listing.user.business.federal_license,
+website: listing.user.business.website,
+place_name: listing.user.business.location.place_name,
+region_slug: listing.user.business.location.region_slug,
+place_slug: listing.user.business.location.place_slug,
+region_short_code: listing.user.business.location.region_short_code,
+place: listing.user.business.location.place,
+region: listing.user.business.location.region,
+business_breeds_slug: Enum.reduce(listing.user.business.breeds, [], fn breed, acc -> [breed.slug | acc] end),
 
 # Transaction
 
-charge_id
-customer_id
-invoice_id
-merchant
-status
-subscription_id
-description
-refund_id
-reference_number
-last_4
+charge_id: charge_id,
+customer_id: customer_id,
+invoice_id: invoice_id,
+merchant: merchant,
+status: status,
+subscription_id: subscription_id,
+description: description,
+refund_id: refund_id,
+reference_number: reference_number,
+last_4: last_4,

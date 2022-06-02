@@ -12,6 +12,8 @@ defmodule PuppiesWeb.UserSessionController do
     %{"email" => email, "password" => password} = user_params
 
     if user = Accounts.get_user_by_email_and_password(email, password) do
+      Puppies.BackgroundJobCoordinator.re_index_user(user.id)
+
       cond do
         user.status == "suspended" ->
           redirect(conn, to: Routes.suspended_path(conn, :index)) |> halt()

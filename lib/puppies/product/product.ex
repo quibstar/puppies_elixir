@@ -3,10 +3,10 @@ defmodule Puppies.Product do
   import Ecto.Changeset
 
   schema "products" do
-    field :name, :string
-    field :price_id, :string
-    field :product_id, :string
-    field :unit_amount, :integer
+    field(:name, :string)
+    field(:price_id, :string)
+    field(:product_id, :string)
+    field(:unit_amount, :integer)
 
     timestamps()
   end

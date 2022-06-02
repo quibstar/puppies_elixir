@@ -1,6 +1,6 @@
 defmodule Puppies.ES.Listings do
   @moduledoc """
-  Elaticsearch: creating indexing and deleting indexing
+  Elasticsearch: creating indexing and deleting indexing
   """
   alias Puppies.{ES.Api, ES.Indexing, Listings}
 
@@ -64,11 +64,9 @@ defmodule Puppies.ES.Listings do
 
     %{
       id: listing.id,
-      email: listing.user.email,
       first_name: listing.user.first_name,
       last_name: listing.user.last_name,
       user_status: listing.user.status,
-      user_phone_number: listing.user.phone_number,
       reputation_level: listing.user.reputation_level,
       approved_to_sell: listing.user.approved_to_sell,
       locked: listing.user.locked,
@@ -99,14 +97,7 @@ defmodule Puppies.ES.Listings do
       breeds_slug: Enum.reduce(listing.breeds, [], fn breed, acc -> [breed.slug | acc] end),
       breeds_name: Enum.reduce(listing.breeds, [], fn breed, acc -> [breed.name | acc] end),
       business_name: listing.user.business.name,
-      business_slug: listing.user.business.slug,
       business_photo: business_photo_url,
-      business_breeds_slug:
-        Enum.reduce(listing.user.business.breeds, [], fn breed, acc -> [breed.slug | acc] end),
-      business_phone_number: listing.user.business.phone_number,
-      state_license: listing.user.business.state_license,
-      federal_license: listing.user.business.federal_license,
-      website: listing.user.business.website,
       place_name: listing.user.business.location.place_name,
       region_slug: listing.user.business.location.region_slug,
       place_slug: listing.user.business.location.place_slug,
@@ -162,13 +153,7 @@ defmodule Puppies.ES.Listings do
           breeds_slug: %{type: :keyword},
           breeds_name: %{type: :keyword},
           business_name: %{type: :keyword},
-          business_slug: %{type: :keyword},
           business_photo: %{type: :keyword},
-          business_breeds_slug: %{type: :keyword},
-          business_phone_number: %{type: :keyword},
-          state_license: %{type: :boolean},
-          federal_license: %{type: :boolean},
-          website: %{type: :keyword},
           place_name: %{type: :keyword},
           region_slug: %{type: :keyword},
           place_slug: %{type: :keyword},

@@ -68,6 +68,7 @@ defmodule PuppiesWeb.StripeWebhooksController do
     {:ok, res} = process_identity_webhook(stripe_event)
     user = Accounts.get_user!(res.user_id)
     Accounts.update_reputation_level(user, %{reputation_level: 3})
+    Puppies.BackgroundJobCoordinator.re_index_user(user.id)
   end
 
   # defp handle_webhook(%{type: "file.created"} = stripe_event) do

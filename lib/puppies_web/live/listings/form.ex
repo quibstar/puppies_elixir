@@ -89,7 +89,7 @@ defmodule PuppiesWeb.ListingsForm do
     case saved_results do
       {:ok, listing} ->
         save_photo(socket, listing)
-        ES.Listings.re_index_listing(listing.id)
+        Puppies.BackgroundJobCoordinator.re_index_listing(listing.id)
 
         Puppies.BackgroundJobCoordinator.check_for_blacklisted_content(
           listing.user_id,

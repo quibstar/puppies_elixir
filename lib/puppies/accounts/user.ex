@@ -42,6 +42,11 @@ defmodule Puppies.Accounts.User do
     has_many(:flags, Puppies.Flag, on_delete: :delete_all, foreign_key: :offender_id)
     has_many(:ip_addresses, Puppies.IPDatum, on_delete: :delete_all)
 
+    has_many(:transactions, Puppies.Transaction,
+      references: :customer_id,
+      foreign_key: :customer_id
+    )
+
     timestamps()
   end
 

@@ -41,7 +41,7 @@ defmodule PuppiesWeb.ListingsStatusUpdateForm do
 
     case listing do
       {:ok, listing} ->
-        ES.Listings.re_index_listing(listing.id)
+        Puppies.BackgroundJobCoordinator.re_index_listing(listing.id)
 
         if(!is_nil(params["buyer_email"]) && listing.status == "sold") do
           ReviewLinks.create_review_link(%{
