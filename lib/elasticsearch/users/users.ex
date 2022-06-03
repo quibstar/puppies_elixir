@@ -12,7 +12,6 @@ defmodule Puppies.ES.Users do
     Api.post("/users/_doc/#{user.id}", res)
   end
 
-  @spec create_mappings_and_index :: :ok
   def create_mappings_and_index() do
     date_time = DateTime.utc_now() |> DateTime.to_unix()
     index_name = "users_#{date_time}"
@@ -31,7 +30,7 @@ defmodule Puppies.ES.Users do
       User
       |> preload([
         :listings,
-        :ip_addresses,
+        :ip_data,
         :transactions,
         [business: [:breeds, :location, :business_breeds]]
       ])
@@ -62,7 +61,12 @@ defmodule Puppies.ES.Users do
       from(u in User,
         where: u.id == ^id
       )
-      |> preload([:listings, [business: [:breeds, :location, :business_breeds]]])
+      |> preload([
+        :listings,
+        :ip_data,
+        :transactions,
+        [business: [:breeds, :location, :business_breeds]]
+      ])
 
     Repo.one(q)
   end
@@ -76,7 +80,7 @@ defmodule Puppies.ES.Users do
       email: user.email,
       name: user.first_name <> " " <> user.last_name,
       user_phone_number: business.phone_number,
-      ip_address: ip_addresses_to_list(user.ip_addresses),
+      ip_address: ip_addresses_to_list(user.ip_data),
       transactions_last_4: transactions_last_4(user.transactions),
       transactions_reference_number: transactions_reference_numbers(user.transactions),
       business_name: business.name,
@@ -87,9 +91,9 @@ defmodule Puppies.ES.Users do
     }
   end
 
-  def ip_addresses_to_list(ip_addresses) do
-    Enum.reduce(ip_addresses, [], fn ip_address, acc ->
-      [ip_address.ip | acc]
+  def ip_addresses_to_list(ip_data) do
+    Enum.reduce(ip_data, [], fn ip_datum, acc ->
+      [ip_datum.ip | acc]
     end)
   end
 
@@ -113,9 +117,9 @@ defmodule Puppies.ES.Users do
           name: %{type: :text},
           email: %{type: :keyword},
           phone_number: %{type: :keyword},
-          business_name: %{type: :keyword},
-          business_description: %{type: :keyword},
-          breeds_slug: %{type: :keyword},
+          business_name: %{type: :text},
+          business_description: %{type: :text},
+          breeds_slug: %{type: :text},
           business_phone_number: %{type: :keyword},
           website: %{type: :keyword},
           listing_descriptions: %{type: :text}

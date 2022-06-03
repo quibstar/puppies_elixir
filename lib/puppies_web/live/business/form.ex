@@ -141,6 +141,8 @@ defmodule PuppiesWeb.BusinessForm do
           business.phone_number
         )
 
+        Puppies.BackgroundJobCoordinator.re_index_user(business.user_id)
+
         {
           :noreply,
           socket

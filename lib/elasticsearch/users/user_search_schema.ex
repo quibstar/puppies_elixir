@@ -6,6 +6,7 @@ defmodule Puppies.SearchUser do
   embedded_schema do
     field(:name)
     field(:email)
+    field(:highlight, :map)
   end
 
   def changeset(attrs) do
@@ -13,7 +14,8 @@ defmodule Puppies.SearchUser do
     |> cast(attrs, [
       :id,
       :name,
-      :email
+      :email,
+      :highlight
     ])
   end
 

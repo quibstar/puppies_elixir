@@ -10,7 +10,7 @@ defmodule Puppies.SearchComponent do
   def handle_event("changed", %{"search_schema" => %{"term" => term}}, socket) do
     changeset = SearchSchema.changeset(%SearchSchema{}, %{term: term})
 
-    users =
+    search =
       if String.length(term) > 2 do
         Puppies.ES.AdminSearch.query(term)
       else
@@ -20,15 +20,13 @@ defmodule Puppies.SearchComponent do
     {:noreply,
      assign(socket,
        changeset: changeset,
-       users: users.users,
-       users_count: users.count,
+       users: search.users,
+       count: search.count,
        term: term
      )}
   end
 
   def render(assigns) do
-    IO.inspect(assigns)
-
     ~H"""
     <div >
       <div class="relative z-10" role="dialog" aria-modal="true"
@@ -71,13 +69,16 @@ defmodule Puppies.SearchComponent do
            <%= if Map.has_key?(assigns, :users) && @users != [] do %>
               <ul class="max-h-full scroll-py-2 overflow-y-auto py-2 text-sm text-gray-800" id="options" role="listbox">
                 <%= for user <- @users  do %>
-                  <li class="cursor-default select-none px-4 py-2" role="option" tabindex="-1">
-                    <div><%= user.name %></div>
-                    <div><%= user.email %></div>
+                  <li class="cursor-default select-none px-4 py-2" role="option" tabindex="-1" x-on:click="show_search = !show_search">
+                    <%= live_redirect to: Routes.live_path(@socket, PuppiesWeb.Admin.User, user.id) do %>
+                      <div class="font-semibold"><%= user.name %></div>
+                      <%= for {k, v}  <- user.highlight do %>
+                        <div class="text-gray-500 text-xs"><span class="text-gray-800"><%= Phoenix.Naming.humanize(k) %></span>: <%= raw List.first(v) %></div>
+                      <% end %>
+                    <% end %>
                   </li>
                 <% end %>
               </ul>
-
             <% end %>
             <%= if Map.has_key?(assigns, :term) do %>
               <%= if String.length(@term) > 2 && @users == [] do %>

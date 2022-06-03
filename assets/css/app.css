@@ -206,3 +206,7 @@ input[type='range']::-webkit-slider-thumb {
 .active-tab {
   @apply border-primary-500 text-primary-600;
 }
+
+.hlt1 {
+  @apply text-primary-600;
+}

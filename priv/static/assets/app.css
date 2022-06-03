@@ -3234,6 +3234,11 @@ input[type='range']::-webkit-slider-thumb {
   color: rgb(202 138 4 / var(--tw-text-opacity));
 }
 
+.hlt1 {
+  --tw-text-opacity: 1;
+  color: rgb(202 138 4 / var(--tw-text-opacity));
+}
+
 .focus-within\:text-gray-600:focus-within {
   --tw-text-opacity: 1;
   color: rgb(75 85 99 / var(--tw-text-opacity));
