@@ -28,9 +28,10 @@ defmodule Puppies.SearchComponent do
 
   def render(assigns) do
     ~H"""
-    <div >
+
       <div class="relative z-10" role="dialog" aria-modal="true"
         x-show="show_search"
+        x-cloak
         x-transition:enter="ease-out duration-300"
         x-transition:enter-start="opacity-0"
         x-transition:enter-end="opacity-100"
@@ -88,7 +89,7 @@ defmodule Puppies.SearchComponent do
           </div>
         </div>
       </div>
-    </div>
+
     """
   end
 end

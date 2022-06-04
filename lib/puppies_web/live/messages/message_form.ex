@@ -7,7 +7,7 @@ defmodule PuppiesWeb.MessageForm do
         <div class="p-4">
           <%= if  @current_thread.receiver.reputation_level > @current_thread.sender.reputation_level do %>
             <div class="text-gray-500">
-              <p>To communicate with <%= @current_thread.receiver.first_name %> <%= @current_thread.receiver.last_name %> about <%= @listing.name %> you must be at the reputation level of <PuppiesWeb.Badges.reputation_level reputation_level={@current_thread.receiver.reputation_level} /></p>
+              <p>To communicate with <%= @current_thread.receiver.first_name %> <%= @current_thread.receiver.last_name %> you must be at the reputation level of <PuppiesWeb.Badges.reputation_level reputation_level={@current_thread.receiver.reputation_level} /></p>
               <p>You are currently at level <PuppiesWeb.Badges.reputation_level reputation_level={@current_thread.sender.reputation_level} /></p>
               <div class="mt-2">
                   <%= live_redirect "Level up!", to: Routes.live_path(@socket, PuppiesWeb.VerificationsLive), class: "inline-block px-4 py-2 border border-transparent text-xs rounded shadow-sm text-white bg-primary-600 hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500" %>
