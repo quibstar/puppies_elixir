@@ -28,7 +28,7 @@ defmodule PuppiesWeb.BuyerMessages do
                     <div class="text-center">
                       <%= PuppiesWeb.Avatar.show(%{business: thread.business, user: thread.business.user, square: 16 , extra_classes: "text-2xl"}) %>
                       <div class="relative -mt-4 z-10 mx-auto">
-                        <PuppiesWeb.ReputationLevel.badge reputation_level={thread.business.user.reputation_level} />
+                        <PuppiesWeb.Badges.reputation_level reputation_level={thread.business.user.reputation_level} />
                       </div>
                     </div>
                     <div>

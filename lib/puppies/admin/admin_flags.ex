@@ -13,7 +13,12 @@ defmodule Puppies.Admin.Flags do
 
     p =
       Repo.aggregate(
-        from(f in Flag, where: f.resolved == false and f.system_reported == ^is_system_reported),
+        from(u in User,
+          join: f in Flag,
+          on: f.offender_id == u.id,
+          where: f.resolved == false and f.system_reported == ^is_system_reported,
+          distinct: u.id
+        ),
         :count,
         :id
       )

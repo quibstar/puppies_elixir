@@ -6,8 +6,8 @@ defmodule Puppies.ES.Users do
   alias Puppies.Repo
   alias Puppies.{ES.Api, ES.Indexing, Accounts.User}
 
-  def re_index_user(id) do
-    user = user_query(id)
+  def re_index_user(user_id) do
+    user = user_query(user_id)
     res = transform_to_flat_data(user)
     Api.post("/users/_doc/#{user.id}", res)
   end

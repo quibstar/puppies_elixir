@@ -201,7 +201,7 @@ defmodule PuppiesWeb.Admin.User do
                     <div class="flex">
                       <div>
                         <%= PuppiesWeb.Avatar.show(%{business: nil, user: @user, square: 10, extra_classes: "text-2xl"}) %>
-                        <PuppiesWeb.ReputationLevel.badge reputation_level={@user.reputation_level} />
+                        <PuppiesWeb.Badges.reputation_level reputation_level={@user.reputation_level} />
                       </div>
 
                       <div class="ml-3 space-y-1">

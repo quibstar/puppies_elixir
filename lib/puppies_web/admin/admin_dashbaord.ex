@@ -42,6 +42,22 @@ defmodule PuppiesWeb.Admin.Dashboard do
     {:noreply, page_data("1", "12", socket, tab)}
   end
 
+  def handle_params(params, _uri, socket) do
+    limit = check_for_nil(params["limit"], "12")
+    page = check_for_nil(params["page"], "1")
+    tab = check_for_nil(params["page"], "users")
+
+    {:noreply, page_data(page, limit, socket, tab)}
+  end
+
+  def check_for_nil(item, default) do
+    unless is_nil(item) do
+      item
+    else
+      default
+    end
+  end
+
   def open_flags(flags) do
     Enum.reduce(flags, 0, fn flag, acc ->
       if flag.resolved == false do
@@ -66,7 +82,7 @@ defmodule PuppiesWeb.Admin.Dashboard do
                 (<%= @user_flag_count %>)
               <% end %>
             </button>
-            <button phx-click="dashboard_tab" phx-value-dashboard_tab="system"class={"#{if @dashboard_tab == "system", do: "border-primary-500 text-primary-600", else: ""} border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm"} >
+            <button phx-click="dashboard_tab" phx-value-dashboard_tab="system" class={"#{if @dashboard_tab == "system", do: "border-primary-500 text-primary-600", else: ""} border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm"} >
               System Flags
               <%= if @system_flag_count > 0 do %>
                 (<%= @system_flag_count %>)
@@ -102,12 +118,16 @@ defmodule PuppiesWeb.Admin.Dashboard do
                         <tr>
                           <td class="px-6 py-2 whitespace-nowrap ">
                             <div class="flex items-center">
-                              <%= PuppiesWeb.Avatar.show(%{business: user.business, user: user, square: "16", extra_classes: "text-4xl pt-0.5"}) %>
+                              <div class="flex flex-col">
+                                <%= PuppiesWeb.Avatar.show(%{business: user.business, user: user, square: "16", extra_classes: "text-4xl pt-0.5"}) %>
+                                <PuppiesWeb.Badges.reputation_level reputation_level={user.reputation_level} />
+                              </div>
                               <div class="ml-4">
-                                <div class="text-sm font-medium text-gray-900 underline">
-                                  <%= live_redirect to: Routes.live_path(@socket, PuppiesWeb.Admin.User, user.id) do %>
+                                <div class="text-sm font-medium text-gray-900">
+                                  <%= live_redirect to: Routes.live_path(@socket, PuppiesWeb.Admin.User, user.id), class: "underline" do %>
                                     <%= user.first_name %> <%= user.last_name %> (<%= user.id %>)
                                   <% end %>
+                                  <PuppiesWeb.Badges.user_type is_seller={user.is_seller} />
                                 </div>
                                 <div class="text-sm text-gray-500">
                                   <%= user.email %>
@@ -115,16 +135,15 @@ defmodule PuppiesWeb.Admin.Dashboard do
                                 <div class="text-sm text-gray-500">
                                   Profile Name: <%= user.first_name %> <%= user.last_name %>
                                 </div>
-                                <div>
-                                  <PuppiesWeb.ReputationLevel.badge reputation_level={user.reputation_level} />
-                                </div>
                               </div>
                             </div>
                           </td>
                           <td class="px-6 py-4 whitespace-nowrap text-right">
-                            <span class={"#{if user.approved_to_sell, do: "bg-green-100 text-green-800", else: "bg-red-100 text-red-800"} capitalize px-2 inline-flex text-xs leading-5 font-semibold rounded-full"}>
-                               <%= user.approved_to_sell %>
-                            </span>
+                           <%= if user.is_seller do %>
+                              <span class={"#{if user.approved_to_sell, do: "bg-green-100 text-green-800", else: "bg-red-100 text-red-800"} capitalize px-2 inline-flex text-xs leading-5 font-semibold rounded-full"}>
+                                <%= user.approved_to_sell %>
+                              </span>
+                            <% end %>
                           </td>
                           <td class="px-6 py-4 whitespace-nowrap text-right">
                             <span class={"#{if user.status == "active", do: "bg-green-100 text-green-800", else: "bg-red-100 text-red-800"} capitalize px-2 inline-flex text-xs leading-5 font-semibold rounded-full"}>
@@ -145,9 +164,9 @@ defmodule PuppiesWeb.Admin.Dashboard do
           </div>
         </div>
 
-      <%= if @flag_count > String.to_integer(@limit) do %>
-        <%= live_component PuppiesWeb.PaginationComponent, pagination: @pagination, socket: @socket, page: @page, limit: @limit %>
-      <% end %>
+        <%= if @flag_count > String.to_integer(@limit) do %>
+          <%= live_component PuppiesWeb.PaginationComponent, pagination: @pagination, pagination: @pagination, socket: @socket, params: %{"page" => @page, "limit" => @limit,"tab" => @dashboard_tab}, end_point: PuppiesWeb.Admin.Dashboard, segment_id: nil %>
+        <% end %>
       </div>
     </div>
     """

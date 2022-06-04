@@ -21,17 +21,7 @@ defmodule PuppiesWeb.FindPuppyLive do
     city = Map.get(params, "city", nil)
     breed = Map.get(params, "breed", nil)
 
-    matches =
-      case {state, city, breed} do
-        {state, nil, nil} ->
-          ListingsSearch.state(state, "1", @size, "newest")
-
-        {state, city, nil} ->
-          ListingsSearch.city_state(city, state, "1", @size, "newest")
-
-        {state, city, breed} ->
-          ListingsSearch.city_state_breed(city, state, breed, "1", @size, "newest")
-      end
+    matches = listing_from_params(state, city, breed, "1", @size, "newest")
 
     count = Map.get(matches, :count, 0)
 
@@ -48,7 +38,7 @@ defmodule PuppiesWeb.FindPuppyLive do
           sort: :newest
         },
         state: state,
-        page_title: "Puppies in #{state} ",
+        page_title: page_title(city, state, breed),
         city: city,
         state: state,
         breed: breed
@@ -65,7 +55,7 @@ defmodule PuppiesWeb.FindPuppyLive do
 
     {:noreply,
      socket
-     |> push_redirect(to: url_based_on_params(socket, match))}
+     |> push_patch(to: url_based_on_params(socket, match))}
   end
 
   def handle_event("changed", %{"match" => match}, socket) do
@@ -80,7 +70,7 @@ defmodule PuppiesWeb.FindPuppyLive do
 
     {:noreply,
      socket
-     |> push_redirect(to: url_based_on_params(socket, match))}
+     |> push_patch(to: url_based_on_params(socket, match))}
   end
 
   def handle_params(params, _uri, socket) do
@@ -90,8 +80,9 @@ defmodule PuppiesWeb.FindPuppyLive do
       limit = match["limit"]
       sort = match["sort"]
       state = params["state"]
-      # TODO: FIX BELOW!!!!!!!!!!!
-      matches = ListingsSearch.state(state, page, limit, sort)
+      city = params["city"]
+      breed = params["breed"]
+      matches = listing_from_params(state, city, breed, page, limit, sort)
       count = Map.get(matches, :count, 0)
 
       updated_match =
@@ -121,6 +112,19 @@ defmodule PuppiesWeb.FindPuppyLive do
     end
   end
 
+  defp listing_from_params(state, city, breed, page, size, filter) do
+    case {state, city, breed} do
+      {state, nil, nil} ->
+        ListingsSearch.state(state, page, size, filter)
+
+      {state, city, nil} ->
+        ListingsSearch.city_state(city, state, page, size, filter)
+
+      {state, city, breed} ->
+        ListingsSearch.city_state_breed(city, state, breed, page, size, filter)
+    end
+  end
+
   def url_based_on_params(socket, match) do
     state = socket.assigns.state
     city = socket.assigns.city
@@ -145,6 +149,23 @@ defmodule PuppiesWeb.FindPuppyLive do
     end
   end
 
+  defp page_title(city, state, breed) do
+    "Puppies in #{state} "
+
+    case {state, city, breed} do
+      {state, nil, nil} ->
+        state = Utilities.state_to_human_readable(state)
+
+        "Puppies in #{Utilities.state_to_human_readable(state)} "
+
+      {state, city, nil} ->
+        "Puppies in #{Utilities.slug_to_string(city)}, #{Utilities.state_to_human_readable(state)} "
+
+      {state, city, breed} ->
+        "#{String.capitalize(breed)} puppies in #{Utilities.slug_to_string(city)}, #{Utilities.state_to_human_readable(state)} "
+    end
+  end
+
   def render(assigns) do
     ~H"""
       <div class="h-full max-w-7xl mx-auto px-4 py-6 sm:px-6 md:justify-start md:space-x-10 lg:px-8">
@@ -154,15 +175,14 @@ defmodule PuppiesWeb.FindPuppyLive do
                       <div class='md:flex justify-between'>
                           <div class='flex'>
                               <div class="text-xl md:text-3xl">
-                              <%= cond do %>
-                                <% !is_nil(@state) && !is_nil(@city) && !is_nil(@breed) -> %>
-                                  <span class="capitalize"><%= Utilities.slug_to_string(@breed) %></span> puppies in <span class="capitalize"><%= Utilities.slug_to_string(@city) %>, <%= Utilities.state_to_human_readable(@state) %></span>.
-                                <% !is_nil(@state) && !is_nil(@city) && is_nil(@breed) -> %>
-                                  Puppies in <span class="capitalize"><%= Utilities.slug_to_string(@city) %>, <%= Utilities.state_to_human_readable(@state) %></span>.
-                                <% !is_nil(@state) && is_nil(@city) && is_nil(@breed) -> %>
-                                  Puppies in <span class="capitalize"><%= Utilities.state_to_human_readable(@state) %></span>.
-                              <% end %>
-
+                                <%= cond do %>
+                                  <% !is_nil(@state) && !is_nil(@city) && !is_nil(@breed) -> %>
+                                    <span class="capitalize"><%= Utilities.slug_to_string(@breed) %></span> puppies in <span class="capitalize"><%= Utilities.slug_to_string(@city) %>, <%= Utilities.state_to_human_readable(@state) %></span>.
+                                  <% !is_nil(@state) && !is_nil(@city) && is_nil(@breed) -> %>
+                                    Puppies in <span class="capitalize"><%= Utilities.slug_to_string(@city) %>, <%= Utilities.state_to_human_readable(@state) %></span>.
+                                  <% !is_nil(@state) && is_nil(@city) && is_nil(@breed) -> %>
+                                    Puppies in <span class="capitalize"><%= Utilities.state_to_human_readable(@state) %></span>.
+                                <% end %>
                               </div>
                           </div>
                           <div class="my-2">

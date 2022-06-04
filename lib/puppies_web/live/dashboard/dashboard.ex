@@ -170,7 +170,7 @@ defmodule PuppiesWeb.UserDashboardLive do
                   <%= live_redirect @business.name, to: Routes.live_path(@socket, PuppiesWeb.BusinessPageLive, @business.slug), class: "text-gray-900 underline cursor-pointer"%>
                 </p>
               <% end %>
-              <PuppiesWeb.ReputationLevel.badge reputation_level={@user.reputation_level} />
+              <PuppiesWeb.Badges.reputation_level reputation_level={@user.reputation_level} />
             </div>
           </div>
           <div class="mt-6 flex flex-col-reverse justify-stretch space-y-4 space-y-reverse sm:flex-row-reverse sm:justify-end sm:space-x-reverse sm:space-y-0 sm:space-x-3 md:mt-0 md:flex-row md:space-x-3">

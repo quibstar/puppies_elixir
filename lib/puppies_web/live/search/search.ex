@@ -207,7 +207,6 @@ defmodule PuppiesWeb.SearchLive do
       changeset = Searches.change_search(%Search{}, params)
 
       matches = Puppies.ES.ListingsSearch.query_builder(params)
-
       count = Map.get(matches, :count, 0)
       page = Map.get(params, "page", 0)
 
