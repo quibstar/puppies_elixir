@@ -14,7 +14,8 @@ defmodule PuppiesWeb.Admin.User do
     Admin.Listings,
     Admin.Business,
     Admin.Activities,
-    Admin.ViewHistories
+    Admin.ViewHistories,
+    Subscriptions
   }
 
   @limit "20"
@@ -185,6 +186,20 @@ defmodule PuppiesWeb.Admin.User do
         Threads.buyer_threads(user.id)
       end
 
+    active_subscriptions =
+      if is_nil(user.customer_id) do
+        []
+      else
+        Subscriptions.get_user_active_subscriptions(user.customer_id)
+      end
+
+    subscription_count =
+      if is_nil(user.customer_id) do
+        0
+      else
+        Subscriptions.user_subscription_count(user.customer_id)
+      end
+
     assign(
       socket,
       loading: false,
@@ -201,7 +216,9 @@ defmodule PuppiesWeb.Admin.User do
       pagination: Map.get(data, :pagination, %{count: 0}),
       page: "1",
       limit: @limit,
-      admin_view_history: admin_view_history
+      admin_view_history: admin_view_history,
+      active_subscriptions: active_subscriptions,
+      subscription_count: subscription_count
     )
   end
 
@@ -278,6 +295,7 @@ defmodule PuppiesWeb.Admin.User do
                       </div>
                     </.form>
                   </div>
+                  <.live_component module={Puppies.Admin.UserMembership} id="user_membership" active_subscriptions={@active_subscriptions} subscription_count={@subscription_count}  />
                 </div>
                 <%= if @user.is_seller do %>
                   <div class="bg-white overflow-hidden shadow rounded-lg divide-y px-2 mt-4">
@@ -320,7 +338,7 @@ defmodule PuppiesWeb.Admin.User do
               </div>
               <div>
                 <.live_component module={PuppiesWeb.Admin.Flags} id="flags" flags={@flags} />
-                <div x-data="{ tab: 'listings' }" class="bg-white shadow rounded-lg p-4">
+                <div x-data="{ tab: 'notes' }" class="bg-white shadow rounded-lg p-4">
                   <div class="border-b border-gray-200">
                     <nav class="-mb-px flex space-x-2" aria-label="Tabs">
                       <button class="border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 whitespace-nowrap py-2 px-1 border-b-2 font-medium text-sm" :class="{ 'active-tab': tab === 'notes' }" @click="tab = 'notes'">

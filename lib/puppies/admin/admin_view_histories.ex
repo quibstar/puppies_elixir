@@ -11,7 +11,7 @@ defmodule Puppies.Admin.ViewHistories do
       from(vh in ViewHistory,
         where: vh.admin_id == ^admin_id,
         order_by: [desc: vh.updated_at],
-        preload: :user
+        preload: [user: [business: :photo]]
       )
 
     Repo.all(q)

@@ -8,7 +8,7 @@ defmodule Puppies.Admin.History do
     if history_user_id == user_id do
       "hover:text-gray-700 border-primary-500 text-primary-600"
     else
-      "border-transparent text-gray-500 hover:text-gray-700"
+      "text-gray-500 hover:text-gray-700"
     end
   end
 
@@ -50,16 +50,19 @@ defmodule Puppies.Admin.History do
     ~H"""
       <div>
         <%= unless @admin_view_history == [] do %>
-          <div class="border-b border-gray-200 mb-2">
-            <nav class="-mb-px flex space-x-2 overflow-scroll" aria-label="Tabs">
+          <div class="">
+            <nav class="-mb-px flex flex-wrap overflow-scroll" aria-label="Tabs">
               <%= for view_history <- @admin_view_history  do %>
-                <div class={"flex hover:border-gray-300 whitespace-nowrap py-2 px-1 border-b-2 text-sm #{render_class(view_history.user_id, @user_id)}"}>
+                <div class={"border rounded-xl mr-2 mb-2 space-x-1 flex items-center hover:border-gray-300 whitespace-nowrap text-xs #{render_class(view_history.user_id, @user_id)}"}>
+                  <%= PuppiesWeb.Avatar.show(%{business: view_history.user.business, user: view_history.user, square: 6, extra_classes: ""}) %>
                   <%= live_redirect to: Routes.live_path(@socket, PuppiesWeb.Admin.User, view_history.user_id) do %>
                     <%= view_history.user.first_name %> <%= view_history.user.last_name %>
                   <% end %>
-                  <svg phx-click="delete" phx-value-id={view_history.user_id} phx-target={@myself} xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 ml-1 cursor-pointer" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                    <path stroke-linecap="round" stroke-linejoin="round" d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z" />
-                  </svg>
+                  <%= if length(@admin_view_history) > 1 do %>
+                    <svg phx-click="delete" phx-value-id={view_history.user_id} phx-target={@myself} xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 cursor-pointer" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                      <path stroke-linecap="round" stroke-linejoin="round" d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                  <% end %>
                 </div>
               <% end %>
             </nav>

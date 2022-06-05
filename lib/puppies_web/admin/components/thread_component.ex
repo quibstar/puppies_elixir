@@ -38,7 +38,7 @@ defmodule PuppiesWeb.Admin.ThreadComponent do
         </:drawer_body>
       </Drawer.drawer>
 
-      <%= if @user.is_seller do %>
+
         <ul class="space-y-2">
           <%= for thread <- @threads do %>
             <li phx-target={@myself} phx-click="thread" phx-value-thread_uuid={thread.uuid} x-on:click.debounce="show_drawer = !show_drawer" class="p-2 flex rounded-lg border border hover:shadow-md hover:border-primary-500 cursor-pointer">
@@ -59,9 +59,7 @@ defmodule PuppiesWeb.Admin.ThreadComponent do
             </li>
           <% end %>
         </ul>
-      <% else %>
-        not seller
-      <% end %>
+
     </div>
     """
   end

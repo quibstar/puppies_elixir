@@ -70,7 +70,7 @@ defmodule Puppies.SearchComponent do
            <%= if Map.has_key?(assigns, :users) && @users != [] do %>
               <ul class="max-h-full scroll-py-2 overflow-y-auto py-2 text-sm text-gray-800" id="options" role="listbox">
                 <%= for user <- @users  do %>
-                  <li class="cursor-default select-none px-4 py-2" role="option" tabindex="-1" x-on:click="show_search = !show_search">
+                  <li class="cursor-default select-none px-4 py-2" role="option"  x-on:click="show_search = !show_search">
                     <%= live_redirect to: Routes.live_path(@socket, PuppiesWeb.Admin.User, user.id) do %>
                       <div class="font-semibold"><%= user.name %></div>
                       <%= for {k, v}  <- user.highlight do %>
