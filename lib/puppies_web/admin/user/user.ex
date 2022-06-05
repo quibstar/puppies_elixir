@@ -13,7 +13,8 @@ defmodule PuppiesWeb.Admin.User do
     Admin.Flags,
     Admin.Listings,
     Admin.Business,
-    Admin.Activities
+    Admin.Activities,
+    Admin.ViewHistories
   }
 
   @limit "20"
@@ -25,53 +26,15 @@ defmodule PuppiesWeb.Admin.User do
   end
 
   def connected_mount(%{"id" => id}, session, socket) do
-    user = Accounts.get_user_business_and_listings(id)
-    changeset = Accounts.change_user_profile(user)
-    listings = Listings.get_user_listings(user.id)
-    business = Business.get_user_business(user.id)
-    notes = Notes.user_notes(user.id)
-    reviews = Reviews.get_reviews_by_user(user.id)
-    flags = Flags.flags_by_user_id(user.id)
-
-    data =
-      Activities.get_activities(user.id, %{
-        limit: @limit,
-        page: "1",
-        number_of_links: 7
-      })
-
     admin =
       if connected?(socket) && Map.has_key?(session, "admin_token") do
         %{"admin_token" => user_token} = session
         Admins.get_admin_by_session_token(user_token)
       end
 
-    # UserThreads.get_thread_list(user.id)
-    threads =
-      if user.is_seller do
-        Threads.seller_threads(user.id)
-      else
-        Threads.buyer_threads(user.id)
-      end
-
-    {:ok,
-     assign(
-       socket,
-       loading: false,
-       user: user,
-       notes: notes,
-       admin: admin,
-       threads: threads,
-       reviews: reviews,
-       flags: flags,
-       listings: listings,
-       business: business,
-       changeset: changeset,
-       activities: data.activities,
-       pagination: Map.get(data, :pagination, %{count: 0}),
-       page: "1",
-       limit: @limit
-     )}
+    user = Accounts.get_user_business_and_listings(id)
+    socket = get_user_data(user, admin, socket)
+    {:ok, socket}
   end
 
   defp status_confirmed(confirmed_at) do
@@ -112,7 +75,7 @@ defmodule PuppiesWeb.Admin.User do
     case user do
       {:ok, user} ->
         changeset = Accounts.change_user_profile(user)
-        reindex_user_listings(user.id)
+        re_index_user_listings(user.id)
 
         {
           :noreply,
@@ -138,7 +101,7 @@ defmodule PuppiesWeb.Admin.User do
           Accounts.admin_logout_user(user)
         end
 
-        reindex_user_listings(user.id)
+        re_index_user_listings(user.id)
 
         {
           :noreply,
@@ -167,7 +130,7 @@ defmodule PuppiesWeb.Admin.User do
             "un-approved"
           end
 
-        reindex_user_listings(user.id)
+        re_index_user_listings(user.id)
 
         {
           :noreply,
@@ -182,7 +145,67 @@ defmodule PuppiesWeb.Admin.User do
     end
   end
 
-  defp reindex_user_listings(user_id) do
+  def handle_params(params, _uri, socket) do
+    # check if user is in queue if not
+    if Map.has_key?(socket.assigns, :admin) do
+      %{"id" => id} = params
+      admin = socket.assigns.admin
+      ViewHistories.create_or_update(admin.id, id)
+      user = Accounts.get_user!(id)
+
+      socket = get_user_data(user, admin, socket)
+      {:noreply, socket}
+    else
+      {:noreply, socket}
+    end
+  end
+
+  def get_user_data(user, admin, socket) do
+    changeset = Accounts.change_user_profile(user)
+    listings = Listings.get_user_listings(user.id)
+    business = Business.get_user_business(user.id)
+    notes = Notes.user_notes(user.id)
+    reviews = Reviews.get_reviews_by_user(user.id)
+    flags = Flags.flags_by_user_id(user.id)
+
+    data =
+      Activities.get_activities(user.id, %{
+        limit: @limit,
+        page: "1",
+        number_of_links: 7
+      })
+
+    admin_view_history = ViewHistories.history(admin.id)
+
+    # UserThreads.get_thread_list(user.id)
+    threads =
+      if user.is_seller do
+        Threads.seller_threads(user.id)
+      else
+        Threads.buyer_threads(user.id)
+      end
+
+    assign(
+      socket,
+      loading: false,
+      user: user,
+      notes: notes,
+      admin: admin,
+      threads: threads,
+      reviews: reviews,
+      flags: flags,
+      listings: listings,
+      business: business,
+      changeset: changeset,
+      activities: data.activities,
+      pagination: Map.get(data, :pagination, %{count: 0}),
+      page: "1",
+      limit: @limit,
+      admin_view_history: admin_view_history
+    )
+  end
+
+  defp re_index_user_listings(user_id) do
     Puppies.BackgroundJobCoordinator.re_index_listing_by_user_id(user_id)
   end
 
@@ -193,6 +216,7 @@ defmodule PuppiesWeb.Admin.User do
           <%= live_component PuppiesWeb.LoadingComponent, id: "admin-loading" %>
         <% else %>
           <div class="mx-auto px-4 sm:px-6 md:px-8 py-4">
+            <.live_component module={Puppies.Admin.History} id="admin_history" admin_view_history={@admin_view_history} user_id={@user.id} />
             <div class="lg:grid md:grid-cols-2 gap-4">
               <div>
                 <div class="bg-white overflow-hidden shadow rounded-lg divide-y px-4">
