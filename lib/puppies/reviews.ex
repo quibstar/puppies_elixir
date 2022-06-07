@@ -6,7 +6,7 @@ defmodule Puppies.Reviews do
   import Ecto.Query, warn: false
   alias Puppies.Repo
 
-  alias Puppies.Reviews.Review
+  alias Puppies.{Reviews.Review, Businesses.Business, Review.Reply, Review.Dispute}
 
   def get_reviews_by_user_id(id) do
     from(r in Review,
@@ -159,5 +159,49 @@ defmodule Puppies.Reviews do
       end
 
     Map.merge(%{average: average}, stars_map)
+  end
+
+  def reviews_authored_by(user_id) do
+    from(r in Review,
+      where: r.user_id == ^user_id
+    )
+    |> Repo.all()
+  end
+
+  def business_reviews(user_id) do
+    from(r in Business,
+      where: r.user_id == ^user_id,
+      preload: [[reviews: [[user: :photo], [business: :photo], :reply, :dispute]], [user: :photo]]
+    )
+    |> Repo.one()
+  end
+
+  # Review Replies
+  def change_review_reply(%Reply{} = reply, attrs \\ %{}) do
+    Reply.changeset(reply, attrs)
+  end
+
+  def create_reply(attrs \\ %{}) do
+    %Reply{}
+    |> Reply.changeset(attrs)
+    |> Repo.insert()
+  end
+
+  def update_reply(reply, attrs) do
+    reply
+    |> Reply.changeset(attrs)
+    |> Repo.update()
+  end
+
+  # Review Disputes
+  def change_review_dispute(%Dispute{} = dispute, attrs \\ %{}) do
+    Dispute.changeset(dispute, attrs)
+  end
+
+  def create_dispute(attrs \\ %{}) do
+    # TODO: mark review as approved false.
+    %Dispute{}
+    |> Dispute.changeset(attrs)
+    |> Repo.insert()
   end
 end

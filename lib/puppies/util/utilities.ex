@@ -242,4 +242,12 @@ defmodule Puppies.Utilities do
       end
     end
   end
+
+  def new_lines_to_br_tags(review) do
+    String.replace(review, "\n", "<br />")
+  end
+
+  def character_count(text) do
+    String.length(text)
+  end
 end

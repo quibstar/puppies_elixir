@@ -91,6 +91,8 @@ defmodule PuppiesWeb.Router do
     live("/listings/:listing_id/edit", ListingsEdit)
 
     # reviews
+
+    live("/reviews", Reviews)
     get("/reviews/new", ReviewController, :new)
     post("/reviews/create", ReviewController, :create)
     get("/reviews/show/:id", ReviewController, :show)

@@ -1,7 +1,7 @@
 defmodule PuppiesWeb.UserDashboardLive do
   use PuppiesWeb, :live_view
 
-  alias Puppies.{Accounts, Listings, Views, Threads, Subscriptions, Verification.Credits}
+  alias Puppies.{Accounts, Listings, Views, Threads, Subscriptions, Verification.Credits, Reviews}
 
   alias PuppiesWeb.{UI.Drawer, BusinessForm}
 
@@ -291,7 +291,8 @@ defmodule PuppiesWeb.UserDashboardLive do
             <% end %>
 
             <%= unless @user.is_seller do %>
-              <%= live_component PuppiesWeb.BuyerMessages, id: "buyer-messages", thread_businesses: @thread_businesses, thread_listings: @thread_listings, user: @user %>
+              <.live_component module={PuppiesWeb.BuyerMessages} id="buyer-messages" thread_businesses={@thread_businesses} thread_listings={@thread_listings} user={@user} />
+              <.live_component module={PuppiesWeb.WatchListComponent} id="watch_list", listings={@user.favorite_listings} />
             <% end %>
           </div>
 
@@ -338,7 +339,9 @@ defmodule PuppiesWeb.UserDashboardLive do
 
             <%= PuppiesWeb.ViewHistoryComponent.show(%{viewing_history: @viewing_history, view_pagination: @view_pagination, socket: @socket}) %>
 
-            <%= live_component PuppiesWeb.WatchListComponent, id: "watch_list", listings: @user.favorite_listings %>
+            <%= if @user.is_seller do %>
+              <%= live_component PuppiesWeb.WatchListComponent, id: "watch_list", listings: @user.favorite_listings %>
+            <% end %>
 
              <%= if !@user.is_seller do %>
               <div class="bg-white px-4 py-5 shadow sm:rounded-lg sm:px-6">
