@@ -20,7 +20,6 @@ defmodule PuppiesWeb.Reviews do
         Accounts.get_user_by_session_token(user_token)
       end
 
-    # TODO: BELOW IS WRONG, MUST GET BUSINESS ID?
     business = Reviews.business_reviews(user.id)
     reviews = Reviews.get_reviews_by_user_id(user.id)
 
@@ -31,9 +30,13 @@ defmodule PuppiesWeb.Reviews do
     ~H"""
     <div class="mt-4 mx-auto px-4 sm:px-6 lg:max-w-7xl lg:px-8"  x-data="{ show_modal: false}" >
       <%= unless @loading do %>
-        <div class="grid grid-cols-2 gap-8 mt-4">
-          <.live_component module={PuppiesWeb.BusinessReviews} id="business-review" business={@business} />
-          <.live_component module={PuppiesWeb.ReviewAuthors} id="reviews" reviews={@reviews} review={nil} />
+        <div class="md:grid grid-cols-2 gap-8 mt-4">
+          <%= unless @business.reviews == [] do %>
+            <.live_component module={PuppiesWeb.BusinessReviews} id="business-review" business={@business} />
+          <% end %>
+          <%= unless @reviews == [] do %>
+            <.live_component module={PuppiesWeb.ReviewAuthors} id="reviews" reviews={@reviews} review={nil} />
+          <% end %>
         </div>
       <% end %>
     </div>

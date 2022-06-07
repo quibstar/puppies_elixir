@@ -48,7 +48,7 @@ defmodule PuppiesWeb.ReviewForm do
           :noreply,
           socket
           |> put_flash(:info, "Review updated")
-          |> push_redirect(to: Routes.live_path(socket, PuppiesWeb.UserDashboardLive))
+          |> push_redirect(to: Routes.live_path(socket, PuppiesWeb.Reviews))
         }
 
       {:error, %Ecto.Changeset{} = changeset} ->
