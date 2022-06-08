@@ -250,4 +250,12 @@ defmodule Puppies.Utilities do
   def character_count(text) do
     String.length(text)
   end
+
+  def active_tab(tab_param, tab_string) do
+    if tab_param == tab_string do
+      "active-tab"
+    else
+      ""
+    end
+  end
 end

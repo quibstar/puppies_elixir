@@ -14,7 +14,9 @@ defmodule PuppiesWeb.ReviewDispute do
 
   def handle_event("save", %{"dispute" => dispute}, socket) do
     case Reviews.create_dispute(dispute) do
-      {:ok, _} ->
+      {:ok, review} ->
+        Reviews.update_review(review, %{approved: false})
+
         {:noreply,
          socket
          |> push_redirect(to: Routes.live_path(socket, PuppiesWeb.Reviews))}

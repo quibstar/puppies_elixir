@@ -11,7 +11,7 @@ defmodule Puppies.Admin.Reviews do
   def get_reviews_by_user(user_id) do
     from(r in Review,
       where: r.user_id == ^user_id,
-      preload: [:user, [business: :user]]
+      preload: [[user: :photo], [business: [user: :photo]], :reply, :dispute]
     )
     |> Repo.all()
   end

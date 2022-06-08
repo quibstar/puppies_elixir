@@ -199,7 +199,6 @@ defmodule Puppies.Reviews do
   end
 
   def create_dispute(attrs \\ %{}) do
-    # TODO: mark review as approved false.
     %Dispute{}
     |> Dispute.changeset(attrs)
     |> Repo.insert()

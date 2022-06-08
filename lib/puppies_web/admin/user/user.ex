@@ -15,7 +15,8 @@ defmodule PuppiesWeb.Admin.User do
     Admin.Business,
     Admin.Activities,
     Admin.ViewHistories,
-    Subscriptions
+    Subscriptions,
+    Utilities
   }
 
   @limit "20"
@@ -26,15 +27,14 @@ defmodule PuppiesWeb.Admin.User do
     end
   end
 
-  def connected_mount(%{"id" => id}, session, socket) do
+  def connected_mount(params, session, socket) do
     admin =
       if connected?(socket) && Map.has_key?(session, "admin_token") do
         %{"admin_token" => user_token} = session
         Admins.get_admin_by_session_token(user_token)
       end
 
-    user = Accounts.get_user_business_and_listings(id)
-    socket = get_user_data(user, admin, socket)
+    socket = get_user_data(params, admin, socket)
     {:ok, socket}
   end
 
@@ -75,16 +75,9 @@ defmodule PuppiesWeb.Admin.User do
 
     case user do
       {:ok, user} ->
-        changeset = Accounts.change_user_profile(user)
         re_index_user_listings(user.id)
 
-        {
-          :noreply,
-          socket
-          |> put_flash(:info, "Status updated to #{user.status}")
-          |> assign(:changeset, changeset)
-          |> push_redirect(to: Routes.live_path(socket, PuppiesWeb.Admin.User, user.id))
-        }
+        shared_response(socket, user, "Status updated to #{user.status}")
 
       {:error, %Ecto.Changeset{} = changeset} ->
         {:noreply, assign(socket, changeset: changeset)}
@@ -96,21 +89,12 @@ defmodule PuppiesWeb.Admin.User do
 
     case user do
       {:ok, user} ->
-        changeset = Accounts.change_user_profile(user)
-
         if user.locked do
           Accounts.admin_logout_user(user)
         end
 
         re_index_user_listings(user.id)
-
-        {
-          :noreply,
-          socket
-          |> put_flash(:info, "Account is locked: #{user.locked}")
-          |> assign(:changeset, changeset)
-          |> push_redirect(to: Routes.live_path(socket, PuppiesWeb.Admin.User, user.id))
-        }
+        shared_response(socket, user, "Account is locked: #{user.locked}")
 
       {:error, %Ecto.Changeset{} = changeset} ->
         {:noreply, assign(socket, changeset: changeset)}
@@ -122,8 +106,6 @@ defmodule PuppiesWeb.Admin.User do
 
     case user do
       {:ok, user} ->
-        changeset = Accounts.change_user_profile(user)
-
         status =
           if user.approved_to_sell do
             "approved"
@@ -133,35 +115,40 @@ defmodule PuppiesWeb.Admin.User do
 
         re_index_user_listings(user.id)
 
-        {
-          :noreply,
-          socket
-          |> put_flash(:info, "Selling status updated to: #{status}")
-          |> assign(:changeset, changeset)
-          |> push_redirect(to: Routes.live_path(socket, PuppiesWeb.Admin.User, user.id))
-        }
+        shared_response(socket, user, "Selling status updated to: #{status}")
 
       {:error, %Ecto.Changeset{} = changeset} ->
         {:noreply, assign(socket, changeset: changeset)}
     end
   end
 
+  def shared_response(socket, user, message) do
+    changeset = Accounts.change_user_profile(user)
+
+    {
+      :noreply,
+      socket
+      |> put_flash(:info, message)
+      |> assign(:changeset, changeset)
+      |> push_patch(to: Routes.live_path(socket, PuppiesWeb.Admin.User, user.id))
+    }
+  end
+
   def handle_params(params, _uri, socket) do
     # check if user is in queue if not
     if Map.has_key?(socket.assigns, :admin) do
-      %{"id" => id} = params
       admin = socket.assigns.admin
-      ViewHistories.create_or_update(admin.id, id)
-      user = Accounts.get_user!(id)
-
-      socket = get_user_data(user, admin, socket)
+      socket = get_user_data(params, admin, socket)
       {:noreply, socket}
     else
       {:noreply, socket}
     end
   end
 
-  def get_user_data(user, admin, socket) do
+  def get_user_data(params, admin, socket) do
+    %{"id" => id} = params
+    ViewHistories.create_or_update(admin.id, id)
+    user = Accounts.get_user!(id)
     changeset = Accounts.change_user_profile(user)
     listings = Listings.get_user_listings(user.id)
     business = Business.get_user_business(user.id)
@@ -200,6 +187,8 @@ defmodule PuppiesWeb.Admin.User do
         Subscriptions.user_subscription_count(user.customer_id)
       end
 
+    tabs = tabs_from_params(params)
+
     assign(
       socket,
       loading: false,
@@ -218,8 +207,28 @@ defmodule PuppiesWeb.Admin.User do
       limit: @limit,
       admin_view_history: admin_view_history,
       active_subscriptions: active_subscriptions,
-      subscription_count: subscription_count
+      subscription_count: subscription_count,
+      tab: tabs.tab,
+      sub_tab: tabs.sub_tab
     )
+  end
+
+  def tabs_from_params(params) do
+    tab =
+      if params["tab"] do
+        params["tab"]
+      else
+        "notes"
+      end
+
+    sub_tab =
+      if params["sub_tab"] do
+        params["sub_tab"]
+      else
+        "conversations"
+      end
+
+    %{tab: tab, sub_tab: sub_tab}
   end
 
   defp re_index_user_listings(user_id) do
@@ -233,7 +242,7 @@ defmodule PuppiesWeb.Admin.User do
           <%= live_component PuppiesWeb.LoadingComponent, id: "admin-loading" %>
         <% else %>
           <div class="mx-auto px-4 sm:px-6 md:px-8 py-4">
-            <.live_component module={Puppies.Admin.History} id="admin_history" admin_view_history={@admin_view_history} user_id={@user.id} />
+            <.live_component module={Puppies.Admin.History} id="admin_history" admin_view_history={@admin_view_history} user_id={@user.id} sub_tab={@sub_tab} tab={@tab}/>
             <div class="lg:grid md:grid-cols-2 gap-4">
               <div>
                 <div class="bg-white overflow-hidden shadow rounded-lg divide-y px-4">
@@ -244,7 +253,6 @@ defmodule PuppiesWeb.Admin.User do
                         <%= PuppiesWeb.Avatar.show(%{business: nil, user: @user, square: 10, extra_classes: "text-2xl"}) %>
                         <PuppiesWeb.Badges.reputation_level reputation_level={@user.reputation_level} />
                       </div>
-
                       <div class="ml-3 space-y-1">
                         <p class="text-sm font-medium text-gray-900"><%= @user.first_name %> <%= @user.last_name %></p>
                         <p class="text-sm text-gray-500">ID: <%= @user.id %></p>
@@ -338,53 +346,49 @@ defmodule PuppiesWeb.Admin.User do
               </div>
               <div>
                 <.live_component module={PuppiesWeb.Admin.Flags} id="flags" flags={@flags} />
-                <div x-data="{ tab: 'notes' }" class="bg-white shadow rounded-lg p-4">
+                <div x-data={"{ tab: '#{@tab}' }"} class="bg-white shadow rounded-lg p-4">
                   <div class="border-b border-gray-200">
                     <nav class="-mb-px flex space-x-2" aria-label="Tabs">
-                      <button class="border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 whitespace-nowrap py-2 px-1 border-b-2 font-medium text-sm" :class="{ 'active-tab': tab === 'notes' }" @click="tab = 'notes'">
+                      <%= live_patch to: Routes.live_path(@socket, PuppiesWeb.Admin.User, @user.id, %{tab: "notes", sub_tab: @sub_tab}), class: "border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 whitespace-nowrap py-2 px-1 border-b-2 font-medium text-sm #{Utilities.active_tab(@tab, "notes")}" do %>
                           Notes
-                      </button>
-
-                      <%= if @user.is_seller do %>
-                        <button class="border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 whitespace-nowrap py-2 px-1 border-b-2 font-medium text-sm" :class="{ 'active-tab': tab === 'listings' }" @click="tab = 'listings'">
-                            Listings
-                        </button>
                       <% end %>
 
-                      <button class="border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 whitespace-nowrap py-2 px-1 border-b-2 font-medium text-sm" :class="{ 'active-tab': tab === 'transactions' }" @click="tab = 'transactions'">
-                          Transactions
-                      </button>
+                      <%= if @user.is_seller do %>
+                        <%= live_patch to: Routes.live_path(@socket, PuppiesWeb.Admin.User, @user.id, %{tab: "listings", sub_tab: @sub_tab}), class: "border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 whitespace-nowrap py-2 px-1 border-b-2 font-medium text-sm #{Utilities.active_tab(@tab, "listings")}" do %>
+                            Listings
+                        <% end %>
+                      <% end %>
 
-                      <button class="border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 whitespace-nowrap py-2 px-1 border-b-2 font-medium text-sm" :class="{ 'active-tab': tab === 'ip' }" @click="tab = 'ip'">
+                      <%= live_patch to: Routes.live_path(@socket, PuppiesWeb.Admin.User, @user.id, %{tab: "transactions", sub_tab: @sub_tab}), class: "border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 whitespace-nowrap py-2 px-1 border-b-2 font-medium text-sm #{Utilities.active_tab(@tab, "transactions")}" do %>
+                          Transactions
+                      <% end %>
+
+                      <%= live_patch to: Routes.live_path(@socket, PuppiesWeb.Admin.User, @user.id, %{tab: "ip", sub_tab: @sub_tab}), class: "border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 whitespace-nowrap py-2 px-1 border-b-2 font-medium text-sm #{Utilities.active_tab(@tab, "ip")}" do %>
                           IP Address
-                      </button>
-                      <button class="border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 whitespace-nowrap py-2 px-1 border-b-2 font-medium text-sm" :class="{ 'active-tab': tab === 'communications' }" @click="tab = 'communications'">
+                      <% end %>
+                      <%= live_patch to: Routes.live_path(@socket, PuppiesWeb.Admin.User, @user.id, %{tab: "communications", sub_tab: @sub_tab}), class: "border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 whitespace-nowrap py-2 px-1 border-b-2 font-medium text-sm #{Utilities.active_tab(@tab, "communications")}" do %>
                           Communications
-                      </button>
+                      <% end %>
                     </nav>
                   </div>
 
-                  <div x-show="tab === 'notes'">
-                    <.live_component module={Puppies.Admin.NotesComponent} id="notes_component" notes={@notes} note={nil} user={@user} admin={@admin} />
-                  </div>
+                  <%= cond do %>
+                    <% @tab == "notes" -> %>
+                      <.live_component module={Puppies.Admin.NotesComponent} id="notes_component" notes={@notes} note={nil} user={@user} admin={@admin} />
 
-                  <%= if @user.is_seller do %>
-                    <div x-show="tab === 'listings'">
+                    <% @tab == "listings" -> %>
                       <.live_component module={Puppies.Admin.ListingsComponent} id="listings_component"  listings={@listings} />
-                    </div>
+
+                    <% @tab == "transactions" -> %>
+                      <.live_component module={PuppiesWeb.Admin.Transactions} id="transactions_component" user_id={@user.id}  customer_id={@user.customer_id}  admin={@admin} />
+
+                    <% @tab == "ip" -> %>
+                      <.live_component module={PuppiesWeb.Admin.IpAddresses} id="ip_address" user={@user}  />
+
+                    <% @tab == "communications" -> %>
+                      <.live_component module={PuppiesWeb.Admin.Communications} id="communications", threads={@threads} user={@user} reviews={@reviews} sub_tab={@sub_tab} tab={@tab}/>
                   <% end %>
 
-                  <div x-show="tab === 'transactions'">
-                    <.live_component module={PuppiesWeb.Admin.Transactions} id="transactions_component" user_id={@user.id}  customer_id={@user.customer_id}  admin={@admin} />
-                  </div>
-
-                  <div x-show="tab === 'ip'">
-                    <.live_component module={PuppiesWeb.Admin.IpAddresses} id="ip_address" user={@user}  />
-                  </div>
-
-                  <div x-show="tab === 'communications'">
-                    <.live_component module={PuppiesWeb.Admin.Communications} id="communications", threads={@threads} user={@user} reviews={@reviews}/>
-                  </div>
                 </div>
               </div>
             </div>

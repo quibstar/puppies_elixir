@@ -3,52 +3,53 @@ defmodule PuppiesWeb.Admin.Communications do
   empty data component
   """
   use PuppiesWeb, :live_component
+  alias Puppies.Utilities
 
   def render(assigns) do
     ~H"""
     <div>
-      <div x-data="{ tab: 'conversations' }">
+      <div>
         <div class="border-b border-gray-200">
           <nav class="-mb-px flex space-x-2" aria-label="Tabs">
-            <button class="border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 whitespace-nowrap py-2 px-1 border-b-2 font-medium text-sm" :class="{ 'active-tab': tab === 'conversations' }" @click="tab = 'conversations'">
+            <%= live_patch to: Routes.live_path(@socket, PuppiesWeb.Admin.User, @user.id, %{tab: @tab, sub_tab: "conversations"}), class: "border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 whitespace-nowrap py-2 px-1 border-b-2 font-medium text-sm #{Utilities.active_tab(@sub_tab, "conversations")}" do %>
               Conversations
-            </button>
+            <% end %>
 
-            <button class="border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 whitespace-nowrap py-2 px-1 border-b-2 font-medium text-sm" :class="{ 'active-tab': tab === 'reviews' }" @click="tab = 'reviews'">
+            <%= live_patch to: Routes.live_path(@socket, PuppiesWeb.Admin.User, @user.id, %{tab: @tab, sub_tab: "reviews"}), class: "border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 whitespace-nowrap py-2 px-1 border-b-2 font-medium text-sm #{Utilities.active_tab(@sub_tab, "reviews")}" do %>
               Reviews
-            </button>
+            <% end %>
 
-            <button class="border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 whitespace-nowrap py-2 px-1 border-b-2 font-medium text-sm" :class="{ 'active-tab': tab === 'sys-email' }" @click="tab = 'sys-email'">
+            <%= live_patch to: Routes.live_path(@socket, PuppiesWeb.Admin.User, @user.id, %{tab: @tab, sub_tab: "sys-emails"}), class: "border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 whitespace-nowrap py-2 px-1 border-b-2 font-medium text-sm #{Utilities.active_tab(@sub_tab, "sys-emails")}" do %>
               System Emails
-            </button>
+            <% end %>
 
-            <button class="border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 whitespace-nowrap py-2 px-1 border-b-2 font-medium text-sm" :class="{ 'active-tab': tab === 'sys-messages' }" @click="tab = 'sys-messages'">
+            <%= live_patch to: Routes.live_path(@socket, PuppiesWeb.Admin.User, @user.id, %{tab: @tab, sub_tab: "sys-messages"}), class: "border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 whitespace-nowrap py-2 px-1 border-b-2 font-medium text-sm #{Utilities.active_tab(@sub_tab, "sys-messages")}" do %>
               System Messages
-            </button>
+            <% end %>
 
           </nav>
         </div>
-        <div x-show="tab === 'conversations'">
-          <.live_component module={PuppiesWeb.Admin.ThreadComponent} id="threads" threads={@threads} thread={nil} messages={[]} user={@user}/>
-        </div>
-        <div x-show="tab === 'sys-messages'">
-          sys messages
-        </div>
+        <%= cond do %>
+          <% @sub_tab == "conversations" -> %>
+            <.live_component module={PuppiesWeb.Admin.ThreadComponent} id="threads" threads={@threads} thread={nil} messages={[]} user={@user}/>
 
-        <div x-show="tab === 'sys-email'">
-          sys emails
-        </div>
+          <% @sub_tab == "reviews" -> %>
+            <div class="my-4 text-xs text-gray-500">
+              Reviews written by this user.
+            </div>
+            <div class="space-y-2">
+              <%= for review <- @reviews do %>
+                <%= live_component  PuppiesWeb.Admin.Review, id: review.id, review: review, business: review.business %>
+              <% end %>
+            </div>
 
-        <div x-show="tab === 'reviews'">
-          <div class="my-4 text-xs text-gray-500">
-            Reviews written by this user.
-          </div>
-          <div class="space-y-2">
-            <%= for review <- @reviews do %>
-              <%= live_component  PuppiesWeb.Review, id: review.id, review: review, business: review.business %>
-            <% end %>
-          </div>
-        </div>
+          <% @sub_tab == "sys-emails" -> %>
+            Sys email
+
+          <% @sub_tab == "sys-messages" -> %>
+            Sys messages
+
+        <% end %>
       </div>
     </div>
     """

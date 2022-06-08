@@ -50,12 +50,12 @@ defmodule Puppies.Admin.History do
     ~H"""
       <div>
         <%= unless @admin_view_history == [] do %>
-          <div class="">
+          <div>
             <nav class="-mb-px flex flex-wrap overflow-scroll" aria-label="Tabs">
               <%= for view_history <- @admin_view_history  do %>
-                <div class={"border rounded-2xl mr-2 mb-2 space-x-1 flex items-center hover:border-gray-300 whitespace-nowrap text-xs #{render_class(view_history.user_id, @user_id)}"}>
+                <div class={"border rounded-2xl mr-2 mb-2 p-1 space-x-1 flex items-center hover:border-gray-300 whitespace-nowrap text-xs #{render_class(view_history.user_id, @user_id)}"}>
                   <%= PuppiesWeb.Avatar.show(%{business: view_history.user.business, user: view_history.user, square: 6, extra_classes: ""}) %>
-                  <%= live_redirect to: Routes.live_path(@socket, PuppiesWeb.Admin.User, view_history.user_id) do %>
+                  <%= live_patch to: Routes.live_path(@socket, PuppiesWeb.Admin.User, view_history.user_id, %{tab: @tab, sub_tab: @sub_tab}) do %>
                     <%= view_history.user.first_name %> <%= view_history.user.last_name %>
                   <% end %>
                   <%= if length(@admin_view_history) > 1 do %>
