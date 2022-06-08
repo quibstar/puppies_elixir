@@ -16,7 +16,9 @@ defmodule Puppies.Admin.Flags do
         from(u in User,
           join: f in Flag,
           on: f.offender_id == u.id,
-          where: f.resolved == false and f.system_reported == ^is_system_reported,
+          where:
+            f.resolved == false and f.system_reported == ^is_system_reported and
+              f.type != "review_dispute",
           distinct: u.id
         ),
         :count,
@@ -34,7 +36,9 @@ defmodule Puppies.Admin.Flags do
     from(u in User,
       join: f in Flag,
       on: f.offender_id == u.id,
-      where: f.resolved == false and f.system_reported == ^is_system_reported,
+      where:
+        f.resolved == false and f.system_reported == ^is_system_reported and
+          f.type != "review_dispute",
       distinct: u.id,
       preload: [:flags, business: :photo],
       order_by: [desc: f.inserted_at],
@@ -43,16 +47,80 @@ defmodule Puppies.Admin.Flags do
     )
   end
 
-  def flag_count(is_system_flag \\ false) do
+  def flag_count() do
     q =
       from(f in Flag,
-        where: f.resolved == false and f.system_reported == ^is_system_flag
+        where: f.resolved == false and f.system_reported == false and f.type != "review_dispute"
       )
 
     Repo.aggregate(
       q,
       :count,
       :id
+    )
+  end
+
+  def system_flag_count() do
+    q =
+      from(f in Flag,
+        where: f.resolved == false and f.system_reported == true
+      )
+
+    Repo.aggregate(
+      q,
+      :count,
+      :id
+    )
+  end
+
+  # Disputed reviews
+  def disputed_reviews_count() do
+    q =
+      from(f in Flag,
+        where: f.resolved == false and f.type == "review_dispute"
+      )
+
+    Repo.aggregate(
+      q,
+      :count,
+      :id
+    )
+  end
+
+  def open_review_flags(page, limit \\ "12") do
+    offset =
+      Utilities.convert_string_to_integer(page) * Utilities.convert_string_to_integer(limit) -
+        Utilities.convert_string_to_integer(limit)
+
+    p =
+      Repo.aggregate(
+        from(u in User,
+          join: f in Flag,
+          on: f.offender_id == u.id,
+          where: f.resolved == false and f.type == "review_dispute",
+          distinct: u.id
+        ),
+        :count,
+        :id
+      )
+
+    pagination = Puppies.Pagination.pagination(p, page, limit)
+
+    users = Repo.all(fetch_disputed_reviews_flags(limit, offset))
+
+    %{users: users, pagination: pagination}
+  end
+
+  def fetch_disputed_reviews_flags(limit, offset) do
+    from(u in User,
+      join: f in Flag,
+      on: f.offender_id == u.id,
+      where: f.resolved == false and f.type == "review_dispute",
+      distinct: u.id,
+      preload: [:flags, business: :photo],
+      order_by: [desc: f.inserted_at],
+      limit: ^limit,
+      offset: ^offset
     )
   end
 
@@ -74,7 +142,6 @@ defmodule Puppies.Admin.Flags do
     Repo.all(f)
   end
 
-  @spec flags_by_user_id(any) :: Ecto.Query.t()
   def flags_by_user_id(user_id) do
     from(f in Flag,
       where: f.offender_id == ^user_id,

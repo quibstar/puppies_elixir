@@ -10,7 +10,7 @@ defmodule Puppies.Admin.ViewHistories do
     q =
       from(vh in ViewHistory,
         where: vh.admin_id == ^admin_id,
-        order_by: [desc: vh.updated_at],
+        order_by: [desc: vh.inserted_at],
         preload: [user: [business: :photo]]
       )
 
@@ -25,8 +25,8 @@ defmodule Puppies.Admin.ViewHistories do
 
     if is_nil(vh) do
       create(%{admin_id: admin_id, user_id: user_id})
-    else
-      update(vh)
+      # else
+      #   update(vh)
     end
   end
 

@@ -9,13 +9,19 @@ defmodule PuppiesWeb.Admin.Dashboard do
 
   def page_data(page, limit, socket, dashboard_tab) do
     user_flag_count = Flags.flag_count()
-    system_flag_count = Flags.flag_count(true)
+    system_flag_count = Flags.system_flag_count()
+    disputed_reviews_count = Flags.disputed_reviews_count()
 
     users =
-      if dashboard_tab == "users" do
-        Flags.open_flags(page, limit)
-      else
-        Flags.open_flags(page, limit, true)
+      case dashboard_tab do
+        "users" ->
+          Flags.open_flags(page, limit)
+
+        "system" ->
+          Flags.open_flags(page, limit, true)
+
+        "reviews" ->
+          Flags.open_review_flags(page, limit)
       end
 
     flag_count =
@@ -31,6 +37,7 @@ defmodule PuppiesWeb.Admin.Dashboard do
       users: users.users,
       user_flag_count: user_flag_count,
       system_flag_count: system_flag_count,
+      disputed_reviews_count: disputed_reviews_count,
       limit: limit,
       page: page,
       dashboard_tab: dashboard_tab,
@@ -88,6 +95,13 @@ defmodule PuppiesWeb.Admin.Dashboard do
                 (<%= @system_flag_count %>)
               <% end %>
             </button>
+
+            <button phx-click="dashboard_tab" phx-value-dashboard_tab="reviews" class={"#{if @dashboard_tab == "reviews", do: "border-primary-500 text-primary-600", else: ""} border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm"} >
+              Review Disputes
+              <%= if @disputed_reviews_count > 0 do %>
+                (<%= @disputed_reviews_count %>)
+              <% end %>
+            </button>
           </nav>
         </div>
       </div>
@@ -124,8 +138,16 @@ defmodule PuppiesWeb.Admin.Dashboard do
                               </div>
                               <div class="ml-4">
                                 <div class="text-sm font-medium text-gray-900">
-                                  <%= live_redirect to: Routes.live_path(@socket, PuppiesWeb.Admin.User, user.id), class: "underline" do %>
-                                    <%= user.first_name %> <%= user.last_name %> (<%= user.id %>)
+                                  <%= if @dashboard_tab == "reviews" do %>
+
+                                    <%= live_redirect to: Routes.live_path(@socket, PuppiesWeb.Admin.User, user.id, %{tab: "communications", sub_tab: "reviews"}), class: "underline" do %>
+                                      <%= user.first_name %> <%= user.last_name %> (<%= user.id %>)
+                                    <% end %>
+
+                                  <% else %>
+                                    <%= live_redirect to: Routes.live_path(@socket, PuppiesWeb.Admin.User, user.id), class: "underline" do %>
+                                      <%= user.first_name %> <%= user.last_name %> (<%= user.id %>)
+                                    <% end %>
                                   <% end %>
                                   <PuppiesWeb.Badges.user_type is_seller={user.is_seller} />
                                 </div>

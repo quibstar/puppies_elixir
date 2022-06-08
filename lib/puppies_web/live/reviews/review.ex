@@ -35,17 +35,6 @@ defmodule PuppiesWeb.Review do
             <%= raw(Utilities.new_lines_to_br_tags(@review.review)) %>
           <% end %>
         </div>
-        <%= if Map.has_key?(assigns, :admin_viewing) do %>
-          <div class="text-xs text-gray-500 mb-2">
-            Written about:
-            <%= live_redirect to: Routes.live_path(@socket, PuppiesWeb.Admin.User, @business.user.id), class: "underline" do %>
-              <%= @business.name %>
-            <% end %>
-            <div>
-              Approved: <%= @review.approved %>
-            </div>
-          </div>
-        <% end %>
       </div>
     </div>
     """

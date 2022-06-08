@@ -5,17 +5,22 @@ defmodule PuppiesWeb.ReviewDispute do
   use PuppiesWeb, :live_component
 
   alias PuppiesWeb.{UI.Modal}
-  alias Puppies.{Reviews, Review.Dispute}
+  alias Puppies.{Reviews, Review.Dispute, Flags}
 
-  def handle_event("validate", %{"dispute" => dispute}, socket) do
+  def handle_event("validate_dispute", %{"dispute" => dispute}, socket) do
     changeset = Reviews.change_review_dispute(%Dispute{}, dispute)
     {:noreply, socket |> assign(:changeset, changeset)}
   end
 
-  def handle_event("save", %{"dispute" => dispute}, socket) do
+  def handle_event("save_dispute", %{"dispute" => dispute}, socket) do
     case Reviews.create_dispute(dispute) do
-      {:ok, review} ->
-        Reviews.update_review(review, %{approved: false})
+      {:ok, _} ->
+        Flags.create(%{
+          "reporter_id" => socket.assigns.reporter_id,
+          "offender_id" => socket.assigns.offender_id,
+          "type" => "review_dispute",
+          "reason" => socket.assigns.reason
+        })
 
         {:noreply,
          socket
@@ -34,7 +39,7 @@ defmodule PuppiesWeb.ReviewDispute do
           Dispute review
         </:modal_title>
         <:modal_body>
-          <.form let={f} for={@changeset} id="review-dispute-form" phx-submit="save" phx_change="validate" phx-target={@myself}>
+          <.form let={f} for={@changeset} id="review-dispute-form" phx-submit="save_dispute" phx_change="validate_dispute" phx-target={@myself}>
             <%= hidden_input f, :review_id %>
             <%= hidden_input f, :disputed, value: true %>
             <%= label f, "In a few word please state the reason for dispute", class: "inline-block text-sm text-gray-700" %>

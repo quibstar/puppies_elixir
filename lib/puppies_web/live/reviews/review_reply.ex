@@ -7,12 +7,12 @@ defmodule PuppiesWeb.ReviewReply do
   alias PuppiesWeb.{UI.Modal}
   alias Puppies.{Reviews, Review.Reply}
 
-  def handle_event("validate", %{"reply" => reply}, socket) do
+  def handle_event("validate_reply", %{"reply" => reply}, socket) do
     changeset = Reviews.change_review_reply(%Reply{}, reply)
     {:noreply, socket |> assign(:changeset, changeset)}
   end
 
-  def handle_event("save", %{"reply" => reply}, socket) do
+  def handle_event("save_reply", %{"reply" => reply}, socket) do
     res =
       if is_nil(reply["id"]) do
         Reviews.create_reply(reply)
@@ -39,7 +39,7 @@ defmodule PuppiesWeb.ReviewReply do
           Reply to review
         </:modal_title>
         <:modal_body>
-          <.form let={f} for={@changeset} id="review-dispute-form" phx-submit="save" phx_change="validate" phx-target={@myself}>
+          <.form let={f} for={@changeset} id="review-reply-form" phx-submit="save_reply" phx_change="validate_reply" phx-target={@myself}>
             <%= hidden_input f, :id %>
             <%= hidden_input f, :review_id %>
             <div class="mt-4 col-span-2">

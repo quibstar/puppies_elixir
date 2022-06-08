@@ -32,7 +32,7 @@ defmodule PuppiesWeb.Reviews do
       <%= unless @loading do %>
         <div class="md:grid grid-cols-2 gap-8 mt-4">
           <%= unless @business.reviews == [] do %>
-            <.live_component module={PuppiesWeb.BusinessReviews} id="business-review" business={@business} />
+            <.live_component module={PuppiesWeb.BusinessReviews} id="business-review" business={@business} user_id={@user.id}/>
           <% end %>
           <%= unless @reviews == [] do %>
             <.live_component module={PuppiesWeb.ReviewAuthors} id="reviews" reviews={@reviews} review={nil} />

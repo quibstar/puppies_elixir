@@ -25,12 +25,10 @@ defmodule PuppiesWeb.BusinessReviews do
                   <%= if is_nil(review.reply) do %>
                     <.live_component module={PuppiesWeb.ReviewReply} id={"reply-#{review.id}"}  changeset={Reviews.change_review_reply(%Reply{}, %{review_id: review.id})} reply={nil}/>
                   <% else %>
-                  <div class="text-sm  mt-2">
-                  <.live_component module={PuppiesWeb.ReviewReply} id={"edit-reply-#{review.reply.id}"} changeset={Reviews.change_review_reply(review.reply, %{})} reply={review.reply}/>
-                </div>
+                    <.live_component module={PuppiesWeb.ReviewReply} id={"edit-reply-#{review.reply.id}"} changeset={Reviews.change_review_reply(review.reply, %{})} reply={review.reply}/>
                   <% end %>
                   <%= if is_nil(review.dispute) do %>
-                    <.live_component module={PuppiesWeb.ReviewDispute} id={"reply-#{review.id}"} changeset={Reviews.change_review_dispute(%Dispute{}, %{review_id: review.id})}/>
+                    <.live_component module={PuppiesWeb.ReviewDispute} id={"dispute-reply-#{review.id}"} changeset={Reviews.change_review_dispute(%Dispute{}, %{review_id: review.id })}  offender_id={review.user.id} reporter_id={@user_id} reason={"Review left by #{review.user.first_name} #{review.user.last_name} is being disputed."}/>
                   <% end %>
                 </div>
               </div>
@@ -56,7 +54,7 @@ defmodule PuppiesWeb.BusinessReviews do
                     </div>
                     <div class="ml-3">
                       <p class="text-sm text-red-700">
-                        Comment left by <%= review.user.first_name %> <%= review.user.last_name %> is being disputed and is under review.
+                        Review left by <%= review.user.first_name %> <%= review.user.last_name %> is being disputed and is under review.
                       </p>
                     </div>
                   </div>
