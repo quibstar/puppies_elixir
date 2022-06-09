@@ -1,7 +1,7 @@
 defmodule PuppiesWeb.Admin.Dashboard do
   use PuppiesWeb, :live_view
 
-  alias Puppies.Admin.Flags
+  alias Puppies.{Admin.Flags, Utilities}
 
   def mount(_params, _session, socket) do
     {:ok, page_data("1", "12", socket, "users")}
@@ -52,7 +52,7 @@ defmodule PuppiesWeb.Admin.Dashboard do
   def handle_params(params, _uri, socket) do
     limit = check_for_nil(params["limit"], "12")
     page = check_for_nil(params["page"], "1")
-    tab = check_for_nil(params["page"], "users")
+    tab = check_for_nil(params["tab"], "users")
 
     {:noreply, page_data(page, limit, socket, tab)}
   end
@@ -83,25 +83,25 @@ defmodule PuppiesWeb.Admin.Dashboard do
 
         <div class="flex items-center border-b border-gray-200">
           <nav class="flex-1 -mb-px flex space-x-6 xl:space-x-8" aria-label="Tabs">
-            <button phx-click="dashboard_tab" phx-value-dashboard_tab="users" class={"#{if @dashboard_tab == "users", do: "border-primary-500 text-primary-600", else: ""} whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm"} >
+            <%= live_patch to: Routes.live_path(@socket, PuppiesWeb.Admin.Dashboard, %{tab: "users"}), class: "border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 whitespace-nowrap py-2 px-1 border-b-2 font-medium text-sm #{Utilities.active_tab(@dashboard_tab, "users")}" do %>
               User Flags
               <%= if @user_flag_count > 0 do %>
                 (<%= @user_flag_count %>)
               <% end %>
-            </button>
-            <button phx-click="dashboard_tab" phx-value-dashboard_tab="system" class={"#{if @dashboard_tab == "system", do: "border-primary-500 text-primary-600", else: ""} border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm"} >
+            <% end %>
+            <%= live_patch to: Routes.live_path(@socket, PuppiesWeb.Admin.Dashboard, %{tab: "system"}), class: "border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 whitespace-nowrap py-2 px-1 border-b-2 font-medium text-sm #{Utilities.active_tab(@dashboard_tab, "system")}" do %>
               System Flags
               <%= if @system_flag_count > 0 do %>
                 (<%= @system_flag_count %>)
               <% end %>
-            </button>
+            <% end %>
 
-            <button phx-click="dashboard_tab" phx-value-dashboard_tab="reviews" class={"#{if @dashboard_tab == "reviews", do: "border-primary-500 text-primary-600", else: ""} border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm"} >
+             <%= live_patch to: Routes.live_path(@socket, PuppiesWeb.Admin.Dashboard, %{tab: "reviews"}), class: "border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 whitespace-nowrap py-2 px-1 border-b-2 font-medium text-sm #{Utilities.active_tab(@dashboard_tab, "reviews")}" do %>
               Review Disputes
               <%= if @disputed_reviews_count > 0 do %>
                 (<%= @disputed_reviews_count %>)
               <% end %>
-            </button>
+            <% end %>
           </nav>
         </div>
       </div>
